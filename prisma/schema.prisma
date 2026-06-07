@@ -1,0 +1,24 @@
+// 둘이서 쓰는 앱이라 단순하게: 진행상황 한 줄 + 획득한 소원권 목록
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Progress {
+  id              Int      @id @default(autoincrement())
+  collectedSpots  String   @default("[]")  // JSON: 방문한 추억 스팟 id 배열
+  hearts          Int      @default(0)
+  updatedAt       DateTime @updatedAt
+}
+
+model Coupon {
+  id        Int      @id @default(autoincrement())
+  title     String
+  emoji     String   @default("🎁")
+  earnedAt  DateTime @default(now())
+  used      Boolean  @default(false)
+}
