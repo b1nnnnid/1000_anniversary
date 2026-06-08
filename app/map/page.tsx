@@ -8,6 +8,7 @@ import MemoryModal from "@/components/MemoryModal";
 import Celebration from "@/components/Celebration";
 import StageChallenge from "@/components/StageChallenge";
 import DialogBox from "@/components/DialogBox";
+import DateModal from "@/components/DateModal";
 import { Stage, STAGES, HEART_PIECES, HEARTS_PER_TICKET, CAT_INTRO, CAT_EVENTS } from "@/lib/gameData";
 import { getProgress, changeTickets, resetProgress } from "@/lib/progressClient";
 
@@ -20,6 +21,7 @@ export default function MapPage() {
   const [challenge, setChallenge] = useState<Stage | null>(null);
   const [celebrate, setCelebrate] = useState(false);
   const [dialog, setDialog] = useState<{ lines: string[]; intro: boolean } | null>(null);
+  const [dateScene, setDateScene] = useState<Stage | null>(null);
   const [confirmReset, setConfirmReset] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -38,6 +40,7 @@ export default function MapPage() {
     toastTimer.current = setTimeout(() => setToast(null), 2600);
   }, []);
 
+  const busy = !!(modal || challenge || celebrate || dialog || confirmReset || dateScene);
   const stageDone = collected.filter((id) => STAGES.some((s) => s.id === id)).length;
   const allCollected = STAGES.every((s) => collected.includes(s.id));
   const celebrated = collected.includes("reunion");
@@ -64,13 +67,23 @@ export default function MapPage() {
 
   const onStage = useCallback((s: Stage) => {
     setCollected((c) => {
+      // 상봉 후엔 데이트 장소로 입장!
+      if (c.includes("reunion") && s.place) {
+        setDateScene(s);
+        if (!c.includes("date:" + s.id)) {
+          saveSpot("date:" + s.id);
+          showToast("💑 " + s.place.name + " 데이트!");
+          return [...c, "date:" + s.id];
+        }
+        return c;
+      }
       const locked = !STAGES.filter((t) => t.order < s.order).every((t) => c.includes(t.id));
       if (locked) { showToast("🔒 이전 추억부터 차례대로 열어줘!"); return c; }
       if (s.challenge && !c.includes("ch:" + s.id)) setChallenge(s);
       else openMemory(s);
       return c;
     });
-  }, [openMemory, showToast]);
+  }, [openMemory, saveSpot, showToast]);
 
   const onChallengeDone = useCallback((success: boolean) => {
     const s = challenge;
@@ -164,7 +177,7 @@ export default function MapPage() {
 
       <TrailMap
         collected={collected} allCollected={allCollected} heartPieces={pieces}
-        lockedIds={lockedIds} celebrated={celebrated} dialogActive={dialog !== null}
+        lockedIds={lockedIds} celebrated={celebrated} busy={busy}
         onStage={onStage} onGoal={onGoal} onHeart={onHeart} onCatTalk={onCatTalk}
       />
 
@@ -177,6 +190,10 @@ export default function MapPage() {
       )}
 
       {dialog && <DialogBox speaker="🐱 길고양이" lines={dialog.lines} onEnd={onDialogEnd} />}
+      {dateScene && (
+        <DateModal stage={dateScene} onClose={() => setDateScene(null)}
+          onMemory={() => { const s = dateScene; setDateScene(null); setModal(s); }} />
+      )}
       {challenge && <StageChallenge stage={challenge} onDone={onChallengeDone} />}
       {modal && <MemoryModal spot={modal} onClose={() => setModal(null)} />}
       {celebrate && <Celebration onClose={onCelebrationClose} />}

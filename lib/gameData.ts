@@ -19,6 +19,10 @@ export interface Challenge {
   answer?: 0 | 1;             // quiz2 전용 (0부터!)
 }
 
+// 상봉 후 스테이지가 변신하는 데이트 장소
+export type PlaceKind = "park" | "cinema" | "cafe" | "restaurant" | "beach" | "amusement";
+export interface Place { kind: PlaceKind; name: string; desc: string; }
+
 export interface Stage {
   id: string;
   order: number;          // 진행 순서 (위→아래)
@@ -31,6 +35,7 @@ export interface Stage {
   photo?: string;         // /photos/xxx
   text: string;
   challenge?: Challenge;  // 스테이지 미션 (없으면 바로 추억 열림)
+  place?: Place;          // 상봉 후 변신할 데이트 장소
 }
 
 // 위(처음 만남)에서 아래(지금)로 이어지는 추억 길.
@@ -40,43 +45,50 @@ export const STAGES: Stage[] = [
     label: "처음 만난 날", title: "처음 만난 날", date: "2023.09.11",
     photo: "/photos/sample1.svg",
     text: "어색하게 인사했던 그날. 여기에 그날의 사진과 이야기를 넣어주세요.",
-    challenge: { type: "quiz2", question: "처음 만난 날, 먼저 말을 건 사람은?", options: ["나", "오빠"], answer: 1 } },
+    challenge: { type: "quiz2", question: "처음 만난 날, 먼저 말을 건 사람은?", options: ["나", "오빠"], answer: 1 },
+    place: { kind: "park", name: "처음 만난 공원", desc: "그날처럼 벤치에 나란히 앉았다. 아이스크림은 역시 두 개." } },
 
   { id: "first-date", order: 2, col: 3, row: 9,
     label: "첫 데이트", title: "첫 데이트", date: "2023.09.20",
     photo: "/photos/sample2.svg",
     text: "둘이 처음 영화를 봤던 날. 가장 좋아하는 사진을 넣어보세요.",
-    challenge: { type: "puzzle" } },
+    challenge: { type: "puzzle" },
+    place: { kind: "cinema", name: "첫 데이트 영화관", desc: "팝콘은 반반. 이번엔 손잡는 데 3분도 안 걸렸다." } },
 
   // ── 분기: 두 갈래 ──
   { id: "cafe", order: 3, branch: "A", col: 2, row: 15,
     label: "단골 카페", title: "우리 단골 카페", date: "2023.11.02",
     photo: "/photos/sample1.svg",
     text: "자주 가던 그 카페. 왼쪽 길의 추억이에요.",
-    challenge: { type: "quiz2", question: "우리가 카페에서 늘 시키던 건?", options: ["아아 두 잔", "달달한 라떼"], answer: 0 } },
+    challenge: { type: "quiz2", question: "우리가 카페에서 늘 시키던 건?", options: ["아아 두 잔", "달달한 라떼"], answer: 0 },
+    place: { kind: "cafe", name: "우리 단골 카페", desc: "늘 앉던 그 자리. 사장님이 서비스 쿠키를 주셨다." } },
   { id: "movie-night", order: 3, branch: "B", col: 9, row: 15,
     label: "영화의 밤", title: "같이 본 영화", date: "2023.12.24",
     photo: "/photos/sample2.svg",
     text: "밤새 영화 보던 날. 오른쪽 길의 추억이에요.",
-    challenge: { type: "finddiff" } },
+    challenge: { type: "finddiff" },
+    place: { kind: "restaurant", name: "심야 맛집", desc: "영화 보고 나면 역시 야식. 오늘도 둘이 한 그릇 더." } },
 
   { id: "trip", order: 4, col: 5, row: 22,
     label: "첫 여행", title: "우리의 첫 여행", date: "2024.05.03",
     photo: "/photos/sample3.svg",
     text: "바다를 보러 갔던 1박 2일.",
-    challenge: { type: "puzzle" } },
+    challenge: { type: "puzzle" },
+    place: { kind: "beach", name: "그 바닷가", desc: "파도 소리, 모래 위 발자국 두 줄. 또 오자." } },
 
   { id: "hundred", order: 5, col: 8, row: 29,
     label: "100일", title: "100일 기념", date: "2023.12.19",
     photo: "/photos/sample3.svg",
     text: "벌써 100일이라니. 케이크 불었던 날.",
-    challenge: { type: "finddiff" } },
+    challenge: { type: "finddiff" },
+    place: { kind: "amusement", name: "놀이동산", desc: "관람차 맨 꼭대기에서 보는 노을. 소원도 빌었다." } },
 
   { id: "now", order: 6, col: 4, row: 35,
     label: "그리고 지금", title: "그리고 지금", date: "2026.06",
     photo: "/photos/sample1.svg",
     text: "여기까지 함께 걸어와줘서 고마워.",
-    challenge: { type: "quiz2", question: "지금 이 순간 내 마음은?", options: ["좋아해", "많이 좋아해"], answer: 1 } },
+    challenge: { type: "quiz2", question: "지금 이 순간 내 마음은?", options: ["좋아해", "많이 좋아해"], answer: 1 },
+    place: { kind: "park", name: "야경 공원", desc: "1000일의 마무리는 천천히 걷기. 다음 1000일도 잘 부탁해." } },
 ];
 
 // 마지막 도착지 (모든 추억을 모으면 열림 → 폭죽 연출)

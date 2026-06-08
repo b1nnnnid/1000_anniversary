@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { isBlocked, isPath, TREES } from "@/lib/trail";
 import {
   drawGrass, drawPathTile, drawTree, drawFlower, drawStageNode, drawGoal,
-  drawCharacter, drawGirlfriend, drawGirlfriendWalk, drawHeartPiece, drawCat, drawEmote,
+  drawCharacter, drawGirlfriend, drawGirlfriendWalk, drawHeartPiece, drawCat, drawEmote, drawPlace,
 } from "@/lib/pixelArt";
 import { STAGES, GOAL, CAT, HEART_PIECES, Stage, TILE, WORLD_COLS, WORLD_ROWS } from "@/lib/gameData";
 
@@ -22,7 +22,7 @@ interface Props {
   heartPieces: string[];
   lockedIds: string[];       // 잠긴 스테이지 id
   celebrated: boolean;       // 상봉 후 핑크 월드
-  dialogActive: boolean;     // 대화창 떠 있으면 이동 정지
+  busy: boolean;             // 모달/대화 등 UI가 떠 있으면 이동·고양이 정지
   onStage: (s: Stage) => void;
   onGoal: () => void;
   onHeart: (id: string) => void;
@@ -30,7 +30,7 @@ interface Props {
 }
 
 export default function TrailMap({
-  collected, allCollected, heartPieces, lockedIds, celebrated, dialogActive,
+  collected, allCollected, heartPieces, lockedIds, celebrated, busy,
   onStage, onGoal, onHeart, onCatTalk,
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -43,7 +43,7 @@ export default function TrailMap({
   const piecesRef = useRef(heartPieces);
   const lockedRef = useRef(lockedIds);
   const celebRef = useRef(celebrated);
-  const dialogRef = useRef(dialogActive);
+  const busyRef = useRef(busy);
   const grabbedRef = useRef<Set<string>>(new Set());
   const hist = useRef<{ x: number; y: number; d: Dir }[]>([]);
   const cat = useRef<{ x: number; y: number; state: CatState; timer: number; cooldown: number }>({
@@ -57,7 +57,7 @@ export default function TrailMap({
   useEffect(() => { piecesRef.current = heartPieces; }, [heartPieces]);
   useEffect(() => { lockedRef.current = lockedIds; }, [lockedIds]);
   useEffect(() => { celebRef.current = celebrated; }, [celebrated]);
-  useEffect(() => { dialogRef.current = dialogActive; }, [dialogActive]);
+  useEffect(() => { busyRef.current = busy; }, [busy]);
 
   const canMove = (nx: number, ny: number) => {
     const pts = [[nx + 8, ny + 18], [nx + 23, ny + 18], [nx + 8, ny + 30], [nx + 23, ny + 30]];
@@ -72,7 +72,7 @@ export default function TrailMap({
 
     const loop = () => {
       tick++;
-      const frozen = dialogRef.current;
+      const frozen = busyRef.current;
       const k = keys.current;
       let dx = 0, dy = 0;
       if (!frozen) {
@@ -100,21 +100,24 @@ export default function TrailMap({
       const dPlayer = Math.hypot(pos.current.x - c.x, pos.current.y - c.y);
       if (c.state === "idle") {
         if (c.cooldown > 0) c.cooldown--;
-        if ((c.cooldown <= 0 && dPlayer < 7 * TILE) || dPlayer < 1.3 * TILE) {
+        if (!busyRef.current && ((c.cooldown <= 0 && dPlayer < 7 * TILE) || dPlayer < 1.3 * TILE)) {
           c.state = "notice"; c.timer = 42;
         }
       } else if (c.state === "notice") {
-        c.timer--;
-        if (c.timer <= 0) { c.state = "approach"; c.timer = 420; }
+        if (busyRef.current) { c.state = "return"; }          // 보던 게 있으면 방해하지 않기
+        else { c.timer--; if (c.timer <= 0) { c.state = "approach"; c.timer = 420; } }
       } else if (c.state === "approach") {
-        c.timer--;
-        const sp = 1.7;
-        const ddx = pos.current.x - c.x, ddy = pos.current.y - c.y;
-        if (Math.abs(ddx) > Math.abs(ddy)) c.x += Math.sign(ddx) * Math.min(sp, Math.abs(ddx));
-        else c.y += Math.sign(ddy) * Math.min(sp, Math.abs(ddy));
-        if (dPlayer < 1.15 * TILE || c.timer <= 0) { c.state = "talk"; onCatTalk(); }
+        if (busyRef.current) { c.state = "return"; }          // 다가오다가도 철수
+        else {
+          c.timer--;
+          const sp = 1.7;
+          const ddx = pos.current.x - c.x, ddy = pos.current.y - c.y;
+          if (Math.abs(ddx) > Math.abs(ddy)) c.x += Math.sign(ddx) * Math.min(sp, Math.abs(ddx));
+          else c.y += Math.sign(ddy) * Math.min(sp, Math.abs(ddy));
+          if (dPlayer < 1.15 * TILE || c.timer <= 0) { c.state = "talk"; onCatTalk(); }
+        }
       } else if (c.state === "talk") {
-        if (!dialogRef.current) c.state = "return";
+        if (!busyRef.current) c.state = "return";
       } else if (c.state === "return") {
         const hx = CAT.col * TILE, hy = CAT.row * TILE, sp = 1.4;
         const ddx = hx - c.x, ddy = hy - c.y;
@@ -155,7 +158,8 @@ export default function TrailMap({
         const d = Math.hypot(s.col * TILE - pos.current.x, s.row * TILE - pos.current.y);
         if (d < best) {
           best = d;
-          label = lockedRef.current.includes(s.id) ? "🔒 아직 잠겨있어요" : s.label;
+          label = celebRef.current && s.place ? "💑 " + s.place.name
+            : lockedRef.current.includes(s.id) ? "🔒 아직 잠겨있어요" : s.label;
           lid = s.id;
         }
       }
@@ -185,7 +189,8 @@ export default function TrailMap({
       const bob = Math.floor(Math.abs(Math.sin(tick / 18)) * 3);
       for (const s of STAGES) {
         if (s.row < r0 - 1 || s.row > r1 + 1) continue;
-        drawStageNode(ctx, s.col, s.row, s.order, collectedRef.current.includes(s.id), bob, lockedRef.current.includes(s.id));
+        if (pink && s.place) drawPlace(ctx, s.col, s.row, s.place.kind, bob);
+        else drawStageNode(ctx, s.col, s.row, s.order, collectedRef.current.includes(s.id), bob, lockedRef.current.includes(s.id));
       }
       for (const h of HEART_PIECES) {
         if (piecesRef.current.includes(h.id) || grabbedRef.current.has(h.id)) continue;

@@ -381,3 +381,63 @@ export function drawGirlfriendWalk(
     ctx.restore();
   }
 }
+
+// 상봉 후 스테이지가 변신하는 데이트 장소 건물들
+export function drawPlace(ctx: CanvasRenderingContext2D, col: number, row: number, kind: string, bob: number) {
+  const x = col * TILE, y = row * TILE;
+  ctx.fillStyle = "rgba(124,90,150,0.16)";
+  ctx.beginPath(); ctx.ellipse(x + 16, y + TILE - 3, 14, 4, 0, 0, Math.PI * 2); ctx.fill();
+
+  if (kind === "cafe") {
+    r(ctx, x + 2, y + 8, 28, 22, "#F2E3C8");
+    r(ctx, x, y + 4, 32, 7, "#E8889C");
+    r(ctx, x + 4, y + 4, 5, 7, "#FFFFFF"); r(ctx, x + 14, y + 4, 5, 7, "#FFFFFF"); r(ctx, x + 24, y + 4, 5, 7, "#FFFFFF");
+    r(ctx, x + 6, y + 16, 8, 8, "#BFE0F5");
+    r(ctx, x + 19, y + 16, 8, 14, "#9C7A5A");
+    r(ctx, x + 24, y + 22, 2, 2, "#F2C76B");
+    r(ctx, x + 12, y - 4 - bob, 8, 7, "#FFFFFF"); r(ctx, x + 14, y - 7 - bob, 4, 3, "#FFFFFF");
+    r(ctx, x + 14, y - 2 - bob, 4, 3, "#9C7A5A");
+  } else if (kind === "restaurant") {
+    r(ctx, x + 2, y + 8, 28, 22, "#FBE9D8");
+    r(ctx, x, y + 4, 32, 7, "#E8556F");
+    r(ctx, x + 5, y + 4, 6, 7, "#FFFFFF"); r(ctx, x + 16, y + 4, 6, 7, "#FFFFFF"); r(ctx, x + 26, y + 4, 4, 7, "#FFFFFF");
+    r(ctx, x + 6, y + 15, 9, 9, "#FBD86B");
+    r(ctx, x + 19, y + 15, 8, 15, "#A8552F");
+    r(ctx, x + 12, y - 5 - bob, 8, 8, "#FFFFFF");
+    r(ctx, x + 14, y - 3 - bob, 4, 4, "#E8556F");
+  } else if (kind === "cinema") {
+    r(ctx, x + 2, y + 6, 28, 24, "#6B6478");
+    r(ctx, x + 5, y + 10, 22, 10, "#FFF8E8");
+    r(ctx, x + 13, y + 12, 6, 6, "#E8556F");
+    r(ctx, x + 13, y + 22, 6, 8, "#4A4454");
+    r(ctx, x, y + 2, 32, 5, "#F2C76B");
+    r(ctx, x + 4, y - 3 - bob, 4, 4, "#FBD86B"); r(ctx, x + 14, y - 5 - bob, 4, 4, "#FBD86B"); r(ctx, x + 24, y - 3 - bob, 4, 4, "#FBD86B");
+  } else if (kind === "park") {
+    r(ctx, x + 18, y + 12, 12, 4, "#C7A07A");
+    r(ctx, x + 18, y + 16, 2, 8, "#A88260"); r(ctx, x + 28, y + 16, 2, 8, "#A88260");
+    r(ctx, x + 18, y + 8, 12, 2, "#C7A07A");
+    r(ctx, x + 4, y + 14, 5, 12, "#C7A07A");
+    r(ctx, x - 1, y + 2, 15, 13, "#F4BCD4"); r(ctx, x + 2, y - 2, 9, 8, "#F8CEE0");
+    r(ctx, x + 20, y + 26, 4, 4, "#F2A3C0"); r(ctx, x + 26, y + 27, 3, 3, "#F6E05E");
+    r(ctx, x + 8, y - 6 - bob, 5, 5, "#F2A3C0");
+  } else if (kind === "beach") {
+    r(ctx, x, y + 18, 32, 12, "#FBE6C8");
+    r(ctx, x, y + 10, 32, 8, "#9FC7E8");
+    r(ctx, x + 2, y + 12, 6, 2, "#FFFFFF"); r(ctx, x + 20, y + 14, 8, 2, "#FFFFFF");
+    r(ctx, x + 14, y + 2, 4, 22, "#C7A07A");
+    r(ctx, x + 4, y - 2 - bob, 24, 5, "#E8556F");
+    r(ctx, x + 8, y - 5 - bob, 16, 4, "#FFFFFF");
+    r(ctx, x + 6, y + 2 - bob, 6, 2, "#FFFFFF"); r(ctx, x + 20, y + 2 - bob, 6, 2, "#E8556F");
+  } else if (kind === "amusement") {
+    // 미니 관람차
+    r(ctx, x + 14, y + 14, 4, 16, "#B8AEB4");
+    r(ctx, x + 8, y + 22, 16, 3, "#B8AEB4");
+    const cx = x + 16, cy = y + 10;
+    r(ctx, cx - 2, cy - 2, 4, 4, "#E8889C");
+    const cabs = [[0, -10], [9, -4], [6, 8], [-6, 8], [-9, -4]];
+    cabs.forEach(([dx2, dy2], i) => {
+      const colors = ["#F2C76B", "#9FC7E8", "#F2A3C0", "#A8E0C8", "#C9A7F0"];
+      r(ctx, cx + dx2 - 3 + (bob > 1 ? 1 : 0), cy + dy2 - 3, 6, 6, colors[i]);
+    });
+  }
+}
