@@ -135,7 +135,11 @@ export default function TrailMap({
       // 서있는 노드 감지
       const ptx = Math.floor((pos.current.x + 16) / TILE);
       const pty = Math.floor((pos.current.y + 24) / TILE);
-      const hereStage = STAGES.find((s) => s.col === ptx && s.row === pty);
+      const hereStage = STAGES.find((s) =>
+        celebRef.current && s.place
+          ? pty === s.row && Math.abs(ptx - s.col) <= 1
+          : s.col === ptx && s.row === pty
+      );
       const onGoalTile = GOAL.col === ptx && GOAL.row === pty;
       const hereId = hereStage ? hereStage.id : onGoalTile ? "goal" : null;
       if (hereId && standing.current !== hereId) {
@@ -188,9 +192,17 @@ export default function TrailMap({
       }
       const bob = Math.floor(Math.abs(Math.sin(tick / 18)) * 3);
       for (const s of STAGES) {
-        if (s.row < r0 - 1 || s.row > r1 + 1) continue;
-        if (pink && s.place) drawPlace(ctx, s.col, s.row, s.place.kind, bob);
-        else drawStageNode(ctx, s.col, s.row, s.order, collectedRef.current.includes(s.id), bob, lockedRef.current.includes(s.id));
+        if (s.row < r0 - 4 || s.row > r1 + 2) continue;
+        if (pink && s.place) {
+          // 큼직한 데이트 건물 (바닥 중심 기준 2.6배)
+          const ax = (s.col + 0.5) * TILE, ay = (s.row + 1) * TILE;
+          ctx.save();
+          ctx.translate(ax, ay); ctx.scale(2.6, 2.6); ctx.translate(-ax, -ay);
+          drawPlace(ctx, s.col, s.row, s.place.kind, bob);
+          ctx.restore();
+        } else {
+          drawStageNode(ctx, s.col, s.row, s.order, collectedRef.current.includes(s.id), bob, lockedRef.current.includes(s.id));
+        }
       }
       for (const h of HEART_PIECES) {
         if (piecesRef.current.includes(h.id) || grabbedRef.current.has(h.id)) continue;

@@ -9,7 +9,7 @@ import Celebration from "@/components/Celebration";
 import StageChallenge from "@/components/StageChallenge";
 import DialogBox from "@/components/DialogBox";
 import DateModal from "@/components/DateModal";
-import { Stage, STAGES, HEART_PIECES, HEARTS_PER_TICKET, CAT_INTRO, CAT_EVENTS } from "@/lib/gameData";
+import { Stage, STAGES, HEART_PIECES, HEARTS_PER_TICKET, CAT_INTRO, CAT_EVENTS, CAT_CONGRATS } from "@/lib/gameData";
 import { getProgress, changeTickets, resetProgress } from "@/lib/progressClient";
 
 export default function MapPage() {
@@ -20,7 +20,7 @@ export default function MapPage() {
   const [modal, setModal] = useState<Stage | null>(null);
   const [challenge, setChallenge] = useState<Stage | null>(null);
   const [celebrate, setCelebrate] = useState(false);
-  const [dialog, setDialog] = useState<{ lines: string[]; intro: boolean } | null>(null);
+  const [dialog, setDialog] = useState<{ lines: string[]; intro?: boolean; congrats?: boolean } | null>(null);
   const [dateScene, setDateScene] = useState<Stage | null>(null);
   const [confirmReset, setConfirmReset] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
@@ -137,6 +137,11 @@ export default function MapPage() {
         changeTickets(1).catch(() => {});
         showToast("고양이가 티켓을 줬다! 🎟 +1");
       }
+      if (d?.congrats) {
+        setCollected((c) => (c.includes("cat-congrats") ? c : [...c, "cat-congrats"]));
+        saveSpot("cat-congrats");
+        showToast("❓퀴즈와 🎁룰렛이 열렸어요!");
+      }
       return null;
     });
   }, [saveSpot, showToast]);
@@ -150,8 +155,14 @@ export default function MapPage() {
 
   const onCelebrationClose = useCallback(() => {
     setCelebrate(false);
-    setCollected((c) => (c.includes("reunion") ? c : [...c, "reunion"]));
-    saveSpot("reunion");
+    setCollected((c) => {
+      if (!c.includes("cat-congrats")) {
+        setTimeout(() => setDialog({ lines: CAT_CONGRATS, congrats: true }), 700);
+      }
+      if (c.includes("reunion")) return c;
+      saveSpot("reunion");
+      return [...c, "reunion"];
+    });
   }, [saveSpot]);
 
   const doReset = useCallback(async () => {
@@ -172,7 +183,11 @@ export default function MapPage() {
             <span className="chip">🎟 {tickets}</span>
           </div>
         </div>
-        <GameDock onHome={() => setConfirmReset(true)} />
+        <GameDock
+          onHome={() => setConfirmReset(true)}
+          gamesLocked={!celebrated}
+          onLockedTry={() => showToast("🔒 추억탐방을 끝내면 열려요!")}
+        />
       </header>
 
       <TrailMap
