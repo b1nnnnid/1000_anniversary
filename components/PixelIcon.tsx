@@ -5,7 +5,8 @@ import React from "react";
 type Icon = { pal: Record<string, string>; rows: string[] };
 
 const R = "#E8799F", D = "#B85C82", L = "#F8C9DC", W = "#FFFFFF", o = "#F2C76B", g = "#E0A94A",
-  k = "#5A4A55", b = "#9FC7E8", v = "#C9A7F0", m = "#9FD9B8", p = "#7E6CC4", n = "#C7A07A", t = "#3F3B45";
+  k = "#5A4A55", b = "#9FC7E8", v = "#C9A7F0", m = "#9FD9B8", p = "#7E6CC4", n = "#C7A07A", t = "#3F3B45",
+  tg = "#1D9E75", mL = "#BFEAD8";
 
 const ICONS: Record<string, Icon> = {
   heart: { pal: { R, L }, rows: [
@@ -14,8 +15,8 @@ const ICONS: Record<string, Icon> = {
   ticket: { pal: { o, g, W }, rows: [
     "            ", "            ", " oooooooooo ", " oggggggggo ", " ogWggggWgo ", "ooggWggWggoo",
     " ogWggggWgo ", " oggggggggo ", " oooooooooo ", "            ", "            ", "            "] },
-  fragment: { pal: { m: "#7 FCFAE".replace(" ",""), t: "#1D9E75", L: "#BFEAD8" }, rows: [
-    "     mm     ", "    mLLm    ", "   mLLLLm   ", "  mLLLLLLm  ", " mLLLLLLLLm ", "mLLLLLLLLLLm",
+  fragment: { pal: { m: mL, t: tg }, rows: [
+    "     mm     ", "    mmmm    ", "   mmmmmm   ", "  mmmmmmmm  ", " mmmmmmmmmm ", "mmmmmmmmmmmm",
     " tttttttttt ", "  tttttttt  ", "   tttttt   ", "    tttt    ", "     tt     ", "            "] },
   camera: { pal: { k, W, b }, rows: [
     "            ", "   kkk      ", " kkkkkkkkkk ", " kWWWWWWWWk ", " kWkkkkkkWk ", " kWkbbbbkWk ",
@@ -26,9 +27,6 @@ const ICONS: Record<string, Icon> = {
   gift: { pal: { R, D, o, W }, rows: [
     "    R  R    ", "   RR  RR   ", "    RooR    ", "  oooooooo  ", "  oRoooRoo  ", " oooooooooo ",
     " oDooooooDo ", " oDoRRRRoDo ", " oDoRRRRoDo ", " oDoRRRRoDo ", " oooRRRRooo ", "            "] },
-  bubble: { pal: { v, p, W }, rows: [
-    " vvvvvvvvvv ", "vppppppppppv", "vpWWpppWWpp v".replace(" v","pv"), "vppppppppppv", "vpppWWWppppv", "vpppWppppppv",
-    "vpppWppppppv", "vppppppppppv", " vvvvvpvvvv ", "      pp    ", "     pp     ", "            "] },
   lock: { pal: { g, o, k }, rows: [
     "            ", "    gggg    ", "   g    g   ", "   g    g   ", "  oooooooo  ", "  oooooooo  ",
     "  ooo  ooo  ", "  oo kk oo  ", "  oo kk oo  ", "  oooooooo  ", "            ", "            "] },
@@ -47,15 +45,24 @@ const ICONS: Record<string, Icon> = {
   star: { pal: { o, g, W }, rows: [
     "     oo     ", "     oo     ", "    oWWo    ", "ooooWWWWoooo", " oooWWWWooo ", "  ooWWWWoo  ",
     "  oWWWWWWo  ", " oWWoooWWo  ", " oWo   oWo  ", "oo       oo ", "            ", "            "] },
-  sparkle: { pal: { o, W }, rows: [
-    "     o      ", "     o      ", "    oWo     ", "  o oWo o   ", "  oWoWoWo   ", "ooooWWWoooo ",
-    "  oWoWoWo   ", "  o oWo o   ", "    oWo     ", "     o      ", "     o      ", "            "] },
   cat: { pal: { n, t, R }, rows: [
     " n      n   ", " nn    nn   ", " nnnnnnnn   ", "nnnnnnnnnn  ", "nntnnnntnn  ", "nnnnnnnnnn  ",
     "nnntnntnnn  ", "nnnnRnnnnn  ", " nnnnnnnn   ", "  nnnnnn    ", "            ", "            "] },
   flower: { pal: { R, o, m }, rows: [
     "            ", "    RRR     ", "   RRRRR    ", " RRRoooRRR  ", "RRRRoooRRRR ", " RRRoooRRR  ",
     "   RRRRR    ", "    RRR     ", "     m      ", "    mmm     ", "     m      ", "            "] },
+  letter: { pal: { R, D, W }, rows: [
+    "            ", " RRRRRRRRRR ", " RWWWWWWWWR ", " RWRWWWWRWR ", " RWWRWWRWWR ", " RWWWRRWWWR ",
+    " RWWWWWWWWR ", " RWWWWWWWWR ", " RRRRRRRRRR ", "            ", "            ", "            "] },
+  trophy: { pal: { o, g, D }, rows: [
+    " oooooooooo ", " oggggggggo ", "gggggggggggg", " ggoggggogg ", "  oggggggo  ", "   oggggo   ",
+    "    oggo    ", "    oggo    ", "   oooooo   ", "   DDDDDD   ", "  DDDDDDDD  ", "            "] },
+  film: { pal: { t, W, R }, rows: [
+    "tttttttttttt", "tWttWttWttWt", "tRRRRRRRRRRt", "tRWWWWWWWWRt", "tRWWWWWWWWRt", "tRWWWWWWWWRt",
+    "tRWWWWWWWWRt", "tRRRRRRRRRRt", "tWttWttWttWt", "tttttttttttt", "            ", "            "] },
+  cards: { pal: { v, W, R }, rows: [
+    "      vvvvv ", "     vWWWWv ", " vvvvvWWWWv ", "vWWWWvWWWWv ", "vWRRWvWWWvv ", "vWRRWvWWv   ",
+    "vWWWWvWv    ", "vWWWWvv     ", "vWWWWv      ", " vvvvv      ", "            ", "            "] },
 };
 
 export default function PixelIcon({ name, size = 16, style }: { name: string; size?: number; style?: React.CSSProperties }) {
