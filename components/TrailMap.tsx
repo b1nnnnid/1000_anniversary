@@ -23,6 +23,7 @@ interface Props {
   lockedIds: string[];       // 잠긴 스테이지 id
   celebrated: boolean;       // 상봉 후 핑크 월드
   busy: boolean;             // 모달/대화 등 UI가 떠 있으면 이동·고양이 정지
+  catActive: boolean;        // false면 고양이가 더 이상 다가오지 않음
   onStage: (s: Stage) => void;
   onGoal: () => void;
   onHeart: (id: string) => void;
@@ -30,7 +31,7 @@ interface Props {
 }
 
 export default function TrailMap({
-  collected, allCollected, heartPieces, lockedIds, celebrated, busy,
+  collected, allCollected, heartPieces, lockedIds, celebrated, busy, catActive,
   onStage, onGoal, onHeart, onCatTalk,
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -44,6 +45,7 @@ export default function TrailMap({
   const lockedRef = useRef(lockedIds);
   const celebRef = useRef(celebrated);
   const busyRef = useRef(busy);
+  const catActiveRef = useRef(catActive);
   const grabbedRef = useRef<Set<string>>(new Set());
   const hist = useRef<{ x: number; y: number; d: Dir }[]>([]);
   const cat = useRef<{ x: number; y: number; state: CatState; timer: number; cooldown: number }>({
@@ -58,6 +60,7 @@ export default function TrailMap({
   useEffect(() => { lockedRef.current = lockedIds; }, [lockedIds]);
   useEffect(() => { celebRef.current = celebrated; }, [celebrated]);
   useEffect(() => { busyRef.current = busy; }, [busy]);
+  useEffect(() => { catActiveRef.current = catActive; }, [catActive]);
 
   const canMove = (nx: number, ny: number) => {
     const pts = [[nx + 8, ny + 18], [nx + 23, ny + 18], [nx + 8, ny + 30], [nx + 23, ny + 30]];
@@ -100,7 +103,7 @@ export default function TrailMap({
       const dPlayer = Math.hypot(pos.current.x - c.x, pos.current.y - c.y);
       if (c.state === "idle") {
         if (c.cooldown > 0) c.cooldown--;
-        if (!busyRef.current && ((c.cooldown <= 0 && dPlayer < 7 * TILE) || dPlayer < 1.3 * TILE)) {
+        if (catActiveRef.current && !busyRef.current && ((c.cooldown <= 0 && dPlayer < 7 * TILE) || dPlayer < 1.3 * TILE)) {
           c.state = "notice"; c.timer = 42;
         }
       } else if (c.state === "notice") {
@@ -197,7 +200,7 @@ export default function TrailMap({
           // 큼직한 데이트 건물 (바닥 중심 기준 2.6배)
           const ax = (s.col + 0.5) * TILE, ay = (s.row + 1) * TILE;
           ctx.save();
-          ctx.translate(ax, ay); ctx.scale(2.6, 2.6); ctx.translate(-ax, -ay);
+          ctx.translate(ax, ay); ctx.scale(2.0, 2.0); ctx.translate(-ax, -ay);
           drawPlace(ctx, s.col, s.row, s.place.kind, bob);
           ctx.restore();
         } else {
@@ -224,11 +227,11 @@ export default function TrailMap({
         const gx = g ? g.x : pos.current.x - 22;
         const gy = g ? g.y : pos.current.y;
         const gdir = g ? g.d : dir.current;
-        drawGirlfriendWalk(ctx, gx, gy, gdir, moving ? (Math.floor(tick / 8) % 2) : 0);
+        drawGirlfriendWalk(ctx, gx, gy, gdir, moving ? (Math.floor(tick / 8) % 2) : 0, true);
       } else {
         drawGirlfriend(ctx, (GOAL.col + 1) * TILE + 6, GOAL.row * TILE, Math.floor(tick / 22) % 2);
       }
-      drawCharacter(ctx, pos.current.x, pos.current.y, dir.current, frame);
+      drawCharacter(ctx, pos.current.x, pos.current.y, dir.current, frame, pink);
       ctx.restore();
 
       // 벚꽃 잎 흩날리기 (화면 오버레이)

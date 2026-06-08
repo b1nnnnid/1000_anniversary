@@ -20,7 +20,7 @@ export default function MapPage() {
   const [modal, setModal] = useState<Stage | null>(null);
   const [challenge, setChallenge] = useState<Stage | null>(null);
   const [celebrate, setCelebrate] = useState(false);
-  const [dialog, setDialog] = useState<{ lines: string[]; intro?: boolean; congrats?: boolean } | null>(null);
+  const [dialog, setDialog] = useState<{ lines: string[]; intro?: boolean; congrats?: boolean; eventIdx?: number } | null>(null);
   const [dateScene, setDateScene] = useState<Stage | null>(null);
   const [confirmReset, setConfirmReset] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
@@ -44,6 +44,8 @@ export default function MapPage() {
   const stageDone = collected.filter((id) => STAGES.some((s) => s.id === id)).length;
   const allCollected = STAGES.every((s) => collected.includes(s.id));
   const celebrated = collected.includes("reunion");
+  const shownEvents = CAT_EVENTS.map((_, i) => collected.includes("cat-ev:" + i));
+  const catActive = !celebrated && (!collected.includes("cat-intro") || shownEvents.some((v) => !v));
   // 이전 순서의 추억을 다 열어야 다음이 열린다
   const lockedIds = STAGES
     .filter((s) => !STAGES.filter((t) => t.order < s.order).every((t) => collected.includes(t.id)))
@@ -122,8 +124,9 @@ export default function MapPage() {
   // 고양이가 다가와서 말 걸기
   const onCatTalk = useCallback(() => {
     setCollected((c) => {
-      if (!c.includes("cat-intro")) setDialog({ lines: CAT_INTRO, intro: true });
-      else setDialog({ lines: CAT_EVENTS[Math.floor(Math.random() * CAT_EVENTS.length)], intro: false });
+      if (!c.includes("cat-intro")) { setDialog({ lines: CAT_INTRO, intro: true }); return c; }
+      const idx = CAT_EVENTS.findIndex((_, i) => !c.includes("cat-ev:" + i));
+      if (idx >= 0) setDialog({ lines: CAT_EVENTS[idx], eventIdx: idx });
       return c;
     });
   }, []);
@@ -141,6 +144,11 @@ export default function MapPage() {
         setCollected((c) => (c.includes("cat-congrats") ? c : [...c, "cat-congrats"]));
         saveSpot("cat-congrats");
         showToast("❓퀴즈와 🎁룰렛이 열렸어요!");
+      }
+      if (typeof d?.eventIdx === "number") {
+        const key = "cat-ev:" + d.eventIdx;
+        setCollected((c) => (c.includes(key) ? c : [...c, key]));
+        saveSpot(key);
       }
       return null;
     });
@@ -192,7 +200,7 @@ export default function MapPage() {
 
       <TrailMap
         collected={collected} allCollected={allCollected} heartPieces={pieces}
-        lockedIds={lockedIds} celebrated={celebrated} busy={busy}
+        lockedIds={lockedIds} celebrated={celebrated} busy={busy} catActive={catActive}
         onStage={onStage} onGoal={onGoal} onHeart={onHeart} onCatTalk={onCatTalk}
       />
 

@@ -12,6 +12,8 @@ const C = {
   hair: "#E889AC", hairLt: "#D9719A", skin: "#FBE0CC",
   ribbon: "#E8556F",
   bHair: "#3F3B45", bHairLt: "#5A5564", bShirt: "#A8CFF0", bShirtSh: "#8FB8DC", bPants: "#5A6B8C",
+  suit: "#3A3F4C", suitSh: "#2C303B", suitShirt: "#F4F4F8", bow: "#C24A5E",
+  dress: "#FFFFFF", dressSh: "#ECE4F2", veil: "#F4ECFA", tiara: "#F2C76B",
   shirt: "#FFFFFF", shirtSh: "#F4B8CC", pants: "#E8556F",
   cheek: "#F4A8B8", eye: "#4A3A2E", gold: "#F2C76B", goldDk: "#E0A94A",
 };
@@ -152,17 +154,24 @@ export function drawGoal(
 
 export function drawCharacter(
   ctx: CanvasRenderingContext2D, px: number, py: number,
-  dir: "down" | "up" | "left" | "right", frame: number
+  dir: "down" | "up" | "left" | "right", frame: number, wedding = false
 ) {
   const x = px + 8, y = py + 4;
   ctx.fillStyle = "rgba(124,90,150,0.18)";
   ctx.beginPath(); ctx.ellipse(px + 16, py + 28, 9, 3.5, 0, 0, Math.PI * 2); ctx.fill();
 
   const legA = frame === 0 ? 0 : 2, legB = frame === 0 ? 2 : 0;
-  r(ctx, x + 3, y + 20 - legA, 4, 4 + legA, C.bPants);
-  r(ctx, x + 9, y + 20 - legB, 4, 4 + legB, C.bPants);
-  r(ctx, x + 2, y + 12, 12, 9, C.bShirt);
-  r(ctx, x + 2, y + 18, 12, 3, C.bShirtSh);
+  const pants = wedding ? C.suit : C.bPants;
+  const top = wedding ? C.suit : C.bShirt;
+  const topSh = wedding ? C.suitSh : C.bShirtSh;
+  r(ctx, x + 3, y + 20 - legA, 4, 4 + legA, pants);
+  r(ctx, x + 9, y + 20 - legB, 4, 4 + legB, pants);
+  r(ctx, x + 2, y + 12, 12, 9, top);
+  r(ctx, x + 2, y + 18, 12, 3, topSh);
+  if (wedding) {
+    r(ctx, x + 6, y + 12, 4, 9, C.suitShirt); // 셔츠 깃
+    r(ctx, x + 7, y + 13, 2, 2, C.bow);       // 보타이
+  }
 
   if (dir === "down") {
     r(ctx, x, y + 13, 3, 6, C.skin); r(ctx, x + 13, y + 13, 3, 6, C.skin);
@@ -342,33 +351,43 @@ export function drawEmote(ctx: CanvasRenderingContext2D, px: number, py: number)
 // 걷는 여자친구 (상봉 후 동행용) — 핑크 단발+리본+원피스, 4방향 2프레임
 export function drawGirlfriendWalk(
   ctx: CanvasRenderingContext2D, px: number, py: number,
-  dir: "down" | "up" | "left" | "right", frame: number
+  dir: "down" | "up" | "left" | "right", frame: number, wedding = false
 ) {
   const x = px + 8, y = py + 4;
   ctx.fillStyle = "rgba(124,90,150,0.18)";
   ctx.beginPath(); ctx.ellipse(px + 16, py + 28, 9, 3.5, 0, 0, Math.PI * 2); ctx.fill();
 
   const legA = frame === 0 ? 0 : 2, legB = frame === 0 ? 2 : 0;
-  r(ctx, x + 3, y + 21 - legA, 4, 3 + legA, C.skin);
-  r(ctx, x + 9, y + 21 - legB, 4, 3 + legB, C.skin);
-  r(ctx, x + 3, y + 24, 4, 2, C.ribbon); r(ctx, x + 9, y + 24, 4, 2, C.ribbon);
-  // 원피스
-  r(ctx, x + 2, y + 12, 12, 8, C.shirt);
-  r(ctx, x + 1, y + 18, 14, 3, C.shirt);
-  r(ctx, x + 1, y + 19, 14, 2, C.shirtSh);
+  if (wedding) {
+    // 길게 퍼지는 드레스
+    r(ctx, x + 4, y + 22, 8, 4, C.dressSh);
+    r(ctx, x + 1, y + 18, 14, 6, C.dress);
+    r(ctx, x, y + 23, 16, 3, C.dress);
+    r(ctx, x + 2, y + 12, 12, 8, C.dress);
+    r(ctx, x + 1, y + 19, 14, 2, C.dressSh);
+  } else {
+    r(ctx, x + 3, y + 21 - legA, 4, 3 + legA, C.skin);
+    r(ctx, x + 9, y + 21 - legB, 4, 3 + legB, C.skin);
+    r(ctx, x + 3, y + 24, 4, 2, C.ribbon); r(ctx, x + 9, y + 24, 4, 2, C.ribbon);
+    r(ctx, x + 2, y + 12, 12, 8, C.shirt);
+    r(ctx, x + 1, y + 18, 14, 3, C.shirt);
+    r(ctx, x + 1, y + 19, 14, 2, C.shirtSh);
+  }
 
   if (dir === "down") {
     r(ctx, x, y + 13, 3, 6, C.skin); r(ctx, x + 13, y + 13, 3, 6, C.skin);
     r(ctx, x + 3, y + 2, 10, 9, C.skin);
     r(ctx, x + 2, y, 12, 5, C.hair); r(ctx, x + 1, y + 3, 3, 7, C.hair); r(ctx, x + 12, y + 3, 3, 7, C.hair);
-    r(ctx, x + 11, y - 2, 4, 3, C.ribbon); r(ctx, x + 10, y, 2, 2, C.ribbon);
+    if (wedding) {
+      r(ctx, x + 1, y - 3, 14, 3, C.veil); r(ctx, x + 4, y - 5, 8, 3, C.tiara);
+    } else { r(ctx, x + 11, y - 2, 4, 3, C.ribbon); r(ctx, x + 10, y, 2, 2, C.ribbon); }
     r(ctx, x + 5, y + 6, 2, 2, C.eye); r(ctx, x + 9, y + 6, 2, 2, C.eye);
     r(ctx, x + 4, y + 8, 2, 1, C.cheek); r(ctx, x + 10, y + 8, 2, 1, C.cheek);
   } else if (dir === "up") {
     r(ctx, x, y + 13, 3, 6, C.skin); r(ctx, x + 13, y + 13, 3, 6, C.skin);
     r(ctx, x + 3, y + 2, 10, 9, C.hair); r(ctx, x + 2, y, 12, 6, C.hair);
     r(ctx, x + 4, y + 9, 8, 2, C.hairLt);
-    r(ctx, x + 1, y - 2, 4, 3, C.ribbon);
+    if (wedding) r(ctx, x + 1, y - 3, 14, 4, C.veil); else r(ctx, x + 1, y - 2, 4, 3, C.ribbon);
   } else {
     const flip = dir === "left";
     ctx.save();
