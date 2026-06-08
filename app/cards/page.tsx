@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { QUESTIONS, TYPE_QUESTIONS, resultType, Axis, CoupleType } from "@/lib/cards";
+import { markFlag } from "@/lib/flags";
 
 type Mode = "type" | "question";
 
@@ -44,7 +45,7 @@ function TypeTest() {
     const next = { ...counts, [axis]: counts[axis] + 1 };
     setCounts(next);
     if (i + 1 < TYPE_QUESTIONS.length) setI(i + 1);
-    else { setResult(resultType(next)); setPhase("done"); }
+    else { setResult(resultType(next)); setPhase("done"); markFlag("cards"); }
   };
 
   if (phase === "intro") {

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { markFlag } from "@/lib/flags";
 
 type Frame = "hearts" | "flowers" | "anniv" | "dots";
 const FRAMES: { id: Frame; label: string }[] = [
@@ -73,6 +74,7 @@ export default function PhotoBooth() {
     a.download = "우리의1000일_포토부스.png";
     a.href = cv.toDataURL("image/png");
     a.click();
+    markFlag("photo");
   };
 
   return (

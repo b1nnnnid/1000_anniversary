@@ -4,11 +4,12 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { STAGES, Stage } from "@/lib/gameData";
 import { getProgress } from "@/lib/progressClient";
+import { markFlag } from "@/lib/flags";
 
 export default function AlbumPage() {
   const [collected, setCollected] = useState<string[]>([]);
   const [open, setOpen] = useState<Stage | null>(null);
-  useEffect(() => { getProgress().then((p) => setCollected(p.collectedSpots)); }, []);
+  useEffect(() => { markFlag("album"); getProgress().then((p) => setCollected(p.collectedSpots)); }, []);
 
   const list = [...STAGES].sort((a, b) => a.order - b.order);
 

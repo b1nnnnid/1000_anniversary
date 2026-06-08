@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { markFlag } from "@/lib/flags";
 
 interface Coupon { id: number; title: string; emoji: string; used: boolean; earnedAt: string; }
 
@@ -11,7 +12,7 @@ export default function WishesPage() {
 
   const load = () => fetch("/api/coupons").then((r) => r.json())
     .then((d) => setCoupons(Array.isArray(d) ? d : [])).catch(() => {}).finally(() => setLoading(false));
-  useEffect(() => { load(); }, []);
+  useEffect(() => { markFlag("wishes"); load(); }, []);
 
   const toggle = (c: Coupon) => {
     setCoupons((cs) => cs.map((x) => (x.id === c.id ? { ...x, used: !x.used } : x)));

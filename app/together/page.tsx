@@ -3,12 +3,14 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { elapsed } from "@/lib/config";
+import { markFlag } from "@/lib/flags";
 
 const MILESTONES = [100, 200, 300, 365, 500, 600, 700, 730, 1000, 1095, 1500, 2000, 3000];
 
 export default function TogetherPage() {
   const [e, setE] = useState(() => elapsed());
   useEffect(() => {
+    markFlag("together");
     const iv = setInterval(() => setE(elapsed()), 100);
     return () => clearInterval(iv);
   }, []);

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { parseKakao, analyze, Analysis } from "@/lib/kakao";
 import { loadAnalyses, saveAnalysis, deleteAnalysis, SavedAnalysis } from "@/lib/kakaoStore";
+import { markFlag } from "@/lib/flags";
 
 function Bar({ items, color, unit }: { items: { name?: string; word?: string; count: number }[]; color: string; unit: string }) {
   const max = Math.max(1, ...items.map((i) => i.count));
@@ -82,6 +83,7 @@ export default function KakaoPage() {
       setList(loadAnalyses());
       setCurrent(item);
       setAdding(false);
+      markFlag("kakao");
     } catch { setErr("파일을 읽는 중 문제가 생겼어요."); }
     e.target.value = "";
   };

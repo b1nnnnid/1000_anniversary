@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { STAGES, Stage } from "@/lib/gameData";
 import { getProgress } from "@/lib/progressClient";
+import { markFlag } from "@/lib/flags";
 
 export default function SlideshowPage() {
   const [slides, setSlides] = useState<Stage[]>([]);
@@ -15,6 +16,7 @@ export default function SlideshowPage() {
   const stopMusic = useRef<(() => void) | null>(null);
 
   useEffect(() => {
+    markFlag("slideshow");
     getProgress().then((p) => {
       const got = STAGES.filter((s) => p.collectedSpots.includes(s.id)).sort((a, b) => a.order - b.order);
       setSlides(got);

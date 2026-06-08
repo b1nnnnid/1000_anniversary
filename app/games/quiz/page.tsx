@@ -6,6 +6,7 @@ import { QUIZ } from "@/lib/gameData";
 import GameIntro from "@/components/GameIntro";
 import CharacterReaction from "@/components/CharacterReaction";
 import { addTickets } from "@/lib/progressClient";
+import { markFlag } from "@/lib/flags";
 
 const PASS = Math.ceil(QUIZ.length / 2);
 
@@ -29,7 +30,7 @@ export default function QuizPage() {
       else {
         const t = newScore === QUIZ.length ? 2 : newScore >= PASS ? 1 : 0;
         setEarned(t);
-        if (t > 0) addTickets(t);
+        if (t > 0) { addTickets(t); markFlag("quiz"); }
         setPhase("done");
       }
     }, 1300);
