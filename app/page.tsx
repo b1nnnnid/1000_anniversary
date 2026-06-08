@@ -75,9 +75,9 @@ const PreviewMap = (
 // 슬라이드 2: 미니게임 & 티켓
 const PreviewGames = (
   <Screen>
-    <p style={{ margin: "2px 0 10px", fontSize: 12, color: "#2F7A52", textAlign: "center" }}>미션 성공! 🧩 +2</p>
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 4, marginBottom: 12 }}>
-      {[0, 1, 2, 3, 4].map((k) => <PixelIcon key={k} name="fragment" size={18} style={{ opacity: k < 4 ? 1 : 0.25 }} />)}
+    <p style={{ margin: "2px 0 10px", fontSize: 12, color: "#2F7A52", textAlign: "center" }}>미션 성공! 🎟 +1</p>
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginBottom: 12 }}>
+      <PixelIcon name="ticket" size={20} /><PixelIcon name="ticket" size={20} /><PixelIcon name="ticket" size={20} />
       <span style={{ fontSize: 14, color: "#B85C82", margin: "0 4px" }}>→</span>
       <PixelIcon name="ticket" size={22} />
     </div>

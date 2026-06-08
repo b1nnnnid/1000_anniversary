@@ -5,7 +5,7 @@ import Link from "next/link";
 import { QUIZ } from "@/lib/gameData";
 import GameIntro from "@/components/GameIntro";
 import CharacterReaction from "@/components/CharacterReaction";
-import { addFragments } from "@/lib/progressClient";
+import { addTickets } from "@/lib/progressClient";
 
 const PASS = Math.ceil(QUIZ.length / 2);
 
@@ -27,9 +27,9 @@ export default function QuizPage() {
     setTimeout(() => {
       if (idx + 1 < QUIZ.length) { setIdx(idx + 1); setPicked(null); }
       else {
-        const t = newScore === QUIZ.length ? 3 : newScore >= PASS ? 1 : 0;
+        const t = newScore === QUIZ.length ? 2 : newScore >= PASS ? 1 : 0;
         setEarned(t);
-        if (t > 0) addFragments(t).catch(() => {});
+        if (t > 0) addTickets(t);
         setPhase("done");
       }
     }, 1300);
@@ -97,8 +97,7 @@ export default function QuizPage() {
           {earned > 0 ? (
             <>
               <p style={{ fontSize: 14, color: "#6A5A66", lineHeight: 1.7 }}>
-                티켓 조각 <b style={{ color: "#B85C82" }}>🧩 {earned}개</b>를 얻었어요!<br />
-                <span style={{ fontSize: 12, color: "#9A8A95" }}>5개를 모으면 룰렛 티켓 🎟 1장이 돼요</span>
+                룰렛 티켓 <b style={{ color: "#B85C82" }}>🎟 {earned}장</b>을 얻었어요!
               </p>
               <div style={{ display: "flex", gap: 8, justifyContent: "center", marginTop: 18 }}>
                 <Link href="/games/roulette" className="btn-rose" style={{ textDecoration: "none", fontSize: 14 }}>

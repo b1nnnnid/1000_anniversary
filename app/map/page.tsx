@@ -10,14 +10,13 @@ import StageChallenge from "@/components/StageChallenge";
 import DialogBox from "@/components/DialogBox";
 import DateModal from "@/components/DateModal";
 import PixelIcon from "@/components/PixelIcon";
-import { Stage, STAGES, HEART_PIECES, HEARTS_PER_TICKET, CAT_INTRO, CAT_EVENTS, CAT_CONGRATS } from "@/lib/gameData";
-import { getProgress, addFragments, resetProgress } from "@/lib/progressClient";
+import { Stage, STAGES, HEART_PIECES, CAT_INTRO, CAT_EVENTS, CAT_CONGRATS } from "@/lib/gameData";
+import { getProgress, addCollected, addHeart, addTickets, resetProgress } from "@/lib/progressClient";
 
 export default function MapPage() {
   const router = useRouter();
   const [collected, setCollected] = useState<string[]>([]);
   const [tickets, setTickets] = useState(0);
-  const [fragments, setFragments] = useState(0);
   const [pieces, setPieces] = useState<string[]>([]);
   const [modal, setModal] = useState<Stage | null>(null);
   const [challenge, setChallenge] = useState<Stage | null>(null);
@@ -32,7 +31,6 @@ export default function MapPage() {
     getProgress().then((p) => {
       setCollected(p.collectedSpots);
       setTickets(p.tickets);
-      setFragments(p.fragments);
       setPieces(p.heartPieces);
     });
   }, []);
@@ -43,14 +41,15 @@ export default function MapPage() {
     toastTimer.current = setTimeout(() => setToast(null), 2600);
   }, []);
 
-  const reward = useCallback(async (n: number, label: string) => {
-    const before = tickets;
-    const res = await addFragments(n);
-    setTickets(res.tickets);
-    setFragments(res.fragments);
-    if (res.tickets > before) showToast(`${label} · 조각 5개 모음 → 🎟 +1!`);
-    else showToast(`${label} · 🧩 +${n} (${res.fragments}/5)`);
-  }, [tickets, showToast]);
+  // 티켓 직접 지급
+  const reward = useCallback((n: number, label: string) => {
+    const left = addTickets(n);
+    setTickets(left);
+    showToast(`${label} · 🎟 +${n}`);
+  }, [showToast]);
+
+  // 수집 항목 저장 (localStorage 우선 + DB)
+  const saveSpot = useCallback((id: string) => { addCollected(id); }, []);
 
   const busy = !!(modal || challenge || celebrate || dialog || confirmReset || dateScene);
   const stageDone = collected.filter((id) => STAGES.some((s) => s.id === id)).length;
@@ -58,17 +57,10 @@ export default function MapPage() {
   const celebrated = collected.includes("reunion");
   const shownEvents = CAT_EVENTS.map((_, i) => collected.includes("cat-ev:" + i));
   const catActive = !celebrated && (!collected.includes("cat-intro") || shownEvents.some((v) => !v));
-  // 이전 순서의 추억을 다 열어야 다음이 열린다
-  const lockedIds = STAGES
+  // 이전 순서의 추억을 다 열어야 다음이 열린다 (상봉 후엔 잠금 해제)
+  const lockedIds = celebrated ? [] : STAGES
     .filter((s) => !STAGES.filter((t) => t.order < s.order).every((t) => collected.includes(t.id)))
     .map((s) => s.id);
-
-  const saveSpot = useCallback((id: string) => {
-    fetch("/api/progress", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ collectSpot: id }),
-    }).catch(() => {});
-  }, []);
 
   const openMemory = useCallback((s: Stage) => {
     setModal(s);
@@ -106,25 +98,20 @@ export default function MapPage() {
     if (success) {
       setCollected((c) => (c.includes("ch:" + s.id) ? c : [...c, "ch:" + s.id]));
       saveSpot("ch:" + s.id);
-      reward(2, "미션 성공!");
+      reward(1, "미션 성공!");
     } else {
       showToast("아쉽다! 추억은 열어줄게 💗");
     }
     openMemory(s);
-  }, [challenge, openMemory, saveSpot, showToast]);
+  }, [challenge, openMemory, saveSpot, reward, showToast]);
 
   const onHeart = useCallback((id: string) => {
     setPieces((prev) => {
       if (prev.includes(id)) return prev;
       const next = [...prev, id];
-      fetch("/api/progress", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ collectHeart: id }),
-      }).then((r) => r.json()).then((d) => {
-        if (typeof d.tickets === "number") setTickets(d.tickets);
-        if (typeof d.fragments === "number") setFragments(d.fragments);
-      }).catch(() => {});
-      showToast(`💗 하트 조각 발견! (${next.length}/${HEART_PIECES.length}) · 🧩 +1`);
+      const p = addHeart(id); // localStorage 저장 + 티켓 +1
+      setTickets(p.tickets);
+      showToast(`💗 하트 조각 발견! (${next.length}/${HEART_PIECES.length}) · 🎟 +1`);
       return next;
     });
   }, [showToast]);
@@ -144,7 +131,7 @@ export default function MapPage() {
       if (d?.intro) {
         setCollected((c) => (c.includes("cat-intro") ? c : [...c, "cat-intro"]));
         saveSpot("cat-intro");
-        reward(2, "고양이가 조각을 줬다! 🐱");
+        reward(1, "고양이가 티켓을 줬다! 🐱");
       }
       if (d?.congrats) {
         setCollected((c) => (c.includes("cat-congrats") ? c : [...c, "cat-congrats"]));
@@ -158,7 +145,7 @@ export default function MapPage() {
       }
       return null;
     });
-  }, [saveSpot, showToast]);
+  }, [saveSpot, reward, showToast]);
 
   const onGoal = useCallback(() => {
     setCollected((c) => {
@@ -194,7 +181,7 @@ export default function MapPage() {
           <div style={{ display: "flex", justifyContent: "center", gap: 6, marginTop: 6, flexWrap: "wrap" }}>
             <span className="chip"><PixelIcon name="camera" size={14} /> {stageDone}/{STAGES.length}</span>
             <span className="chip"><PixelIcon name="heart" size={14} /> {pieces.length}/{HEART_PIECES.length}</span>
-            <span className="chip"><PixelIcon name="ticket" size={14} /> {tickets} · <PixelIcon name="fragment" size={13} /> {fragments}/5</span>
+            <span className="chip"><PixelIcon name="ticket" size={14} /> {tickets}</span>
           </div>
         </div>
         <GameDock
@@ -236,7 +223,7 @@ export default function MapPage() {
             <p style={{ fontSize: 36, margin: "0 0 6px" }}>🥺</p>
             <h2 style={{ fontSize: 16, color: "#B85C82", margin: "0 0 8px" }}>처음부터 다시 시작할까요?</h2>
             <p style={{ fontSize: 12.5, color: "#6A5A66", lineHeight: 1.7, margin: "0 0 16px" }}>
-              모은 추억·하트 조각·티켓·소원권이<br />전부 사라지고 온보딩으로 돌아가요.
+              모은 추억·하트·티켓·소원권이<br />전부 사라지고 온보딩으로 돌아가요.
             </p>
             <div style={{ display: "flex", gap: 8, justifyContent: "center" }}>
               <button onClick={() => setConfirmReset(false)} style={{
