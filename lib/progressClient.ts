@@ -71,5 +71,6 @@ export async function resetProgress(): Promise<void> {
     localStorage.removeItem(LS);
     localStorage.removeItem(LSF);
     localStorage.removeItem("our1000days-kakao");
+    localStorage.removeItem("our1000days-unlocks");
   } catch {}
 }
