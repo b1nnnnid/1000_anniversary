@@ -111,54 +111,67 @@ function FallingGame({ onDone, mode }: { onDone: (s: boolean) => void; mode: "co
   const trayX = useRef(130);
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
-  const scoreRef = useRef(0), livesRef = useRef(3), over = useRef(false);
-  const target = mode === "cookie" ? 8 : 8;
+  const [count, setCount] = useState(3);          // 3,2,1 → 0(시작)
+  const scoreRef = useRef(0), livesRef = useRef(3), over = useRef(false), started = useRef(false);
+  const onDoneRef = useRef(onDone); onDoneRef.current = onDone;
+  const target = 8;
   const good = mode === "cookie" ? "🍪" : "💗";
 
+  // 카운트다운
   useEffect(() => {
-    const cv = ref.current!; const ctx = cv.getContext("2d")!;
+    if (count <= 0) { started.current = true; return; }
+    const t = setTimeout(() => setCount((c) => c - 1), 750);
+    return () => clearTimeout(t);
+  }, [count]);
+
+  useEffect(() => {
+    const cv = ref.current; if (!cv) return;
+    const ctx = cv.getContext("2d")!;
     const W = 260, H = 300;
-    let raf = 0, t = 0;
+    let raf = 0, t = 0, cancelled = false;
     type Item = { x: number; y: number; vy: number; bomb: boolean; e: string };
     let items: Item[] = [];
     const spawn = () => {
-      const bomb = mode === "cookie" && Math.random() < 0.28;
-      items.push({ x: 20 + Math.random() * (W - 40), y: -16, vy: 1.6 + Math.random() * 1.4 + t / 2400, bomb, e: bomb ? "💣" : good });
+      const bomb = mode === "cookie" && Math.random() < 0.26;
+      items.push({ x: 22 + Math.random() * (W - 44), y: -16, vy: 1.5 + Math.random() * 1.3 + t / 2600, bomb, e: bomb ? "💣" : good });
     };
     const loop = () => {
-      t++;
-      if (t % Math.max(28 - Math.floor(t / 240), 14) === 0) spawn();
+      if (cancelled) return;
       ctx.clearRect(0, 0, W, H);
       ctx.fillStyle = mode === "cookie" ? "#F7EBDD" : "#FBEAF0"; ctx.fillRect(0, 0, W, H);
-      // 트레이
       const tx = trayX.current;
       ctx.font = "30px sans-serif"; ctx.textAlign = "center";
-      ctx.fillText(mode === "cookie" ? "🧺" : "🧺", tx, H - 16);
-      for (const it of items) {
-        it.y += it.vy;
-        ctx.font = "26px sans-serif"; ctx.fillText(it.e, it.x, it.y);
-        if (it.y > H - 40 && it.y < H - 6 && Math.abs(it.x - tx) < 26) {
-          it.y = 9999;
-          if (it.bomb) { livesRef.current--; setLives(livesRef.current); }
-          else { scoreRef.current++; setScore(scoreRef.current); }
+      ctx.fillText("🧺", tx, H - 16);
+
+      if (started.current && !over.current) {
+        t++;
+        if (t % Math.max(28 - Math.floor(t / 240), 13) === 0) spawn();
+        for (const it of items) {
+          it.y += it.vy;
+          if (it.y > H - 40 && it.y < H - 6 && Math.abs(it.x - tx) < 28) {
+            it.y = 9999;
+            if (it.bomb) { livesRef.current--; setLives(livesRef.current); }
+            else { scoreRef.current++; setScore(scoreRef.current); }
+          }
         }
+        items = items.filter((it) => it.y < H + 20);
+        if (scoreRef.current >= target) { over.current = true; setTimeout(() => onDoneRef.current(true), 400); }
+        else if (livesRef.current <= 0) { over.current = true; setTimeout(() => onDoneRef.current(false), 400); }
       }
-      items = items.filter((it) => it.y < H + 20);
-      if (!over.current && scoreRef.current >= target) { over.current = true; setTimeout(() => onDone(true), 400); }
-      if (!over.current && livesRef.current <= 0) { over.current = true; setTimeout(() => onDone(false), 400); }
-      if (!over.current) raf = requestAnimationFrame(loop);
+      for (const it of items) { ctx.font = "26px sans-serif"; ctx.fillText(it.e, it.x, it.y); }
+      raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
 
     const move = (clientX: number) => {
       const rect = cv.getBoundingClientRect();
-      trayX.current = Math.max(20, Math.min(240, ((clientX - rect.left) / rect.width) * W));
+      trayX.current = Math.max(22, Math.min(238, ((clientX - rect.left) / rect.width) * W));
     };
-    const onMove = (e: PointerEvent) => move(e.clientX);
+    const onMove = (e: PointerEvent) => { e.preventDefault(); move(e.clientX); };
     cv.addEventListener("pointermove", onMove);
     cv.addEventListener("pointerdown", onMove);
-    return () => { cancelAnimationFrame(raf); cv.removeEventListener("pointermove", onMove); cv.removeEventListener("pointerdown", onMove); };
-  }, [mode, onDone, target, good]);
+    return () => { cancelled = true; cancelAnimationFrame(raf); cv.removeEventListener("pointermove", onMove); cv.removeEventListener("pointerdown", onMove); };
+  }, [mode, target, good]);
 
   return (
     <div style={{ textAlign: "center" }}>
@@ -166,7 +179,14 @@ function FallingGame({ onDone, mode }: { onDone: (s: boolean) => void; mode: "co
         <span>{good} {score}/{target}</span>
         {mode === "cookie" && <span>{"❤️".repeat(Math.max(0, lives))}</span>}
       </div>
-      <canvas ref={ref} width={260} height={300} style={{ width: "100%", maxWidth: 260, height: "auto", borderRadius: 10, touchAction: "none", imageRendering: "pixelated", margin: "0 auto", display: "block" }} />
+      <div style={{ position: "relative", maxWidth: 260, margin: "0 auto" }}>
+        <canvas ref={ref} width={260} height={300} style={{ width: "100%", maxWidth: 260, height: "auto", borderRadius: 10, touchAction: "none", imageRendering: "pixelated", display: "block" }} />
+        {count > 0 && (
+          <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(255,255,255,0.55)", borderRadius: 10 }}>
+            <span key={count} className="pop" style={{ fontSize: 64, color: "#E8556F", fontWeight: 700 }}>{count}</span>
+          </div>
+        )}
+      </div>
       <p style={{ fontSize: 11.5, color: "#A89AA3", margin: "8px 0 0" }}>
         바구니를 손가락/마우스로 움직여 {good} 받기{mode === "cookie" ? " · 💣 피하기!" : ""}
       </p>
@@ -177,26 +197,32 @@ function FallingGame({ onDone, mode }: { onDone: (s: boolean) => void; mode: "co
 // ── 타이밍 탭 ──
 function TimingGame({ onDone }: { onDone: (s: boolean) => void }) {
   const ref = useRef<HTMLCanvasElement>(null);
-  const posRef = useRef(0), dirRef = useRef(1), stopped = useRef(false);
+  const posRef = useRef(20), dirRef = useRef(1), stopped = useRef(false);
   const [hits, setHits] = useState(0);
   const hitsRef = useRef(0); const need = 2;
-  const [msg, setMsg] = useState("막대가 초록 영역에 올 때 탭!");
+  const [msg, setMsg] = useState("막대가 초록 영역에 올 때 멈춰!");
+  const onDoneRef = useRef(onDone); onDoneRef.current = onDone;
 
   useEffect(() => {
-    const cv = ref.current!; const ctx = cv.getContext("2d")!;
-    const W = 260, H = 70; let raf = 0;
+    const cv = ref.current; if (!cv) return;
+    const ctx = cv.getContext("2d")!;
+    const W = 260, H = 70; let raf = 0, cancelled = false;
     const loop = () => {
-      posRef.current += dirRef.current * (3 + hitsRef.current * 0.8);
-      if (posRef.current > W - 10 || posRef.current < 10) dirRef.current *= -1;
+      if (cancelled) return;
+      if (!stopped.current) {
+        posRef.current += dirRef.current * (2.6 + hitsRef.current * 0.9);
+        if (posRef.current > W - 10) { posRef.current = W - 10; dirRef.current = -1; }
+        if (posRef.current < 10) { posRef.current = 10; dirRef.current = 1; }
+      }
       ctx.clearRect(0, 0, W, H);
       ctx.fillStyle = "#F1EFE8"; ctx.fillRect(0, 26, W, 18);
-      ctx.fillStyle = "#C7E8D2"; ctx.fillRect(W / 2 - 26, 26, 52, 18);   // 초록 존
-      ctx.fillStyle = "#9FD9B8"; ctx.fillRect(W / 2 - 8, 26, 16, 18);     // 퍼펙트
-      ctx.fillStyle = "#E8556F"; ctx.fillRect(posRef.current - 3, 20, 6, 30);
-      if (!stopped.current) raf = requestAnimationFrame(loop);
+      ctx.fillStyle = "#C7E8D2"; ctx.fillRect(W / 2 - 26, 26, 52, 18);
+      ctx.fillStyle = "#9FD9B8"; ctx.fillRect(W / 2 - 8, 26, 16, 18);
+      ctx.fillStyle = "#E8556F"; ctx.fillRect(posRef.current - 3, 18, 6, 34);
+      raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(raf);
+    return () => { cancelled = true; cancelAnimationFrame(raf); };
   }, []);
 
   const tap = () => {
@@ -205,7 +231,7 @@ function TimingGame({ onDone }: { onDone: (s: boolean) => void }) {
     if (d < 26) {
       const nh = hitsRef.current + 1; hitsRef.current = nh; setHits(nh);
       setMsg(d < 8 ? "퍼펙트! ✨" : "좋아! 👍");
-      if (nh >= need) { stopped.current = true; setTimeout(() => onDone(true), 600); }
+      if (nh >= need) { stopped.current = true; setTimeout(() => onDoneRef.current(true), 600); }
     } else {
       setMsg("앗 빗나갔다! 다시 노려봐 😣");
     }
