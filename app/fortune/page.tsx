@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ME, OPPA, dailyFortune, coupleTip, todayKey, Person } from "@/lib/fortune";
+import TicketGate from "@/components/TicketGate";
 
 function stars(n: number) { return "★★★★★".slice(0, n) + "☆☆☆☆☆".slice(0, 5 - n); }
 
@@ -37,6 +38,7 @@ export default function FortunePage() {
   const tip = coupleTip(dateKey);
   const today = new Date();
   return (
+    <TicketGate unlockKey="fortune" title="오늘의 운세" iconName="moon" cost={1}>
     <main style={{ maxWidth: 460, margin: "0 auto", padding: "20px 16px 36px", minHeight: "100dvh" }}>
       <Link href="/us" style={{ color: "#B85C82", fontSize: 13, textDecoration: "none" }}>← 우리의 공간</Link>
       <h1 style={{ fontSize: 20, color: "#B85C82", textAlign: "center", margin: "12px 0 2px" }}>오늘의 운세 🌙</h1>
@@ -58,5 +60,6 @@ export default function FortunePage() {
         <Link href="/saju" style={{ fontSize: 13, color: "#B85C82" }}>🔮 커플 사주·궁합 보기 →</Link>
       </p>
     </main>
+    </TicketGate>
   );
 }

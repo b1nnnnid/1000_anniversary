@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ME, OPPA, zodiacAnimal, starSign, dayElement, compatibility, Person } from "@/lib/fortune";
+import TicketGate from "@/components/TicketGate";
 
 function PersonCard({ p }: { p: Person }) {
   const an = zodiacAnimal(p.y), sg = starSign(p.m, p.d), el = dayElement(p.y);
@@ -24,6 +25,7 @@ function PersonCard({ p }: { p: Person }) {
 export default function SajuPage() {
   const c = compatibility();
   return (
+    <TicketGate unlockKey="saju" title="커플 사주·궁합" iconName="crystal" cost={1}>
     <main style={{ maxWidth: 460, margin: "0 auto", padding: "20px 16px 36px", minHeight: "100dvh" }}>
       <Link href="/us" style={{ color: "#B85C82", fontSize: 13, textDecoration: "none" }}>← 우리의 공간</Link>
       <h1 style={{ fontSize: 20, color: "#B85C82", textAlign: "center", margin: "12px 0 2px" }}>커플 사주 · 궁합 🔮</h1>
@@ -59,5 +61,6 @@ export default function SajuPage() {
         ※ 정통 명리학이 아닌 재미용 콘텐츠예요
       </p>
     </main>
+    </TicketGate>
   );
 }
