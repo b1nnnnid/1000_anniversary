@@ -6,17 +6,21 @@ import GameDock from "@/components/GameDock";
 import MemoryModal from "@/components/MemoryModal";
 import Celebration from "@/components/Celebration";
 import { Stage, STAGES } from "@/lib/gameData";
+import { getProgress } from "@/lib/progressClient";
 
 export default function MapPage() {
   const [collected, setCollected] = useState<string[]>([]);
   const [hearts, setHearts] = useState(0);
+  const [tickets, setTickets] = useState(0);
   const [modal, setModal] = useState<Stage | null>(null);
   const [celebrate, setCelebrate] = useState(false);
 
   useEffect(() => {
-    fetch("/api/progress").then((r) => r.json())
-      .then((d) => { setCollected(d.collectedSpots ?? []); setHearts(d.hearts ?? 0); })
-      .catch(() => {});
+    getProgress().then((p) => {
+      setCollected(p.collectedSpots);
+      setHearts(p.hearts);
+      setTickets(p.tickets);
+    });
   }, []);
 
   const allCollected = STAGES.every((s) => collected.includes(s.id));
@@ -44,6 +48,7 @@ export default function MapPage() {
           <div style={{ display: "flex", justifyContent: "center", gap: 8, marginTop: 6 }}>
             <span className="chip">♥ {hearts}</span>
             <span className="chip">📷 {collected.length}/{STAGES.length}</span>
+            <span className="chip">🎟 {tickets}</span>
           </div>
         </div>
         <GameDock />

@@ -1,4 +1,4 @@
-// 둘이서 쓰는 앱이라 단순하게: 진행상황 한 줄 + 획득한 소원권 목록
+// 진행상황 한 줄 + 획득한 소원권 목록
 generator client {
   provider = "prisma-client-js"
 }
@@ -9,16 +9,17 @@ datasource db {
 }
 
 model Progress {
-  id              Int      @id @default(autoincrement())
-  collectedSpots  String   @default("[]")  // JSON: 방문한 추억 스팟 id 배열
-  hearts          Int      @default(0)
-  updatedAt       DateTime @updatedAt
+  id             Int      @id @default(autoincrement())
+  collectedSpots String   @default("[]") // JSON: 방문한 추억 스테이지 id 배열
+  hearts         Int      @default(0)
+  tickets        Int      @default(0)    // 룰렛 돌릴 기회 (퀴즈 등 게임으로 획득)
+  updatedAt      DateTime @updatedAt
 }
 
 model Coupon {
-  id        Int      @id @default(autoincrement())
-  title     String
-  emoji     String   @default("🎁")
-  earnedAt  DateTime @default(now())
-  used      Boolean  @default(false)
+  id       Int      @id @default(autoincrement())
+  title    String
+  emoji    String   @default("🎁")
+  earnedAt DateTime @default(now())
+  used     Boolean  @default(false)
 }

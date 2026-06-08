@@ -52,3 +52,13 @@ button { cursor: pointer; }
 .floaty { animation: floaty 2.4s ease-in-out infinite; }
 @keyframes sparkle { 0%,100%{opacity:.5;transform:scale(.9)} 50%{opacity:1;transform:scale(1.15)} }
 .sparkle { animation: sparkle 1.6s ease-in-out infinite; }
+
+@keyframes slideup { from { transform: translateY(16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.slideup { animation: slideup .35s ease-out; }
+.btn-rose:disabled {
+  background: #D9CBE8; color: #fff; box-shadow: 0 4px 0 rgba(124,90,150,0.18); cursor: not-allowed;
+}
+.rule-card {
+  background: #fff; border-radius: 14px; padding: 14px 16px; text-align: left;
+  box-shadow: 0 3px 0 rgba(124,90,150,0.12);
+}

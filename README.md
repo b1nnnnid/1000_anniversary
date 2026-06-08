@@ -22,8 +22,8 @@ npm run dev             # http://localhost:3000
 ## 화면 구성
 - `/`      온보딩(시작) 화면 → "여행 시작하기"
 - `/map`   메인: 세로 스테이지 트레일 추억탐방 + 구석 게임 아이콘
-- `/games/quiz`      커플 퀴즈
-- `/games/roulette`  소원권 룰렛 + 쿠폰 이미지 저장
+- `/games/quiz`      커플 퀴즈 → 통과하면 룰렛 기회 🎟 획득 (만점이면 2장)
+- `/games/roulette`  소원권 룰렛 (기회 🎟 1장 소모) + 쿠폰 이미지 저장
 
 ## 폴더 구조
 ```
@@ -45,6 +45,11 @@ prisma/schema.prisma    DB 스키마
 public/photos/          ★ 커플 사진 (sample 교체)
 ```
 
+## 룰렛 기회(티켓) 구조
+소원권 룰렛은 그냥 돌릴 수 없고, **커플 퀴즈를 통과해 기회(🎟)를 얻어야** 돌릴 수 있어요.
+기회는 DB(`Progress.tickets`)에 저장되고, DB가 없으면 브라우저(localStorage)에 임시 저장됩니다.
+> ⚠ 스키마가 바뀌었으니 pull 후 한 번 `npx prisma db push` 를 실행하세요.
+
 ## 내용 바꾸기
 - **추억 스테이지**: `lib/gameData.ts`의 `STAGES` 배열 (순서 order, 위치 col/row, 사진, 글).
   같은 `order`에 노드를 2개 두면 길이 두 갈래로 갈라졌다 합쳐집니다(분기).
@@ -58,4 +63,4 @@ public/photos/          ★ 커플 사진 (sample 교체)
 ## 다음 단계 후보
 카드 뒤집기·추억 수집 미니게임, 소원권 보관함, 배포(Vercel · SQLite→Postgres).
 
-> 참고: `components/ExploreMap.tsx`, `lib/mapLayout.ts`는 구버전 잔재라 비워뒀어요. 지워도 됩니다.
+
