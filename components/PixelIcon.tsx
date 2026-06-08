@@ -63,6 +63,9 @@ const ICONS: Record<string, Icon> = {
   cards: { pal: { v, W, R }, rows: [
     "      vvvvv ", "     vWWWWv ", " vvvvvWWWWv ", "vWWWWvWWWWv ", "vWRRWvWWWvv ", "vWRRWvWWv   ",
     "vWWWWvWv    ", "vWWWWvv     ", "vWWWWv      ", " vvvvv      ", "            ", "            "] },
+  bubble: { pal: { v, W, p }, rows: [
+    " vvvvvvvvvv ", "vWWWWWWWWWWv", "vWWWppppWWWv", "vWWWWWWpWWWv", "vWWWWWppWWWv", "vWWWWWpWWWWv",
+    "vWWWWWWWWWWv", "vWWWWWpWWWWv", "vWWWWWWWWWWv", " vvvvvvvvvv ", "   vvv      ", "    v       "] },
 };
 
 export default function PixelIcon({ name, size = 16, style }: { name: string; size?: number; style?: React.CSSProperties }) {

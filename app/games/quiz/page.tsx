@@ -45,7 +45,7 @@ export default function QuizPage() {
           title="커플 퀴즈"
           desc={"우리에 대해 얼마나 알고 있을까?\n맞히면 룰렛을 돌릴 기회를 줄게."}
           rules={[
-            `총 ${QUIZ.length}문제, 절반 이상 맞히면 통과`,
+            `총 ${QUIZ.length}문제, 절반 이상 맞히면 PASS`,
             "통과하면 룰렛 기회 🎟 1장",
             "전부 다 맞히면 🎟 2장!",
           ]}

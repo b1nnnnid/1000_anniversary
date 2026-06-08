@@ -42,7 +42,7 @@ export interface Stage {
 // order 3 은 두 갈래(분기)로 갈라졌다 다시 합쳐집니다.
 export const STAGES: Stage[] = [
   { id: "first-meet", order: 1, col: 6, row: 3,
-    label: "처음 만난 날", title: "처음 만난 날", date: "2023.09.11",
+    label: "처음 만난 날", title: "처음 만난 날", date: "2023.09.18",
     photo: "/photos/sample1.svg",
     text: "어색하게 인사했던 그날. 여기에 그날의 사진과 이야기를 넣어주세요.",
     challenge: { type: "quiz2", question: "처음 만난 날, 먼저 말을 건 사람은?", options: ["나", "오빠"], answer: 1 },
@@ -133,8 +133,8 @@ export interface QuizQuestion { q: string; options: string[]; answer: number; }
 // answer 는 0부터 시작! (첫 번째 보기 = 0)
 export const QUIZ: QuizQuestion[] = [
   { q: "우리가 처음 같이 먹은 음식은?", options: ["떡볶이", "파스타", "초밥", "치킨"], answer: 3 },
-  { q: "우리의 1일은 며칠일까?", options: ["9월 9일", "9월 11일", "9월 20일", "10월 1일"], answer: 1 },
-  { q: "내가 제일 좋아하는 오빠의 모습은?", options: ["웃을 때", "잘 때", "운동할 때", "먹을 때"], answer: 2 },
+  { q: "우리의 1일은 며칠일까?", options: ["10월 8일", "10월 7일", "10월 3일", "10월 11일"], answer: 0 },
+  { q: "내가 제일 좋아하는 오빠의 모습은?", options: ["웃을 때", "잘 때", "운동할 때", "먹을 때"], answer: 1 },
 ];
 
 // 소원권 룰렛: weight = 칸 크기. 좁은 칸(1)엔 좋은 보상, 넓은 칸(3~4)엔 웃긴 벌칙!
