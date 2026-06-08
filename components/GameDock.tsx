@@ -13,9 +13,7 @@ export default function GameDock({ onHome, gamesLocked = false, onLockedTry }: P
   const router = useRouter();
   const items = [
     { icon: "home", label: "처음으로", lockable: false, act: () => (onHome ? onHome() : router.push("/")) },
-    { icon: "heart", label: "우리공간", lockable: true, act: () => router.push("/us") },
-    { icon: "bubble", label: "퀴즈", lockable: true, act: () => router.push("/games/quiz") },
-    { icon: "gift", label: "룰렛", lockable: true, act: () => router.push("/games/roulette") },
+    { icon: "heart", label: "우리집", lockable: true, act: () => router.push("/us") },
   ];
   return (
     <div style={{ position: "absolute", top: 4, right: 4, zIndex: 30, display: "flex", flexDirection: "column", gap: 8 }}>
