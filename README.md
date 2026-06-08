@@ -45,10 +45,16 @@ prisma/schema.prisma    DB 스키마
 public/photos/          ★ 커플 사진 (sample 교체)
 ```
 
+## 룰렛 기회(티켓) 얻는 법
+- 커플 퀴즈 통과 🎟 1장 (만점 2장)
+- 스테이지 미션 성공 🎟 1장 (스테이지당 1회) — 2지선다 / 숨은하트찾기 / 사진퍼즐
+- 맵의 숨은 하트 조각 💗 5개마다 🎟 1장 (총 8개, 풀숲 탐험!)
+- 길가 고양이 🐱 처음 쓰다듬으면 🎟 1장
+
 ## 룰렛 기회(티켓) 구조
 소원권 룰렛은 그냥 돌릴 수 없고, **커플 퀴즈를 통과해 기회(🎟)를 얻어야** 돌릴 수 있어요.
 기회는 DB(`Progress.tickets`)에 저장되고, DB가 없으면 브라우저(localStorage)에 임시 저장됩니다.
-> ⚠ 스키마가 바뀌었으니 pull 후 한 번 `npx prisma db push` 를 실행하세요.
+> ⚠ 스키마가 바뀌었으니 pull 후 한 번 `npx prisma db push` 를 실행하세요. (heartPieces 컬럼 추가)
 
 ## 내용 바꾸기
 - **추억 스테이지**: `lib/gameData.ts`의 `STAGES` 배열 (순서 order, 위치 col/row, 사진, 글).

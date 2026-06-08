@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { isBlocked, isPath, TREES } from "@/lib/trail";
-import { drawGrass, drawPathTile, drawTree, drawFlower, drawStageNode, drawGoal, drawCharacter } from "@/lib/pixelArt";
-import { STAGES, GOAL, Stage, TILE, WORLD_COLS, WORLD_ROWS } from "@/lib/gameData";
+import { drawGrass, drawPathTile, drawTree, drawFlower, drawStageNode, drawGoal, drawCharacter, drawGirlfriend, drawHeartPiece, drawCat } from "@/lib/pixelArt";
+import { STAGES, GOAL, CAT, HEART_PIECES, Stage, TILE, WORLD_COLS, WORLD_ROWS } from "@/lib/gameData";
 
 type Dir = "down" | "up" | "left" | "right";
 const VW = WORLD_COLS * TILE;          // 384
@@ -14,11 +14,14 @@ const SPEED = 2.2;
 interface Props {
   collected: string[];
   allCollected: boolean;
+  heartPieces: string[];          // 주운 하트 조각 id
   onStage: (s: Stage) => void;
   onGoal: () => void;
+  onHeart: (id: string) => void;  // 하트 조각 밟음
+  onCat: () => void;              // 고양이 만남
 }
 
-export default function TrailMap({ collected, allCollected, onStage, onGoal }: Props) {
+export default function TrailMap({ collected, allCollected, heartPieces, onStage, onGoal, onHeart, onCat }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const keys = useRef<Record<string, boolean>>({});
   const pos = useRef({ x: 6 * TILE, y: 5 * TILE });
@@ -26,11 +29,14 @@ export default function TrailMap({ collected, allCollected, onStage, onGoal }: P
   const standing = useRef<string | null>(null);
   const collectedRef = useRef(collected);
   const allRef = useRef(allCollected);
+  const piecesRef = useRef(heartPieces);
+  const grabbedRef = useRef<Set<string>>(new Set());
   const [near, setNear] = useState<string | null>(null);
   const nearId = useRef<string | null>(null);
 
   useEffect(() => { collectedRef.current = collected; }, [collected]);
   useEffect(() => { allRef.current = allCollected; }, [allCollected]);
+  useEffect(() => { piecesRef.current = heartPieces; }, [heartPieces]);
 
   const canMove = (nx: number, ny: number) => {
     const pts = [[nx + 8, ny + 18], [nx + 23, ny + 18], [nx + 8, ny + 30], [nx + 23, ny + 30]];
@@ -71,6 +77,18 @@ export default function TrailMap({ collected, allCollected, onStage, onGoal }: P
         else if (onGoalTile && allRef.current) onGoal();
       } else if (!hereId) standing.current = null;
 
+      // 숨은 하트 조각 줍기
+      for (const h of HEART_PIECES) {
+        if (h.col === ptx && h.row === pty && !piecesRef.current.includes(h.id) && !grabbedRef.current.has(h.id)) {
+          grabbedRef.current.add(h.id);
+          onHeart(h.id);
+        }
+      }
+      // 고양이
+      if (CAT.col === ptx && CAT.row === pty) {
+        if (standing.current !== "cat") { standing.current = "cat"; onCat(); }
+      }
+
       // 가까운 라벨
       let best = 1.7 * TILE, label: string | null = null, lid: string | null = null;
       for (const s of STAGES) {
@@ -103,7 +121,14 @@ export default function TrailMap({ collected, allCollected, onStage, onGoal }: P
         if (s.row < r0 - 1 || s.row > r1 + 1) continue;
         drawStageNode(ctx, s.col, s.row, s.order, collectedRef.current.includes(s.id), bob);
       }
+      for (const h of HEART_PIECES) {
+        if (piecesRef.current.includes(h.id) || grabbedRef.current.has(h.id)) continue;
+        if (h.row < r0 - 1 || h.row > r1 + 1) continue;
+        drawHeartPiece(ctx, h.col, h.row, bob);
+      }
+      drawCat(ctx, CAT.col, CAT.row, Math.floor(tick / 26) % 2);
       drawGoal(ctx, GOAL.col, GOAL.row, allRef.current, bob);
+      drawGirlfriend(ctx, (GOAL.col + 1) * TILE + 6, GOAL.row * TILE, Math.floor(tick / 22) % 2);
 
       const frame = moving ? (Math.floor(tick / 8) % 2) : 0;
       drawCharacter(ctx, pos.current.x, pos.current.y, dir.current, frame);
@@ -113,7 +138,7 @@ export default function TrailMap({ collected, allCollected, onStage, onGoal }: P
     };
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
-  }, [onStage, onGoal]);
+  }, [onStage, onGoal, onHeart, onCat]);
 
   useEffect(() => {
     const m: Record<string, string> = {

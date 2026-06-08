@@ -9,8 +9,10 @@ const C = {
   card: "#FFFFFF", cardBar: "#F4D6E6", photo: "#BFE0F5", leaf: "#8FC9A0",
   rose: "#E8799F", roseDk: "#B85C82", post: "#B98C63",
   // 캐릭터
-  hair: "#7A5A8E", hairLt: "#A07FB8", skin: "#FBE0CC",
-  shirt: "#9FC7E8", shirtSh: "#7FA8CC", pants: "#6B8AA8",
+  hair: "#E889AC", hairLt: "#D9719A", skin: "#FBE0CC",
+  ribbon: "#E8556F",
+  bHair: "#3F3B45", bHairLt: "#5A5564", bShirt: "#A8CFF0", bShirtSh: "#8FB8DC", bPants: "#5A6B8C",
+  shirt: "#FFFFFF", shirtSh: "#F4B8CC", pants: "#E8556F",
   cheek: "#F4A8B8", eye: "#4A3A2E", gold: "#F2C76B", goldDk: "#E0A94A",
 };
 
@@ -124,28 +126,29 @@ export function drawCharacter(
   ctx.beginPath(); ctx.ellipse(px + 16, py + 28, 9, 3.5, 0, 0, Math.PI * 2); ctx.fill();
 
   const legA = frame === 0 ? 0 : 2, legB = frame === 0 ? 2 : 0;
-  r(ctx, x + 3, y + 20 - legA, 4, 4 + legA, C.pants);
-  r(ctx, x + 9, y + 20 - legB, 4, 4 + legB, C.pants);
-  r(ctx, x + 2, y + 12, 12, 9, C.shirt);
-  r(ctx, x + 2, y + 18, 12, 3, C.shirtSh);
+  r(ctx, x + 3, y + 20 - legA, 4, 4 + legA, C.bPants);
+  r(ctx, x + 9, y + 20 - legB, 4, 4 + legB, C.bPants);
+  r(ctx, x + 2, y + 12, 12, 9, C.bShirt);
+  r(ctx, x + 2, y + 18, 12, 3, C.bShirtSh);
 
   if (dir === "down") {
     r(ctx, x, y + 13, 3, 6, C.skin); r(ctx, x + 13, y + 13, 3, 6, C.skin);
     r(ctx, x + 3, y + 2, 10, 9, C.skin);
-    r(ctx, x + 2, y, 12, 5, C.hair); r(ctx, x + 2, y + 4, 2, 4, C.hair); r(ctx, x + 12, y + 4, 2, 4, C.hair);
+    r(ctx, x + 2, y, 12, 5, C.bHair); r(ctx, x + 1, y + 2, 3, 3, C.bHair); r(ctx, x + 12, y + 2, 3, 3, C.bHair);
+    r(ctx, x + 2, y + 4, 2, 3, C.bHair); r(ctx, x + 12, y + 4, 2, 3, C.bHair);
     r(ctx, x + 5, y + 6, 2, 2, C.eye); r(ctx, x + 9, y + 6, 2, 2, C.eye);
-    r(ctx, x + 4, y + 8, 2, 1, C.cheek); r(ctx, x + 10, y + 8, 2, 1, C.cheek);
   } else if (dir === "up") {
     r(ctx, x, y + 13, 3, 6, C.skin); r(ctx, x + 13, y + 13, 3, 6, C.skin);
-    r(ctx, x + 3, y + 2, 10, 9, C.hair); r(ctx, x + 2, y, 12, 6, C.hair); r(ctx, x + 4, y + 9, 8, 2, C.hairLt);
+    r(ctx, x + 3, y + 2, 10, 9, C.bHair); r(ctx, x + 2, y, 12, 6, C.bHair);
+    r(ctx, x + 4, y + 9, 8, 2, C.bHairLt);
   } else {
     const flip = dir === "left";
     ctx.save();
     if (flip) { ctx.translate(px * 2 + 32, 0); ctx.scale(-1, 1); }
     r(ctx, x + 6, y + 13, 4, 6, C.skin);
     r(ctx, x + 3, y + 2, 10, 9, C.skin);
-    r(ctx, x + 2, y, 12, 5, C.hair); r(ctx, x + 2, y + 4, 3, 6, C.hair);
-    r(ctx, x + 9, y + 6, 2, 2, C.eye); r(ctx, x + 8, y + 8, 2, 1, C.cheek);
+    r(ctx, x + 2, y, 12, 5, C.bHair); r(ctx, x + 2, y + 4, 3, 5, C.bHair);
+    r(ctx, x + 9, y + 6, 2, 2, C.eye);
     ctx.restore();
   }
 }
@@ -164,7 +167,7 @@ export function drawReaction(ctx: CanvasRenderingContext2D, mood: Mood, frame: n
   // 머리 + 리본
   g(12, 7 + oy, 16, 5, C.hair);
   g(11, 9 + oy, 3, 11, C.hair); g(26, 9 + oy, 3, 11, C.hair);
-  g(23, 5 + oy, 4, 3, C.rose); g(20, 6 + oy, 3, 2, C.rose);
+  g(23, 5 + oy, 4, 3, C.ribbon); g(20, 6 + oy, 3, 2, C.ribbon);
   // 얼굴
   g(14, 12 + oy, 12, 9, C.skin);
 
@@ -189,8 +192,8 @@ export function drawReaction(ctx: CanvasRenderingContext2D, mood: Mood, frame: n
   // 몸통
   g(14, 21 + oy, 12, 8, C.shirt);
   g(14, 27 + oy, 12, 2, C.shirtSh);
-  g(16, 29 + oy, 3, 4, C.pants); g(21, 29 + oy, 3, 4, C.pants);
-  g(16, 33 + oy, 3, 2, "#8898A8"); g(21, 33 + oy, 3, 2, "#8898A8");
+  g(16, 29 + oy, 3, 4, C.skin); g(21, 29 + oy, 3, 4, C.skin);
+  g(16, 33 + oy, 3, 2, C.ribbon); g(21, 33 + oy, 3, 2, C.ribbon);
 
   // 팔
   if (mood === "happy") {
@@ -217,4 +220,70 @@ export function drawReaction(ctx: CanvasRenderingContext2D, mood: Mood, frame: n
     g(6 + sx, 12, 1, 3, C.gold); g(5 + sx, 13, 3, 1, C.gold);
     g(32 - sx, 9, 1, 3, C.gold); g(31 - sx, 10, 3, 1, C.gold);
   }
+}
+
+
+
+// 여자친구: 핑크 단발 + 리본 + 흰 원피스, 도착지에서 손 흔들며 기다림 (2프레임)
+export function drawGirlfriend(ctx: CanvasRenderingContext2D, px: number, py: number, frame: number) {
+  const x = px + 8, y = py + 4;
+  ctx.fillStyle = "rgba(124,90,150,0.18)";
+  ctx.beginPath(); ctx.ellipse(px + 16, py + 28, 9, 3.5, 0, 0, Math.PI * 2); ctx.fill();
+  // 다리 + 빨간 신발
+  r(ctx, x + 3, y + 21, 4, 4, C.skin); r(ctx, x + 9, y + 21, 4, 4, C.skin);
+  r(ctx, x + 3, y + 24, 4, 2, C.ribbon); r(ctx, x + 9, y + 24, 4, 2, C.ribbon);
+  // 원피스 (살짝 퍼지게)
+  r(ctx, x + 2, y + 12, 12, 8, C.shirt);
+  r(ctx, x + 1, y + 18, 14, 3, C.shirt);
+  r(ctx, x + 1, y + 19, 14, 2, C.shirtSh);
+  // 왼팔 내리고
+  r(ctx, x, y + 13, 3, 6, C.skin);
+  // 오른팔 흔들기
+  const wy = frame === 0 ? y + 6 : y + 9;
+  r(ctx, x + 13, wy, 3, 7, C.skin);
+  // 머리 (단발)
+  r(ctx, x + 3, y + 2, 10, 9, C.skin);
+  r(ctx, x + 2, y, 12, 5, C.hair);
+  r(ctx, x + 1, y + 3, 3, 7, C.hair); r(ctx, x + 12, y + 3, 3, 7, C.hair);
+  r(ctx, x + 11, y - 2, 4, 3, C.ribbon); r(ctx, x + 10, y, 2, 2, C.ribbon);
+  // 눈 + 볼
+  r(ctx, x + 5, y + 6, 2, 2, C.eye); r(ctx, x + 9, y + 6, 2, 2, C.eye);
+  r(ctx, x + 4, y + 8, 2, 1, C.cheek); r(ctx, x + 10, y + 8, 2, 1, C.cheek);
+}
+
+// 숨은 하트 조각 (둥둥 떠서 반짝임)
+export function drawHeartPiece(ctx: CanvasRenderingContext2D, col: number, row: number, bob: number) {
+  const x = col * TILE + 10, y = row * TILE + 8 - bob;
+  ctx.fillStyle = "rgba(124,90,150,0.14)";
+  ctx.beginPath(); ctx.ellipse(col * TILE + 16, row * TILE + 26, 7, 3, 0, 0, Math.PI * 2); ctx.fill();
+  r(ctx, x + 1, y, 3, 3, C.rose); r(ctx, x + 6, y, 3, 3, C.rose);
+  r(ctx, x, y + 2, 10, 4, C.rose); r(ctx, x + 1, y + 6, 8, 2, C.rose);
+  r(ctx, x + 3, y + 8, 4, 2, C.rose); r(ctx, x + 2, y + 2, 2, 2, "#FBD2E0");
+  r(ctx, x + 12, y - 3, 2, 2, C.gold); r(ctx, x - 3, y + 5, 2, 2, C.gold);
+}
+
+// 길가의 고양이 (꼬리 살랑살랑 2프레임)
+export function drawCat(ctx: CanvasRenderingContext2D, col: number, row: number, frame: number) {
+  const x = col * TILE, y = row * TILE;
+  ctx.fillStyle = "rgba(124,90,150,0.16)";
+  ctx.beginPath(); ctx.ellipse(x + 16, y + 28, 9, 3.5, 0, 0, Math.PI * 2); ctx.fill();
+  // 꼬리
+  if (frame === 0) { r(ctx, x + 24, y + 14, 3, 10, "#E8D5B8"); r(ctx, x + 25, y + 12, 3, 4, "#E8D5B8"); }
+  else { r(ctx, x + 24, y + 16, 3, 8, "#E8D5B8"); r(ctx, x + 26, y + 14, 3, 4, "#E8D5B8"); }
+  // 몸 (앉은 자세)
+  r(ctx, x + 8, y + 16, 16, 10, "#F2E3C8");
+  r(ctx, x + 8, y + 24, 16, 3, "#E8D5B8");
+  // 머리
+  r(ctx, x + 9, y + 6, 14, 11, "#F2E3C8");
+  // 귀
+  r(ctx, x + 9, y + 2, 4, 5, "#F2E3C8"); r(ctx, x + 19, y + 2, 4, 5, "#F2E3C8");
+  r(ctx, x + 10, y + 4, 2, 2, "#F4A8B8"); r(ctx, x + 20, y + 4, 2, 2, "#F4A8B8");
+  // 무늬
+  r(ctx, x + 13, y + 6, 2, 3, "#D9BC92"); r(ctx, x + 17, y + 6, 2, 3, "#D9BC92");
+  // 눈 + 코 + 수염
+  r(ctx, x + 12, y + 10, 2, 2, "#4A3A2E"); r(ctx, x + 18, y + 10, 2, 2, "#4A3A2E");
+  r(ctx, x + 15, y + 13, 2, 1, "#E8889C");
+  r(ctx, x + 6, y + 11, 3, 1, "#D9BC92"); r(ctx, x + 23, y + 11, 3, 1, "#D9BC92");
+  // 앞발
+  r(ctx, x + 10, y + 23, 3, 4, "#F2E3C8"); r(ctx, x + 19, y + 23, 3, 4, "#F2E3C8");
 }

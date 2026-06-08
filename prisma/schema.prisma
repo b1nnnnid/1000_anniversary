@@ -13,6 +13,7 @@ model Progress {
   collectedSpots String   @default("[]") // JSON: 방문한 추억 스테이지 id 배열
   hearts         Int      @default(0)
   tickets        Int      @default(0)    // 룰렛 돌릴 기회 (퀴즈 등 게임으로 획득)
+  heartPieces    String   @default("[]") // JSON: 주운 숨은 하트 조각 id 배열
   updatedAt      DateTime @updatedAt
 }
 

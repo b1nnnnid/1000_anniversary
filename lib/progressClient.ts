@@ -3,6 +3,7 @@ export interface ProgressData {
   collectedSpots: string[];
   hearts: number;
   tickets: number;
+  heartPieces: string[];
 }
 
 const LS = "our1000days-tickets";
@@ -14,9 +15,9 @@ export async function getProgress(): Promise<ProgressData> {
     const r = await fetch("/api/progress");
     if (!r.ok) throw new Error();
     const d = await r.json();
-    return { collectedSpots: d.collectedSpots ?? [], hearts: d.hearts ?? 0, tickets: d.tickets ?? 0 };
+    return { collectedSpots: d.collectedSpots ?? [], hearts: d.hearts ?? 0, tickets: d.tickets ?? 0, heartPieces: d.heartPieces ?? [] };
   } catch {
-    return { collectedSpots: [], hearts: 0, tickets: lsGet() };
+    return { collectedSpots: [], hearts: 0, tickets: lsGet(), heartPieces: [] };
   }
 }
 
