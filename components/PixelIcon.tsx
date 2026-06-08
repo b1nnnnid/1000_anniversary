@@ -66,6 +66,15 @@ const ICONS: Record<string, Icon> = {
   bubble: { pal: { v, W, p }, rows: [
     " vvvvvvvvvv ", "vWWWWWWWWWWv", "vWWWppppWWWv", "vWWWWWWpWWWv", "vWWWWWppWWWv", "vWWWWWpWWWWv",
     "vWWWWWWWWWWv", "vWWWWWpWWWWv", "vWWWWWWWWWWv", " vvvvvvvvvv ", "   vvv      ", "    v       "] },
+  help: { pal: { R, W }, rows: [
+    "  RRRRRRRR  ", " RRRRRRRRRR ", "RRRWWWWRRRRR", "RRRRRRWWRRRR", "RRRRRWWRRRRR", "RRRRWWRRRRRR",
+    "RRRRWWRRRRRR", "RRRRRRRRRRRR", "RRRRWWRRRRRR", " RRRRRRRRRR ", "  RRRRRRRR  ", "            "] },
+  sound: { pal: { k, b }, rows: [
+    "            ", "     kk     ", "    kkk  b  ", "  kkkkk b b ", "kkkkkkkkb bb", "kkkkkkkkb bb",
+    "kkkkkkkkb bb", "  kkkkk b b ", "    kkk  b  ", "     kk     ", "            ", "            "] },
+  mute: { pal: { k, r: "#E24B4A" }, rows: [
+    "            ", "     kk     ", "    kkk     ", "  kkkkk r r ", "kkkkkkk rr  ", "kkkkkkk  r  ",
+    "kkkkkkk rr  ", "  kkkkk r r ", "    kkk     ", "     kk     ", "            ", "            "] },
 };
 
 export default function PixelIcon({ name, size = 16, style }: { name: string; size?: number; style?: React.CSSProperties }) {
