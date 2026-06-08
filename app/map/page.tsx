@@ -9,6 +9,7 @@ import Celebration from "@/components/Celebration";
 import StageChallenge from "@/components/StageChallenge";
 import DialogBox from "@/components/DialogBox";
 import DateModal from "@/components/DateModal";
+import PixelIcon from "@/components/PixelIcon";
 import { Stage, STAGES, HEART_PIECES, HEARTS_PER_TICKET, CAT_INTRO, CAT_EVENTS, CAT_CONGRATS } from "@/lib/gameData";
 import { getProgress, addFragments, resetProgress } from "@/lib/progressClient";
 
@@ -191,9 +192,9 @@ export default function MapPage() {
             우리의 1000일 {celebrated ? "🌸" : "♥"}
           </h1>
           <div style={{ display: "flex", justifyContent: "center", gap: 6, marginTop: 6, flexWrap: "wrap" }}>
-            <span className="chip">📷 {stageDone}/{STAGES.length}</span>
-            <span className="chip">💗 {pieces.length}/{HEART_PIECES.length}</span>
-            <span className="chip">🎟 {tickets} · 🧩 {fragments}/5</span>
+            <span className="chip"><PixelIcon name="camera" size={14} /> {stageDone}/{STAGES.length}</span>
+            <span className="chip"><PixelIcon name="heart" size={14} /> {pieces.length}/{HEART_PIECES.length}</span>
+            <span className="chip"><PixelIcon name="ticket" size={14} /> {tickets} · <PixelIcon name="fragment" size={13} /> {fragments}/5</span>
           </div>
         </div>
         <GameDock

@@ -66,6 +66,4 @@ export async function spendTicket(n = 1): Promise<number> {
 
 // 진행 데이터 전부 초기화 (DB + 브라우저 저장)
 export async function resetProgress(): Promise<void> {
-  try { await fetch("/api/progress", { method: "DELETE" }); } catch {}
-  try { localStorage.removeItem(LS); localStorage.removeItem(LSF); } catch {}
-}
+  try { await fetch("/api/progress", {

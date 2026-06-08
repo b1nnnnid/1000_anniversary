@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import PixelIcon from "@/components/PixelIcon";
 
 interface Props {
   onHome?: () => void;
@@ -11,10 +12,10 @@ interface Props {
 export default function GameDock({ onHome, gamesLocked = false, onLockedTry }: Props) {
   const router = useRouter();
   const items = [
-    { emoji: "🏠", label: "처음으로", lockable: false, act: () => (onHome ? onHome() : router.push("/")) },
-    { emoji: "💗", label: "우리공간", lockable: true, act: () => router.push("/us") },
-    { emoji: "💭", label: "퀴즈", lockable: true, act: () => router.push("/games/quiz") },
-    { emoji: "🎁", label: "룰렛", lockable: true, act: () => router.push("/games/roulette") },
+    { icon: "home", label: "처음으로", lockable: false, act: () => (onHome ? onHome() : router.push("/")) },
+    { icon: "heart", label: "우리공간", lockable: true, act: () => router.push("/us") },
+    { icon: "bubble", label: "퀴즈", lockable: true, act: () => router.push("/games/quiz") },
+    { icon: "gift", label: "룰렛", lockable: true, act: () => router.push("/games/roulette") },
   ];
   return (
     <div style={{ position: "absolute", top: 4, right: 4, zIndex: 30, display: "flex", flexDirection: "column", gap: 8 }}>
@@ -29,9 +30,9 @@ export default function GameDock({ onHome, gamesLocked = false, onLockedTry }: P
               display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
               lineHeight: 1, gap: 1, position: "relative", opacity: locked ? 0.85 : 1,
             }}>
-            <span style={{ fontSize: 18, filter: locked ? "grayscale(1)" : "none" }}>{it.emoji}</span>
+            <span style={{ filter: locked ? "grayscale(1)" : "none", opacity: locked ? 0.6 : 1 }}><PixelIcon name={it.icon} size={20} /></span>
             <span style={{ fontSize: 8.5, color: locked ? "#9A8A95" : "#B85C82" }}>{it.label}</span>
-            {locked && <span style={{ position: "absolute", top: -6, right: -6, fontSize: 13 }}>🔒</span>}
+            {locked && <span style={{ position: "absolute", top: -7, right: -7 }}><PixelIcon name="lock" size={16} /></span>}
           </button>
         );
       })}
