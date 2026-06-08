@@ -8,6 +8,8 @@ const ITEMS = [
   { href: "/album", emoji: "📷", title: "추억 앨범", desc: "모은 추억 모아보기" },
   { href: "/wishes", emoji: "🎟", title: "소원권 보관함", desc: "뽑은 소원권 관리" },
   { href: "/kakao", emoji: "💬", title: "카톡 대화 분석", desc: "우리 대화 통계" },
+  { href: "/saju", emoji: "🔮", title: "커플 사주·궁합", desc: "우리 둘의 기운" },
+  { href: "/fortune", emoji: "🌙", title: "오늘의 운세", desc: "매일 바뀌어요" },
   { href: "/games/quiz", emoji: "💭", title: "커플 퀴즈", desc: "조각 모으기" },
   { href: "/games/roulette", emoji: "🎁", title: "소원권 룰렛", desc: "티켓으로 돌리기" },
 ];
