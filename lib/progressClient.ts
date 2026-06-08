@@ -37,3 +37,9 @@ export async function changeTickets(n: number): Promise<number> {
     return Math.max(0, t);
   }
 }
+
+// 진행 데이터 전부 초기화 (DB + 브라우저 저장)
+export async function resetProgress(): Promise<void> {
+  try { await fetch("/api/progress", { method: "DELETE" }); } catch {}
+  try { localStorage.removeItem(LS); } catch {}
+}

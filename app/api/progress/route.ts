@@ -51,3 +51,10 @@ export async function POST(req: Request) {
   });
   return NextResponse.json(shape(updated));
 }
+
+// 처음부터 다시: 진행상황 + 소원권 전부 삭제
+export async function DELETE() {
+  await prisma.coupon.deleteMany();
+  await prisma.progress.deleteMany();
+  return NextResponse.json({ ok: true });
+}
