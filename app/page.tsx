@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, ReactNode } from "react";
 import { useRouter } from "next/navigation";
+import PixelIcon from "@/components/PixelIcon";
 
 const COUPLE_SVG = (
-  <svg width="240" height="170" viewBox="0 0 240 190" aria-hidden="true" shapeRendering="crispEdges">
+  <svg width="220" height="156" viewBox="0 0 240 190" aria-hidden="true" shapeRendering="crispEdges">
     <ellipse cx="120" cy="172" rx="92" ry="13" fill="#E0D0EC" />
     <rect x="24" y="118" width="192" height="48" rx="14" fill="#C7E8D2" />
     <g transform="translate(48,52)">
@@ -39,64 +40,127 @@ const COUPLE_SVG = (
   </svg>
 );
 
-const SLIDES = [
-  { emoji: "🚶‍♂️🚶‍♀️", title: "추억을 따라 걸어요", body: "캐릭터를 움직여 우리가 걸어온 길을 따라가요.\n스테이지에 도착하면 그날의 추억이 하나씩 열려요." },
-  { emoji: "💗🐱🎟", title: "곳곳을 탐험해요", body: "풀숲에 숨은 하트 조각을 줍고, 길고양이와 이야기하고,\n작은 미션을 풀면 룰렛 기회(티켓)를 모을 수 있어요." },
-  { emoji: "🌸💑", title: "끝엔 만남이 기다려요", body: "추억을 모두 모아 도착하면 둘이 만나고,\n세상이 분홍빛 데이트 월드로 바뀌어요." },
+// 가짜 화면 프레임
+function Screen({ children }: { children: ReactNode }) {
+  return (
+    <div className="pixel-border" style={{ background: "var(--cream)", borderRadius: 16, padding: "12px 12px 14px", width: "100%", maxWidth: 280 }}>
+      {children}
+    </div>
+  );
+}
+
+// 슬라이드 1: 추억탐방 미리보기
+const PreviewMap = (
+  <Screen>
+    <div style={{ display: "flex", justifyContent: "center", gap: 6, marginBottom: 8 }}>
+      <span className="chip" style={{ fontSize: 10 }}><PixelIcon name="camera" size={12} /> 0/7</span>
+      <span className="chip" style={{ fontSize: 10 }}><PixelIcon name="heart" size={12} /> 0/8</span>
+      <span className="chip" style={{ fontSize: 10 }}><PixelIcon name="ticket" size={12} /> 0</span>
+    </div>
+    <svg width="100%" viewBox="0 0 120 96" shapeRendering="crispEdges" style={{ borderRadius: 8, display: "block" }}>
+      <rect width="120" height="96" fill="#CDEBD8" />
+      <path d="M52 0 L52 40 L84 40 L84 96" stroke="#F3E3CE" strokeWidth="16" fill="none" />
+      <path d="M52 0 L52 40 L84 40 L84 96" stroke="#EAD0AE" strokeWidth="16" strokeDasharray="2 13" fill="none" />
+      <g><rect x="14" y="20" width="14" height="14" fill="#A7D8B6" /><rect x="18" y="12" width="8" height="10" fill="#BCE6C8" /><rect x="20" y="34" width="3" height="5" fill="#C7A07A" /></g>
+      <g transform="translate(40,8)"><rect x="0" y="0" width="20" height="20" fill="#fff" /><rect x="0" y="0" width="20" height="5" fill="#F4D6E6" /><rect x="4" y="8" width="12" height="9" fill="#BFE0F5" /><rect x="7" y="-6" width="6" height="6" fill="#E8799F" /></g>
+      <g transform="translate(76,52)">
+        <rect x="2" y="8" width="12" height="10" fill="#A8CFF0" /><rect x="4" y="2" width="8" height="7" fill="#FBE0CC" />
+        <rect x="3" y="0" width="10" height="4" fill="#3F3B45" /><rect x="5" y="4" width="2" height="2" fill="#4A3A2E" /><rect x="9" y="4" width="2" height="2" fill="#4A3A2E" />
+        <rect x="4" y="18" width="4" height="4" fill="#5A6B8C" /><rect x="9" y="18" width="4" height="4" fill="#5A6B8C" />
+      </g>
+    </svg>
+  </Screen>
+);
+
+// 슬라이드 2: 미니게임 & 티켓
+const PreviewGames = (
+  <Screen>
+    <p style={{ margin: "2px 0 10px", fontSize: 12, color: "#2F7A52", textAlign: "center" }}>미션 성공! 🧩 +2</p>
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 4, marginBottom: 12 }}>
+      {[0, 1, 2, 3, 4].map((k) => <PixelIcon key={k} name="fragment" size={18} style={{ opacity: k < 4 ? 1 : 0.25 }} />)}
+      <span style={{ fontSize: 14, color: "#B85C82", margin: "0 4px" }}>→</span>
+      <PixelIcon name="ticket" size={22} />
+    </div>
+    <div style={{ display: "flex", justifyContent: "center", gap: 10, borderTop: "1px dashed #E0D0DC", paddingTop: 10 }}>
+      <span style={{ fontSize: 11, color: "#8A7A85", display: "flex", alignItems: "center", gap: 3 }}><PixelIcon name="heart" size={13} /> 숨은하트</span>
+      <span style={{ fontSize: 11, color: "#8A7A85", display: "flex", alignItems: "center", gap: 3 }}><PixelIcon name="cat" size={14} /> 고양이</span>
+      <span style={{ fontSize: 11, color: "#8A7A85", display: "flex", alignItems: "center", gap: 3 }}><PixelIcon name="bubble" size={13} /> 퀴즈</span>
+    </div>
+  </Screen>
+);
+
+// 슬라이드 3: 우리의 공간
+const HUB = [
+  { icon: "film", label: "슬라이드쇼" }, { icon: "letter", label: "편지함" }, { icon: "crystal", label: "사주" },
+  { icon: "moon", label: "운세" }, { icon: "cards", label: "유형테스트" }, { icon: "trophy", label: "업적" },
+];
+const PreviewHub = (
+  <Screen>
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
+      {HUB.map((h) => (
+        <div key={h.icon} style={{ background: "#fff", borderRadius: 10, padding: "10px 4px", textAlign: "center", boxShadow: "0 2px 0 rgba(124,90,150,0.1)" }}>
+          <PixelIcon name={h.icon} size={26} />
+          <p style={{ margin: "4px 0 0", fontSize: 9.5, color: "#B85C82" }}>{h.label}</p>
+        </div>
+      ))}
+    </div>
+  </Screen>
+);
+
+// 슬라이드 4: 엔딩 티저 (스포 금지)
+const PreviewTeaser = (
+  <Screen>
+    <div style={{ textAlign: "center", padding: "10px 0" }}>
+      <div className="floaty" style={{ position: "relative", display: "inline-block" }}>
+        <PixelIcon name="gift" size={64} />
+        <span className="sparkle" style={{ position: "absolute", top: -6, right: -10 }}><PixelIcon name="sparkle" size={20} /></span>
+      </div>
+      <p style={{ margin: "10px 0 0", fontSize: 13, color: "#B85C82" }}>추억을 다 모으면...?</p>
+      <p style={{ margin: "2px 0 0", fontSize: 11, color: "#A89AA3" }}>끝까지 가면 알게 돼요 (비밀 ✨)</p>
+    </div>
+  </Screen>
+);
+
+const SLIDES: { title: string; body: string; preview: ReactNode }[] = [
+  { title: "추억을 따라 걸어요", body: "캐릭터를 움직여 우리가 걸어온 길을 따라가요.\n스테이지에 닿으면 그날의 추억이 하나씩 열려요.", preview: PreviewMap },
+  { title: "모으고, 풀고, 즐겨요", body: "숨은 하트·고양이·미니 미션으로 티켓 조각을 모아\n소원권 룰렛을 돌릴 수 있어요.", preview: PreviewGames },
+  { title: "우리의 공간엔 가득", body: "추억 슬라이드쇼, 편지함, 사주·운세,\n커플 유형 테스트, 업적까지 즐길 게 많아요.", preview: PreviewHub },
+  { title: "그리고 마지막엔...", body: "추억을 끝까지 모으면 특별한 순간이 기다려요.\n어떤 일일지는 직접 확인해봐요!", preview: PreviewTeaser },
 ];
 
 export default function Intro() {
   const router = useRouter();
-  const [step, setStep] = useState(0); // 0=표지, 1~3=소개, 그 후 /map
+  const [step, setStep] = useState(0);
+  const total = SLIDES.length + 1; // 표지 + 4
 
-  const next = () => {
-    if (step < SLIDES.length) setStep(step + 1);
-    else router.push("/map");
-  };
+  const next = () => { if (step < SLIDES.length) setStep(step + 1); else router.push("/map"); };
 
   return (
-    <main style={{
-      minHeight: "100dvh", display: "flex", flexDirection: "column",
-      alignItems: "center", justifyContent: "center", padding: "28px 22px",
-      textAlign: "center", maxWidth: 460, margin: "0 auto",
-    }}>
+    <main style={{ minHeight: "100dvh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "26px 22px", textAlign: "center", maxWidth: 460, margin: "0 auto" }}>
       {step === 0 ? (
         <div key="cover" className="slideup" style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
           <div className="sparkle" style={{ fontSize: 13, color: "#B85C82", letterSpacing: 2 }}>OUR LITTLE WORLD</div>
           <h1 style={{ fontSize: 26, color: "#B85C82", margin: "10px 0 4px", lineHeight: 1.4 }}>우리의 1000일 ♥</h1>
-          <p style={{ fontSize: 13, color: "#8A7A85", margin: "0 0 18px", lineHeight: 1.7 }}>
-            함께 걸어온 길을 따라가는 작은 추억 여행
-          </p>
+          <p style={{ fontSize: 13, color: "#8A7A85", margin: "0 0 16px", lineHeight: 1.7 }}>함께 걸어온 길을 따라가는 작은 추억 여행</p>
           <div className="floaty">{COUPLE_SVG}</div>
-          <button className="btn-rose" onClick={next} style={{ marginTop: 24 }}>여행 시작하기 →</button>
+          <button className="btn-rose" onClick={next} style={{ marginTop: 22 }}>여행 시작하기 →</button>
         </div>
       ) : (
         <div key={step} className="slideup" style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "100%" }}>
-          <div className="floaty" style={{ fontSize: 46, letterSpacing: 4, minHeight: 60 }}>{SLIDES[step - 1].emoji}</div>
-          <h2 style={{ fontSize: 21, color: "#B85C82", margin: "16px 0 10px" }}>{SLIDES[step - 1].title}</h2>
-          <p style={{ fontSize: 14, color: "#6A5A66", lineHeight: 1.8, whiteSpace: "pre-line", margin: 0 }}>
-            {SLIDES[step - 1].body}
-          </p>
-          <button className="btn-rose" onClick={next} style={{ marginTop: 28 }}>
-            {step < SLIDES.length ? "다음 →" : "시작하기 ♥"}
-          </button>
+          {SLIDES[step - 1].preview}
+          <h2 style={{ fontSize: 20, color: "#B85C82", margin: "18px 0 8px" }}>{SLIDES[step - 1].title}</h2>
+          <p style={{ fontSize: 13.5, color: "#6A5A66", lineHeight: 1.8, whiteSpace: "pre-line", margin: 0 }}>{SLIDES[step - 1].body}</p>
+          <button className="btn-rose" onClick={next} style={{ marginTop: 22 }}>{step < SLIDES.length ? "다음 →" : "시작하기 ♥"}</button>
         </div>
       )}
 
-      {/* 진행 점 */}
-      <div style={{ display: "flex", gap: 7, marginTop: 26 }}>
-        {[0, 1, 2, 3].map((i) => (
-          <div key={i} style={{
-            width: i === step ? 20 : 8, height: 8, borderRadius: 4,
-            background: i === step ? "var(--rose)" : "#E0D0DC", transition: "all .3s",
-          }} />
+      <div style={{ display: "flex", gap: 7, marginTop: 24 }}>
+        {Array.from({ length: total }).map((_, i) => (
+          <div key={i} style={{ width: i === step ? 20 : 8, height: 8, borderRadius: 4, background: i === step ? "var(--rose)" : "#E0D0DC", transition: "all .3s" }} />
         ))}
       </div>
       {step > 0 && (
-        <button onClick={() => router.push("/map")} style={{
-          background: "none", border: "none", fontSize: 12, color: "#A89AA3",
-          marginTop: 14, textDecoration: "underline",
-        }}>건너뛰기</button>
+        <button onClick={() => router.push("/map")} style={{ background: "none", border: "none", fontSize: 12, color: "#A89AA3", marginTop: 14, textDecoration: "underline" }}>건너뛰기</button>
       )}
     </main>
   );
