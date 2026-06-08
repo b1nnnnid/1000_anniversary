@@ -1,75 +1,92 @@
-// 클라이언트에서 진행상황/룰렛 기회(티켓)를 읽고 쓴다. DB 실패 시 localStorage 폴백.
+// 진행상황은 브라우저(localStorage)에 우선 저장하고, DB에는 가능하면 함께 동기화한다.
+// 이렇게 하면 DB 스키마가 안 맞거나 연결이 안 돼도 진행상황이 사라지지 않는다.
 export interface ProgressData {
   collectedSpots: string[];
   hearts: number;
   tickets: number;
-  fragments: number;
   heartPieces: string[];
 }
 
-const LS = "our1000days-tickets";
-const lsGet = () => (typeof window === "undefined" ? 0 : Math.max(0, Number(localStorage.getItem(LS) ?? 0)));
-const lsSet = (n: number) => { if (typeof window !== "undefined") localStorage.setItem(LS, String(Math.max(0, n))); };
-const LSF = "our1000days-frag";
-const lsGetF = () => (typeof window === "undefined" ? 0 : Math.max(0, Number(localStorage.getItem(LSF) ?? 0)));
-const lsSetF = (n: number) => { if (typeof window !== "undefined") localStorage.setItem(LSF, String(Math.max(0, n))); };
+const PKEY = "our1000days-progress";
+const empty = (): ProgressData => ({ collectedSpots: [], hearts: 0, tickets: 0, heartPieces: [] });
+
+function lsRead(): ProgressData {
+  if (typeof window === "undefined") return empty();
+  try {
+    const d = JSON.parse(localStorage.getItem(PKEY) ?? "null");
+    if (!d) return empty();
+    return { collectedSpots: d.collectedSpots ?? [], hearts: d.hearts ?? 0, tickets: d.tickets ?? 0, heartPieces: d.heartPieces ?? [] };
+  } catch { return empty(); }
+}
+function lsWrite(p: ProgressData) {
+  if (typeof window === "undefined") return;
+  try { localStorage.setItem(PKEY, JSON.stringify(p)); } catch {}
+}
+const uniq = (a: string[], b: string[]) => Array.from(new Set([...a, ...b]));
+
+function dbPost(body: Record<string, unknown>) {
+  // DB 동기화는 실패해도 무시 (localStorage가 진짜 저장소)
+  fetch("/api/progress", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }).catch(() => {});
+}
 
 export async function getProgress(): Promise<ProgressData> {
+  const local = lsRead();
+  const hasLocal = local.collectedSpots.length > 0 || local.heartPieces.length > 0 || local.tickets > 0 || local.hearts > 0;
   try {
     const r = await fetch("/api/progress");
     if (!r.ok) throw new Error();
     const d = await r.json();
-    return { collectedSpots: d.collectedSpots ?? [], hearts: d.hearts ?? 0, tickets: d.tickets ?? 0, fragments: d.fragments ?? 0, heartPieces: d.heartPieces ?? [] };
+    const merged: ProgressData = {
+      collectedSpots: uniq(local.collectedSpots, d.collectedSpots ?? []),
+      heartPieces: uniq(local.heartPieces, d.heartPieces ?? []),
+      hearts: Math.max(local.hearts, d.hearts ?? 0),
+      // 티켓은 사용/적립이 반영된 localStorage를 우선. 단 로컬이 완전 비어있으면 DB값으로 시드.
+      tickets: hasLocal ? local.tickets : (d.tickets ?? 0),
+    };
+    lsWrite(merged);
+    return merged;
   } catch {
-    return { collectedSpots: [], hearts: 0, tickets: lsGet(), fragments: lsGetF(), heartPieces: [] };
+    return local;
   }
 }
 
-export interface RewardResult { tickets: number; fragments: number; }
-
-// 티켓 조각 추가. 5조각마다 티켓 1장으로 합성. 반환: {tickets, fragments}
-export async function addFragments(n: number): Promise<RewardResult> {
-  try {
-    const r = await fetch("/api/progress", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ addFragments: n }),
-    });
-    if (!r.ok) throw new Error();
-    const d = await r.json();
-    return { tickets: d.tickets ?? 0, fragments: d.fragments ?? 0 };
-  } catch {
-    let f = lsGetF() + n;
-    let t = lsGet();
-    if (f >= 5) { t += Math.floor(f / 5); f = f % 5; lsSet(t); }
-    lsSetF(f);
-    return { tickets: t, fragments: f };
-  }
+// 추억/날짜/플래그 등 수집 항목 추가
+export function addCollected(id: string): ProgressData {
+  const p = lsRead();
+  if (!p.collectedSpots.includes(id)) { p.collectedSpots.push(id); lsWrite(p); }
+  dbPost({ collectSpot: id });
+  return p;
 }
 
-// 티켓 사용(룰렛 돌릴 때). 서버에 차감 저장. 반환: 남은 티켓 수
+// 숨은 하트 조각: 티켓 +1
+export function addHeart(id: string): ProgressData {
+  const p = lsRead();
+  if (!p.heartPieces.includes(id)) { p.heartPieces.push(id); p.tickets += 1; lsWrite(p); }
+  dbPost({ collectHeart: id });
+  return p;
+}
+
+export function addTickets(n: number): number {
+  const p = lsRead();
+  p.tickets = Math.max(0, p.tickets + n);
+  lsWrite(p);
+  dbPost({ addTickets: n });
+  return p.tickets;
+}
+
 export async function spendTicket(n = 1): Promise<number> {
-  try {
-    const r = await fetch("/api/progress", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ spendTicket: n }),
-    });
-    if (!r.ok) throw new Error();
-    const d = await r.json();
-    return d.tickets ?? 0;
-  } catch {
-    const t = Math.max(0, lsGet() - n);
-    lsSet(t);
-    return t;
-  }
+  const p = lsRead();
+  p.tickets = Math.max(0, p.tickets - n);
+  lsWrite(p);
+  dbPost({ spendTicket: n });
+  return p.tickets;
 }
 
 // 진행 데이터 전부 초기화 (DB + 브라우저 저장)
 export async function resetProgress(): Promise<void> {
   try { await fetch("/api/progress", { method: "DELETE" }); } catch {}
   try {
-    localStorage.removeItem(LS);
-    localStorage.removeItem(LSF);
+    localStorage.removeItem(PKEY);
     localStorage.removeItem("our1000days-kakao");
     localStorage.removeItem("our1000days-unlocks");
   } catch {}
