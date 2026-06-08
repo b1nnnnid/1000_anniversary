@@ -14,6 +14,7 @@ model Progress {
   hearts         Int      @default(0)
   tickets        Int      @default(0)    // 룰렛 돌릴 기회 (퀴즈 등 게임으로 획득)
   heartPieces    String   @default("[]") // JSON: 주운 숨은 하트 조각 id 배열
+  fragments      Int      @default(0)    // 티켓 조각 (5조각 = 티켓 1장)
   updatedAt      DateTime @updatedAt
 }
 

@@ -10,12 +10,13 @@ import StageChallenge from "@/components/StageChallenge";
 import DialogBox from "@/components/DialogBox";
 import DateModal from "@/components/DateModal";
 import { Stage, STAGES, HEART_PIECES, HEARTS_PER_TICKET, CAT_INTRO, CAT_EVENTS, CAT_CONGRATS } from "@/lib/gameData";
-import { getProgress, changeTickets, resetProgress } from "@/lib/progressClient";
+import { getProgress, addFragments, resetProgress } from "@/lib/progressClient";
 
 export default function MapPage() {
   const router = useRouter();
   const [collected, setCollected] = useState<string[]>([]);
   const [tickets, setTickets] = useState(0);
+  const [fragments, setFragments] = useState(0);
   const [pieces, setPieces] = useState<string[]>([]);
   const [modal, setModal] = useState<Stage | null>(null);
   const [challenge, setChallenge] = useState<Stage | null>(null);
@@ -30,6 +31,7 @@ export default function MapPage() {
     getProgress().then((p) => {
       setCollected(p.collectedSpots);
       setTickets(p.tickets);
+      setFragments(p.fragments);
       setPieces(p.heartPieces);
     });
   }, []);
@@ -39,6 +41,15 @@ export default function MapPage() {
     if (toastTimer.current) clearTimeout(toastTimer.current);
     toastTimer.current = setTimeout(() => setToast(null), 2600);
   }, []);
+
+  const reward = useCallback(async (n: number, label: string) => {
+    const before = tickets;
+    const res = await addFragments(n);
+    setTickets(res.tickets);
+    setFragments(res.fragments);
+    if (res.tickets > before) showToast(`${label} · 조각 5개 모음 → 🎟 +1!`);
+    else showToast(`${label} · 🧩 +${n} (${res.fragments}/5)`);
+  }, [tickets, showToast]);
 
   const busy = !!(modal || challenge || celebrate || dialog || confirmReset || dateScene);
   const stageDone = collected.filter((id) => STAGES.some((s) => s.id === id)).length;
@@ -94,9 +105,7 @@ export default function MapPage() {
     if (success) {
       setCollected((c) => (c.includes("ch:" + s.id) ? c : [...c, "ch:" + s.id]));
       saveSpot("ch:" + s.id);
-      setTickets((t) => t + 1);
-      changeTickets(1).catch(() => {});
-      showToast("미션 성공! 🎟 +1");
+      reward(2, "미션 성공!");
     } else {
       showToast("아쉽다! 추억은 열어줄게 💗");
     }
@@ -107,16 +116,14 @@ export default function MapPage() {
     setPieces((prev) => {
       if (prev.includes(id)) return prev;
       const next = [...prev, id];
-      if (next.length % HEARTS_PER_TICKET === 0) {
-        setTickets((t) => t + 1);
-        showToast(`💗 ${next.length}개 모음! 🎟 +1`);
-      } else {
-        showToast(`하트 조각 발견! (${next.length}/${HEART_PIECES.length})`);
-      }
       fetch("/api/progress", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ collectHeart: id }),
+      }).then((r) => r.json()).then((d) => {
+        if (typeof d.tickets === "number") setTickets(d.tickets);
+        if (typeof d.fragments === "number") setFragments(d.fragments);
       }).catch(() => {});
+      showToast(`💗 하트 조각 발견! (${next.length}/${HEART_PIECES.length}) · 🧩 +1`);
       return next;
     });
   }, [showToast]);
@@ -136,9 +143,7 @@ export default function MapPage() {
       if (d?.intro) {
         setCollected((c) => (c.includes("cat-intro") ? c : [...c, "cat-intro"]));
         saveSpot("cat-intro");
-        setTickets((t) => t + 1);
-        changeTickets(1).catch(() => {});
-        showToast("고양이가 티켓을 줬다! 🎟 +1");
+        reward(2, "고양이가 조각을 줬다! 🐱");
       }
       if (d?.congrats) {
         setCollected((c) => (c.includes("cat-congrats") ? c : [...c, "cat-congrats"]));
@@ -188,7 +193,7 @@ export default function MapPage() {
           <div style={{ display: "flex", justifyContent: "center", gap: 6, marginTop: 6, flexWrap: "wrap" }}>
             <span className="chip">📷 {stageDone}/{STAGES.length}</span>
             <span className="chip">💗 {pieces.length}/{HEART_PIECES.length}</span>
-            <span className="chip">🎟 {tickets}</span>
+            <span className="chip">🎟 {tickets} · 🧩 {fragments}/5</span>
           </div>
         </div>
         <GameDock

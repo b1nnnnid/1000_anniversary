@@ -8,8 +8,12 @@ export async function GET() {
 
 export async function POST(req: Request) {
   const { title, emoji } = await req.json();
-  const coupon = await prisma.coupon.create({
-    data: { title, emoji: emoji ?? "🎁" },
-  });
+  const coupon = await prisma.coupon.create({ data: { title, emoji: emoji ?? "🎁" } });
+  return NextResponse.json(coupon);
+}
+
+export async function PATCH(req: Request) {
+  const { id, used } = await req.json();
+  const coupon = await prisma.coupon.update({ where: { id }, data: { used } });
   return NextResponse.json(coupon);
 }
