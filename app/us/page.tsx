@@ -13,7 +13,7 @@ const ITEMS = [
   { href: "/letters", icon: "letter", title: "숨겨둔 편지함", desc: "티켓으로 열기" },
   { href: "/saju", icon: "crystal", title: "커플 사주·궁합", desc: "티켓 열람권" },
   { href: "/fortune", icon: "moon", title: "오늘의 운세", desc: "티켓 열람권" },
-  { href: "/cards", icon: "cards", title: "커플 카드게임", desc: "밸런스·알아가기" },
+  { href: "/cards", icon: "cards", title: "커플 카드", desc: "유형테스트·알아가기" },
   { href: "/photobooth", icon: "camera", title: "포토부스", desc: "픽셀 액자 사진" },
   { href: "/achievements", icon: "trophy", title: "업적 도감", desc: "달성 뱃지 모으기" },
   { href: "/games/quiz", icon: "bubble", title: "커플 퀴즈", desc: "조각 모으기" },
