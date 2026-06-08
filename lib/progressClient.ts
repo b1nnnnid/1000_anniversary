@@ -46,25 +46,26 @@ export async function addFragments(n: number): Promise<RewardResult> {
   }
 }
 
-export async function changeTickets(n: number): Promise<number> {
+// 티켓 사용(룰렛 돌릴 때). 서버에 차감 저장. 반환: 남은 티켓 수
+export async function spendTicket(n = 1): Promise<number> {
   try {
     const r = await fetch("/api/progress", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ addTickets: n }),
+      body: JSON.stringify({ spendTicket: n }),
     });
     if (!r.ok) throw new Error();
     const d = await r.json();
     return d.tickets ?? 0;
   } catch {
-    const t = lsGet() + n;
+    const t = Math.max(0, lsGet() - n);
     lsSet(t);
-    return Math.max(0, t);
+    return t;
   }
 }
 
 // 진행 데이터 전부 초기화 (DB + 브라우저 저장)
 export async function resetProgress(): Promise<void> {
   try { await fetch("/api/progress", { method: "DELETE" }); } catch {}
-  try { localStorage.removeItem(LS); } catch {}
+  try { localStorage.removeItem(LS); localStorage.removeItem(LSF); } catch {}
 }

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { WISHES } from "@/lib/gameData";
 import GameIntro from "@/components/GameIntro";
 import CharacterReaction from "@/components/CharacterReaction";
-import { getProgress, changeTickets } from "@/lib/progressClient";
+import { getProgress, spendTicket } from "@/lib/progressClient";
 
 const TOTAL = WISHES.reduce((s, w) => s + w.weight, 0);
 // 각 칸의 시작 각도/크기 (꼭대기 0°, 시계방향)
@@ -68,8 +68,8 @@ export default function RoulettePage() {
     if (spinning || !tickets || tickets < 1) return;
     setSpinning(true);
     setResult(null);
-    setTickets((t) => (t ?? 1) - 1);
-    changeTickets(-1).catch(() => {});
+    setTickets((t) => Math.max(0, (t ?? 1) - 1));   // 즉시 반영
+    spendTicket(1).then((left) => setTickets(left)).catch(() => {}); // 서버 차감 + 동기화
 
     // 칸 크기(가중치)에 비례한 추첨
     let rnd = Math.random() * TOTAL, i = 0;
