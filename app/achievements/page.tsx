@@ -5,6 +5,7 @@ import Link from "next/link";
 import CharacterReaction from "@/components/CharacterReaction";
 import { getProgress } from "@/lib/progressClient";
 import { getUnlocks } from "@/lib/unlocks";
+import { getFlags } from "@/lib/flags";
 import { computeAchievements } from "@/lib/achievements";
 
 export default function AchievementsPage() {
@@ -15,7 +16,7 @@ export default function AchievementsPage() {
 
   useEffect(() => {
     getProgress().then((p) => {
-      const computed = computeAchievements({ collected: p.collectedSpots, pieces: p.heartPieces, unlocks: getUnlocks() });
+      const computed = computeAchievements({ collected: p.collectedSpots, pieces: p.heartPieces, unlocks: getUnlocks(), flags: getFlags() });
       setList(computed);
       setLoaded(true);
       if (computed.length > 0 && computed.every((a) => a.unlocked)) showCelebration();

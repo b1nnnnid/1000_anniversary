@@ -24,10 +24,15 @@ function lsWrite(p: ProgressData) {
 }
 const uniq = (a: string[], b: string[]) => Array.from(new Set([...a, ...b]));
 
+// 업적 감시기에게 "확인해" 신호
+function ping() { if (typeof window !== "undefined") { try { window.dispatchEvent(new Event("ach-check")); } catch {} } }
+
 function dbPost(body: Record<string, unknown>) {
-  // DB 동기화는 실패해도 무시 (localStorage가 진짜 저장소)
   fetch("/api/progress", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }).catch(() => {});
 }
+
+// 동기 로컬 읽기 (업적 감시기용)
+export function getProgressLocal(): ProgressData { return lsRead(); }
 
 export async function getProgress(): Promise<ProgressData> {
   const local = lsRead();
@@ -40,7 +45,6 @@ export async function getProgress(): Promise<ProgressData> {
       collectedSpots: uniq(local.collectedSpots, d.collectedSpots ?? []),
       heartPieces: uniq(local.heartPieces, d.heartPieces ?? []),
       hearts: Math.max(local.hearts, d.hearts ?? 0),
-      // 티켓은 사용/적립이 반영된 localStorage를 우선. 단 로컬이 완전 비어있으면 DB값으로 시드.
       tickets: hasLocal ? local.tickets : (d.tickets ?? 0),
     };
     lsWrite(merged);
@@ -50,19 +54,19 @@ export async function getProgress(): Promise<ProgressData> {
   }
 }
 
-// 추억/날짜/플래그 등 수집 항목 추가
 export function addCollected(id: string): ProgressData {
   const p = lsRead();
   if (!p.collectedSpots.includes(id)) { p.collectedSpots.push(id); lsWrite(p); }
   dbPost({ collectSpot: id });
+  ping();
   return p;
 }
 
-// 숨은 하트 조각: 티켓 +1
 export function addHeart(id: string): ProgressData {
   const p = lsRead();
   if (!p.heartPieces.includes(id)) { p.heartPieces.push(id); p.tickets += 1; lsWrite(p); }
   dbPost({ collectHeart: id });
+  ping();
   return p;
 }
 
@@ -71,6 +75,7 @@ export function addTickets(n: number): number {
   p.tickets = Math.max(0, p.tickets + n);
   lsWrite(p);
   dbPost({ addTickets: n });
+  ping();
   return p.tickets;
 }
 
@@ -79,6 +84,7 @@ export async function spendTicket(n = 1): Promise<number> {
   p.tickets = Math.max(0, p.tickets - n);
   lsWrite(p);
   dbPost({ spendTicket: n });
+  ping();
   return p.tickets;
 }
 
@@ -89,5 +95,7 @@ export async function resetProgress(): Promise<void> {
     localStorage.removeItem(PKEY);
     localStorage.removeItem("our1000days-kakao");
     localStorage.removeItem("our1000days-unlocks");
+    localStorage.removeItem("our1000days-flags");
+    localStorage.removeItem("our1000days-ach-seen");
   } catch {}
 }

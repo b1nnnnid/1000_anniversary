@@ -13,6 +13,7 @@ export function isUnlocked(key: string): boolean {
 function addUnlock(key: string) {
   const s = getUnlocks();
   if (!s.includes(key)) { s.push(key); try { localStorage.setItem(KEY, JSON.stringify(s)); } catch {} }
+  try { window.dispatchEvent(new Event("ach-check")); } catch {}
 }
 export function clearUnlocks() { try { localStorage.removeItem(KEY); } catch {} }
 
