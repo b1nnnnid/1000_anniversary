@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { QUIZ } from "@/lib/gameData";
 import GameIntro from "@/components/GameIntro";
+import CharacterReaction from "@/components/CharacterReaction";
 import { changeTickets } from "@/lib/progressClient";
 
 const PASS = Math.ceil(QUIZ.length / 2);
@@ -31,7 +32,7 @@ export default function QuizPage() {
         if (t > 0) changeTickets(t).catch(() => {});
         setPhase("done");
       }
-    }, 700);
+    }, 1300);
   };
 
   const q = QUIZ[idx];
@@ -120,6 +121,16 @@ export default function QuizPage() {
             )}
           </p>
           <Link href="/map" style={{ fontSize: 12, color: "#A89AA3", textDecoration: "none" }}>← 맵으로 돌아가기</Link>
+        </div>
+      )}
+      {phase === "play" && picked !== null && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 70, display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none" }}>
+          <div className="pop" style={{ background: "rgba(255,255,255,0.94)", borderRadius: 18, padding: "14px 26px 12px", textAlign: "center", boxShadow: "0 5px 0 rgba(124,90,150,0.22)" }}>
+            <CharacterReaction mood={picked === q.answer ? "happy" : "sad"} />
+            <p style={{ margin: "2px 0 0", fontSize: 14, color: picked === q.answer ? "#2F7A52" : "#A33333" }}>
+              {picked === q.answer ? "정답이야! 역시 우리 💗" : "앗... 그게 아니야 😢"}
+            </p>
+          </div>
         </div>
       )}
     </main>

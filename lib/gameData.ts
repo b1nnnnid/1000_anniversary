@@ -65,18 +65,23 @@ export const GOAL = { col: 6, row: 41, label: "1000일 ♥" };
 // 커플 퀴즈
 export interface QuizQuestion { q: string; options: string[]; answer: number; }
 export const QUIZ: QuizQuestion[] = [
-  { q: "우리가 처음 같이 먹은 음식은?", options: ["떡볶이", "파스타", "초밥", "삼겹살"], answer: 1 },
+  { q: "우리가 처음 같이 먹은 음식은?", options: ["떡볶이", "파스타", "초밥", "치킨"], answer: 4 },
   { q: "우리의 1일은 며칠일까?", options: ["9월 9일", "9월 11일", "9월 20일", "10월 1일"], answer: 1 },
-  { q: "내가 제일 좋아하는 너의 모습은?", options: ["웃을 때", "잘 때", "화낼 때", "먹을 때"], answer: 0 },
+  { q: "내가 제일 좋아하는 오빠의 모습은?", options: ["웃을 때", "잘 때", "운동할 때", "먹을 때"], answer: 2 },
 ];
 
-// 소원권 룰렛
-export interface Wish { title: string; emoji: string; }
+// 소원권 룰렛: weight = 칸 크기. 좁은 칸(1)엔 좋은 보상, 넓은 칸(3~4)엔 웃긴 벌칙!
+// 당첨 확률은 칸 크기에 비례합니다.
+export type WishKind = "rare" | "mid" | "fun" | "miss";
+export interface Wish { title: string; emoji: string; weight: number; kind: WishKind; }
+
 export const WISHES: Wish[] = [
-  { title: "맛있는 거 사주기 쿠폰", emoji: "🍰" },
-  { title: "안마 30분 쿠폰", emoji: "💆" },
-  { title: "영화 고르기 1회권", emoji: "🎬" },
-  { title: "소원 하나 들어주기", emoji: "⭐" },
-  { title: "꽉 안아주기 쿠폰", emoji: "🤗" },
-  { title: "드라이브 가기 쿠폰", emoji: "🚗" },
+  { title: "소원 하나 들어주기", emoji: "⭐", weight: 1, kind: "rare" },
+  { title: "엉덩이로 이름 쓰기", emoji: "🍑", weight: 3, kind: "fun" },
+  { title: "데이트 메뉴 선정권", emoji: "🍽️", weight: 1, kind: "rare" },
+  { title: "애교 3종 세트 시전", emoji: "🐰", weight: 3, kind: "fun" },
+  { title: "맛있는 거 사주기", emoji: "🍰", weight: 1, kind: "rare" },
+  { title: "꽝! 다음 기회에", emoji: "🤡", weight: 4, kind: "miss" },
+  { title: "안마 30분 쿠폰", emoji: "💆", weight: 2, kind: "mid" },
+  { title: "오늘 설거지 당번", emoji: "🧽", weight: 3, kind: "fun" },
 ];

@@ -149,3 +149,72 @@ export function drawCharacter(
     ctx.restore();
   }
 }
+
+// ===== 리액션 캐릭터 (퀴즈 정답/오답, 룰렛 두근두근) =====
+// 120x120 캔버스 기준, frame = 0|1 로 두 프레임 애니메이션
+export type Mood = "happy" | "sad" | "excited";
+
+export function drawReaction(ctx: CanvasRenderingContext2D, mood: Mood, frame: number) {
+  const U = 3;
+  const g = (gx: number, gy: number, gw: number, gh: number, c: string) => {
+    ctx.fillStyle = c; ctx.fillRect(gx * U, gy * U, gw * U, gh * U);
+  };
+  const oy = mood === "happy" && frame === 1 ? -1 : 0; // 기쁠 땐 콩콩 점프
+
+  // 머리 + 리본
+  g(12, 7 + oy, 16, 5, C.hair);
+  g(11, 9 + oy, 3, 11, C.hair); g(26, 9 + oy, 3, 11, C.hair);
+  g(23, 5 + oy, 4, 3, C.rose); g(20, 6 + oy, 3, 2, C.rose);
+  // 얼굴
+  g(14, 12 + oy, 12, 9, C.skin);
+
+  if (mood === "happy") {
+    g(16, 15 + oy, 1, 1, C.eye); g(17, 14 + oy, 1, 1, C.eye); g(18, 15 + oy, 1, 1, C.eye);
+    g(21, 15 + oy, 1, 1, C.eye); g(22, 14 + oy, 1, 1, C.eye); g(23, 15 + oy, 1, 1, C.eye);
+    g(18, 18 + oy, 4, 2, C.eye); g(19, 19 + oy, 2, 1, "#F08CA0");
+    g(15, 17 + oy, 2, 1, C.cheek); g(23, 17 + oy, 2, 1, C.cheek);
+  } else if (mood === "sad") {
+    g(15, 13, 2, 1, C.eye); g(23, 13, 2, 1, C.eye);          // 처진 눈썹
+    g(16, 15, 2, 2, C.eye); g(22, 15, 2, 2, C.eye);
+    const ty = frame === 0 ? 17 : 18;                          // 또르르 눈물
+    g(15, ty, 1, 2, "#9FC7E8"); g(24, ty + 1, 1, 2, "#9FC7E8");
+    g(18, 20, 4, 1, C.eye); g(17, 19, 1, 1, C.eye); g(22, 19, 1, 1, C.eye); // 시무룩 입
+  } else {
+    g(16, 14, 2, 2, C.eye); g(22, 14, 2, 2, C.eye);
+    g(16, 14, 1, 1, "#fff"); g(22, 14, 1, 1, "#fff");          // 초롱초롱
+    g(19, 18, 2, 2, C.eye);                                     // 오~ 하는 입
+    g(15, 17, 2, 1, C.cheek); g(23, 17, 2, 1, C.cheek);
+  }
+
+  // 몸통
+  g(14, 21 + oy, 12, 8, C.shirt);
+  g(14, 27 + oy, 12, 2, C.shirtSh);
+  g(16, 29 + oy, 3, 4, C.pants); g(21, 29 + oy, 3, 4, C.pants);
+  g(16, 33 + oy, 3, 2, "#8898A8"); g(21, 33 + oy, 3, 2, "#8898A8");
+
+  // 팔
+  if (mood === "happy") {
+    const ay = frame === 0 ? 17 : 15;                          // 만세!
+    g(11, ay, 3, 5, C.skin); g(26, ay, 3, 5, C.skin);
+  } else if (mood === "sad") {
+    g(12, 22, 2, 6, C.skin); g(26, 22, 2, 6, C.skin);          // 축 처진 팔
+  } else {
+    g(17, 23, 6, 3, C.skin);                                    // 두 손 모으고
+  }
+
+  // 이펙트
+  const heart = (hx: number, hy: number, c: string) => {
+    g(hx, hy, 2, 2, c); g(hx + 3, hy, 2, 2, c); g(hx, hy + 2, 5, 2, c); g(hx + 1, hy + 4, 3, 1, c); g(hx + 2, hy + 5, 1, 1, c);
+  };
+  if (mood === "happy") {
+    if (frame === 0) { heart(4, 10, C.rose); heart(31, 14, "#F2A3C0"); }
+    else { heart(3, 8, "#F2A3C0"); heart(32, 11, C.rose); }
+  } else if (mood === "sad") {
+    const dy = frame === 0 ? 0 : 2;
+    g(7, 10 + dy, 1, 3, "#9FC7E8"); g(32, 8 + dy, 1, 3, "#9FC7E8");
+  } else {
+    const sx = frame === 0 ? 0 : 1;
+    g(6 + sx, 12, 1, 3, C.gold); g(5 + sx, 13, 3, 1, C.gold);
+    g(32 - sx, 9, 1, 3, C.gold); g(31 - sx, 10, 3, 1, C.gold);
+  }
+}
