@@ -22,17 +22,15 @@ export default function AchievementWatcher() {
       const p = getProgressLocal();
       const list = computeAchievements({ collected: p.collectedSpots, pieces: p.heartPieces, unlocks: getUnlocks(), flags: getFlags() });
       const unlocked = list.filter((a) => a.unlocked);
-      const firstRun = !inited.current && localStorage.getItem(SEEN) === null;
-      const seen = readSeen();
 
-      if (firstRun) {
-        // 첫 실행: 이미 달성된 건 토스트 없이 seen 처리
-        const s = new Set(unlocked.map((a) => a.id));
-        writeSeen(s);
+      if (!inited.current && localStorage.getItem(SEEN) === null) {
+        // 첫 실행: 이미 달성된 건 토스트 없이 기준선 처리
+        writeSeen(new Set(unlocked.map((a) => a.id)));
         inited.current = true;
         return;
       }
       inited.current = true;
+      const seen = readSeen();
       const fresh = unlocked.filter((a) => !seen.has(a.id));
       if (fresh.length) {
         fresh.forEach((a) => seen.add(a.id));
@@ -52,15 +50,19 @@ export default function AchievementWatcher() {
     };
   }, []);
 
-  // 큐에서 하나씩 3초 표시
+  // 큐에 있고 표시 중이 아니면 하나 꺼내 보여줌
   useEffect(() => {
     if (current || queue.length === 0) return;
-    const nextPop = queue[0];
-    setCurrent(nextPop);
+    setCurrent(queue[0]);
     setQueue((q) => q.slice(1));
+  }, [queue, current]);
+
+  // 표시 중이면 3초 뒤 자동으로 닫음 (이 effect는 current에만 의존)
+  useEffect(() => {
+    if (!current) return;
     const t = setTimeout(() => setCurrent(null), 3000);
     return () => clearTimeout(t);
-  }, [queue, current]);
+  }, [current]);
 
   if (!current) return null;
   return (
