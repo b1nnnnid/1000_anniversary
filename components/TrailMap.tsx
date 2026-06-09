@@ -48,8 +48,8 @@ export default function TrailMap({
   const catActiveRef = useRef(catActive);
   const grabbedRef = useRef<Set<string>>(new Set());
   const hist = useRef<{ x: number; y: number; d: Dir }[]>([]);
-  const cat = useRef<{ x: number; y: number; state: CatState; timer: number; cooldown: number }>({
-    x: CAT.col * TILE, y: CAT.row * TILE, state: "idle", timer: 0, cooldown: 360,
+  const cat = useRef<{ x: number; y: number; state: CatState; timer: number; cooldown: number; seenBusy: boolean }>({
+    x: CAT.col * TILE, y: CAT.row * TILE, state: "idle", timer: 0, cooldown: 360, seenBusy: false,
   });
   const [near, setNear] = useState<string | null>(null);
   const nearId = useRef<string | null>(null);
@@ -117,10 +117,19 @@ export default function TrailMap({
           const ddx = pos.current.x - c.x, ddy = pos.current.y - c.y;
           if (Math.abs(ddx) > Math.abs(ddy)) c.x += Math.sign(ddx) * Math.min(sp, Math.abs(ddx));
           else c.y += Math.sign(ddy) * Math.min(sp, Math.abs(ddy));
-          if (dPlayer < 1.15 * TILE || c.timer <= 0) { c.state = "talk"; onCatTalk(); }
+          if (dPlayer < 1.15 * TILE || c.timer <= 0) {
+            c.state = "talk"; c.timer = 30; c.seenBusy = false; onCatTalk();
+          }
         }
       } else if (c.state === "talk") {
-        if (!busyRef.current) c.state = "return";
+        // setDialog()로 busy가 켜지기까지 몇 프레임 걸리므로, busy를 한 번
+        // 본 뒤(대화창 열림) 닫힐 때까지 제자리를 지킨다.
+        if (busyRef.current) c.seenBusy = true;
+        if (c.seenBusy) {
+          if (!busyRef.current) c.state = "return";        // 대화 끝 → 복귀
+        } else if (c.timer-- <= 0) {
+          c.state = "return";                              // 대화창이 안 떴으면 복귀
+        }
       } else if (c.state === "return") {
         const hx = CAT.col * TILE, hy = CAT.row * TILE, sp = 1.4;
         const ddx = hx - c.x, ddy = hy - c.y;
