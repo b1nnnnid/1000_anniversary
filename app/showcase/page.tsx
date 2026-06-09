@@ -13,8 +13,8 @@ import { computeAchievements } from "@/lib/achievements";
 /* ───────── 편집 포인트: 만든 사람 소개 / 자랑 문구 ─────────
    아래 CREDIT 값만 바꾸면 크레딧 카드 내용이 바뀝니다.            */
 const CREDIT = {
-  maker: "YJ",
-  title: "💝 Made with love by YJ",
+  maker: "숯댕이",
+  title: "💝 Made with love by 숯댕이",
   lines: [
     "1000일을 기념하며 한 땀 한 땀 직접 만들었어요.",
     "우리가 함께 걸어온 길을, 작은 세계로 담았어요.",
@@ -22,6 +22,37 @@ const CREDIT = {
   stack: ["Next.js", "React", "TypeScript", "픽셀아트", "Canvas"],
 };
 /* ──────────────────────────────────────────────────────────── */
+
+// 정성 스탯 (실제 콘텐츠 개수 — 스크롤 시 숫자가 카운트업)
+const STATS: { to: number; prefix?: string; label: string }[] = [
+  { to: 16, label: "화면" },
+  { to: 7, label: "추억" },
+  { to: 21, label: "업적" },
+  { to: 8, label: "숨은하트" },
+  { to: 4, label: "편지" },
+  { to: 1000, prefix: "D+", label: "함께한 날" },
+];
+
+// D-day 미니 타임라인 이정표 (pct = 1000일 기준 위치 %)
+const MILES: { pct: number; label: string }[] = [
+  { pct: 0, label: "처음" },
+  { pct: 10, label: "100일" },
+  { pct: 36.5, label: "1년" },
+  { pct: 73, label: "2년" },
+  { pct: 100, label: "1000일" },
+];
+
+// 배경에 은은히 떠다니는 장식
+const BG: { e: string; l: string; t: string; s: number; o: number; d: string; anim: string }[] = [
+  { e: "💗", l: "6%", t: "8%", s: 16, o: 0.5, d: "0s", anim: "drift" },
+  { e: "✨", l: "88%", t: "14%", s: 13, o: 0.55, d: "1.2s", anim: "twinkle" },
+  { e: "⭐", l: "14%", t: "30%", s: 12, o: 0.4, d: "2.1s", anim: "twinkle" },
+  { e: "💞", l: "82%", t: "42%", s: 15, o: 0.45, d: "0.6s", anim: "drift" },
+  { e: "✨", l: "10%", t: "56%", s: 12, o: 0.5, d: "1.8s", anim: "twinkle" },
+  { e: "💗", l: "90%", t: "66%", s: 14, o: 0.42, d: "2.6s", anim: "drift" },
+  { e: "⭐", l: "8%", t: "80%", s: 11, o: 0.4, d: "0.9s", anim: "twinkle" },
+  { e: "💞", l: "85%", t: "90%", s: 15, o: 0.45, d: "1.5s", anim: "drift" },
+];
 
 // 미니 화면 프레임 (카드 안의 작은 목업)
 function Mini({ children, bg = "#FBF3F8", pad = 10 }: { children: ReactNode; bg?: string; pad?: number }) {
@@ -45,7 +76,7 @@ type ScreenDef = { n: string; route: string; icon: string; title: string; blurb:
 const SCREENS: ScreenDef[] = [
   {
     n: "01", route: "/", icon: "heart", title: "인트로 — 우리의 1000일",
-    blurb: "표지에서 시작하는 작은 추억 여행. 슬라이드로 세계관을 소개해요.",
+    blurb: "표지에서 시작하는 작은 추억 여행. 함께 떠나봐요.",
     mock: (
       <Mini bg="#F3DCE7">
         <div style={{ textAlign: "center", padding: "6px 0" }}>
@@ -61,7 +92,7 @@ const SCREENS: ScreenDef[] = [
   },
   {
     n: "02", route: "/map", icon: "camera", title: "추억탐방 맵",
-    blurb: "캐릭터를 움직여 함께 걸어온 길을 따라가요. 스테이지마다 그날의 추억이 열려요.",
+    blurb: "함께 걸어온 길을 따라가요. 스테이지마다 그날의 추억이 열려요.",
     mock: (
       <Mini>
         <svg width="100%" viewBox="0 0 140 80" shapeRendering="crispEdges" style={{ borderRadius: 8, display: "block" }}>
@@ -91,7 +122,7 @@ const SCREENS: ScreenDef[] = [
   },
   {
     n: "04", route: "/album", icon: "camera", title: "추억 앨범",
-    blurb: "함께 찍은 순간들을 폴라로이드처럼 모아둔 갤러리.",
+    blurb: "우리가 함께 걸어온 순간들을 모아봐요.",
     mock: (
       <Mini bg="#E6C7A0">
         <div style={{ display: "flex", justifyContent: "center", gap: 8 }}>
@@ -314,6 +345,30 @@ export default function Showcase() {
     return () => { io.disconnect(); window.removeEventListener("scroll", onScroll); };
   }, [phase]);
 
+  // 정성 스탯 숫자 카운트업 (화면에 들어올 때 0 → 목표값)
+  useEffect(() => {
+    if (phase !== "open") return;
+    const nums = Array.from(document.querySelectorAll<HTMLElement>(".countup"));
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        const el = e.target as HTMLElement;
+        io.unobserve(el);
+        const to = Number(el.dataset.to || "0");
+        const pre = el.dataset.prefix || "";
+        const t0 = performance.now(), dur = 1100;
+        const tick = (now: number) => {
+          const k = Math.min(1, (now - t0) / dur);
+          el.textContent = pre + Math.round((1 - Math.pow(1 - k, 3)) * to);
+          if (k < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      });
+    }, { threshold: 0.6 });
+    nums.forEach((n) => io.observe(n));
+    return () => io.disconnect();
+  }, [phase]);
+
   if (phase === "loading") {
     return <main style={{ minHeight: "100dvh", display: "flex", alignItems: "center", justifyContent: "center", color: "#B85C82", fontSize: 13 }}>불러오는 중…</main>;
   }
@@ -343,13 +398,20 @@ export default function Showcase() {
 
   // ── 열림: 풀 쇼케이스 ──
   return (
-    <main ref={rootRef} style={{ maxWidth: 460, margin: "0 auto", padding: "0 0 60px", position: "relative" }}>
+    <main ref={rootRef} style={{ maxWidth: 460, margin: "0 auto", padding: "0 0 60px", position: "relative", overflowX: "clip" }}>
+      {/* 배경에 은은히 떠다니는 장식 (클릭 통과) */}
+      <div aria-hidden style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none", zIndex: 0 }}>
+        {BG.map((b, i) => (
+          <span key={i} className={b.anim} style={{ position: "absolute", left: b.l, top: b.t, fontSize: b.s, opacity: b.o, animationDelay: b.d }}>{b.e}</span>
+        ))}
+      </div>
+
       {/* 상단 스크롤 진행바 */}
       <div className="scroll-rail" style={{ position: "sticky", top: 0, zIndex: 40, height: 5, width: "100%" }}>
         <div className="scroll-fill" style={{ height: "100%", width: `${progress * 100}%` }} />
       </div>
 
-      <div style={{ padding: "0 16px" }}>
+      <div style={{ padding: "0 16px", position: "relative", zIndex: 1 }}>
         <Link href="/us" style={{ display: "inline-block", marginTop: 14, color: "#B85C82", fontSize: 13, textDecoration: "none" }}>← 우리집</Link>
 
         {/* 히어로 */}
@@ -392,6 +454,25 @@ export default function Showcase() {
           ))}
         </div>
 
+        {/* D-day 미니 타임라인 */}
+        <section className="reveal" style={{ marginTop: 22, border: "3px solid #fff", background: "#FBF3F8", boxShadow: "0 0 0 3px var(--lav), 4px 6px 0 rgba(124,90,150,0.22)", borderRadius: 16, padding: "16px 18px 14px" }}>
+          <div className="stagger" style={{ fontSize: 12.5, color: "#B85C82", fontWeight: 700, textAlign: "center", marginBottom: 18 }}>우리가 걸어온 1000일 🐾</div>
+          <div className="stagger" style={{ position: "relative", height: 26, margin: "0 6px" }}>
+            <div style={{ position: "absolute", top: 11, left: 0, right: 0, height: 4, borderRadius: 2, background: "#E7D7E4" }} />
+            <div className="trail-fill" style={{ position: "absolute", top: 11, left: 0, width: "100%", height: 4, borderRadius: 2, background: "linear-gradient(90deg, var(--rose), var(--lav))" }}>
+              <span style={{ position: "absolute", right: -9, top: -13, fontSize: 17 }}>💗</span>
+            </div>
+            {MILES.map((m) => (
+              <div key={m.label} style={{ position: "absolute", left: `${m.pct}%`, top: 7, transform: "translateX(-50%)", width: 11, height: 11, borderRadius: "50%", background: "#fff", border: "3px solid var(--rose)", boxSizing: "border-box" }} />
+            ))}
+          </div>
+          <div style={{ position: "relative", height: 16, margin: "6px 6px 0" }}>
+            {MILES.map((m) => (
+              <span key={m.label} className="stagger" style={{ position: "absolute", left: `${m.pct}%`, transform: `translateX(${m.pct === 0 ? "0" : m.pct === 100 ? "-100%" : "-50%"})`, fontSize: 9, color: "#A89AA3", whiteSpace: "nowrap" }}>{m.label}</span>
+            ))}
+          </div>
+        </section>
+
         {/* 크레딧 (편집용 플레이스홀더) */}
         <section className="reveal" style={{ marginTop: 22, border: "3px solid #fff", background: "#FBF3F8", boxShadow: "0 0 0 3px var(--lav), 4px 6px 0 rgba(124,90,150,0.22)", borderRadius: 16, padding: "18px 16px", textAlign: "center" }}>
           <div className="stagger floaty" style={{ display: "flex", justifyContent: "center", marginBottom: 8 }}>
@@ -401,14 +482,23 @@ export default function Showcase() {
           <div className="stagger" style={{ fontSize: 11.5, color: "#8A7A85", lineHeight: 1.8, marginTop: 7 }}>
             {CREDIT.lines.map((l, i) => <div key={i}>{l}</div>)}
           </div>
-          <div className="stagger" style={{ display: "flex", gap: 5, justifyContent: "center", flexWrap: "wrap", marginTop: 12 }}>
+
+          {/* 정성 스탯 (카운트업) */}
+          <div className="stagger" style={{ fontSize: 10.5, color: "#B85C82", marginTop: 16 }}>이만큼의 마음을 담았어요 💗</div>
+          <div className="stagger" style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: "10px 16px", marginTop: 10 }}>
+            {STATS.map((s) => (
+              <div key={s.label} style={{ textAlign: "center", minWidth: 44 }}>
+                <div className="countup" data-to={s.to} data-prefix={s.prefix || ""} style={{ fontSize: 19, color: "#E8799F", fontWeight: 700, lineHeight: 1.1 }}>{s.prefix || ""}0</div>
+                <div style={{ fontSize: 9, color: "#A89AA3", marginTop: 3 }}>{s.label}</div>
+              </div>
+            ))}
+          </div>
+
+          <div className="stagger" style={{ display: "flex", gap: 5, justifyContent: "center", flexWrap: "wrap", marginTop: 16, paddingTop: 14, borderTop: "1px dashed #E7D7E4" }}>
             {CREDIT.stack.map((t) => (
               <span key={t} className="chip" style={{ fontSize: 10 }}>{t}</span>
             ))}
           </div>
-          <p className="stagger" style={{ fontSize: 9.5, color: "#C9A0B4", marginTop: 12 }}>
-            ※ 이 카드 문구는 <code style={{ background: "#F1EFE8", padding: "1px 5px", borderRadius: 4 }}>app/showcase/page.tsx</code>의 CREDIT 값에서 수정할 수 있어요.
-          </p>
         </section>
 
         {/* 엔딩 */}
