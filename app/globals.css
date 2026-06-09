@@ -102,3 +102,8 @@ button { cursor: pointer; }
 /* 잠금 해제 등장 */
 @keyframes unlockGlow { 0%{box-shadow:0 0 0 0 rgba(232,121,159,.5)} 100%{box-shadow:0 0 0 18px rgba(232,121,159,0)} }
 .unlock-glow { animation: unlockGlow 1.6s ease-out infinite; }
+
+/* D-day 타임라인: 길이 채워지며 하트가 따라감 */
+@keyframes trailFill { from { width: 0 } }
+.reveal.in .trail-fill { animation: trailFill 1.5s .25s cubic-bezier(.3,.7,.2,1) both; }
+@media (prefers-reduced-motion: reduce) { .reveal.in .trail-fill { animation: none; } }
