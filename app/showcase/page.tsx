@@ -20,6 +20,7 @@ const CREDIT = {
     "우리가 함께 걸어온 길을, 작은 세계로 담았어요.",
   ],
   stack: ["Next.js", "React", "TypeScript", "픽셀아트", "Canvas"],
+  version: "v1.0 · 2026.06",
 };
 /* ──────────────────────────────────────────────────────────── */
 
@@ -499,6 +500,7 @@ export default function Showcase() {
               <span key={t} className="chip" style={{ fontSize: 10 }}>{t}</span>
             ))}
           </div>
+          <div className="stagger" style={{ fontFamily: "monospace", fontSize: 10, color: "#9A8A95", letterSpacing: 0.5, marginTop: 12 }}>{CREDIT.version}</div>
         </section>
 
         {/* 엔딩 */}
