@@ -188,6 +188,7 @@ export default function MapPage() {
           onHome={() => setConfirmReset(true)}
           gamesLocked={!celebrated}
           onLockedTry={() => showToast("🔒 추억탐방을 끝내면 열려요!")}
+          onShowcaseLockedTry={() => showToast("🔒 모든 업적을 깨면 열려요!")}
         />
       </header>
 
