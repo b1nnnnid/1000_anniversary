@@ -7,6 +7,7 @@ import GameIntro from "@/components/GameIntro";
 import CharacterReaction from "@/components/CharacterReaction";
 import { addTickets } from "@/lib/progressClient";
 import { markFlag } from "@/lib/flags";
+import { playSuccess, playWrong, playWin } from "@/lib/sfx";
 
 const PASS = Math.ceil(QUIZ.length / 2);
 
@@ -23,6 +24,7 @@ export default function QuizPage() {
     if (picked !== null) return;
     setPicked(i);
     const correct = i === QUIZ[idx].answer;
+    if (correct) playSuccess(); else playWrong();
     const newScore = score + (correct ? 1 : 0);
     if (correct) setScore(newScore);
     setTimeout(() => {
@@ -30,7 +32,7 @@ export default function QuizPage() {
       else {
         const t = newScore === QUIZ.length ? 2 : newScore >= PASS ? 1 : 0;
         setEarned(t);
-        if (t > 0) { addTickets(t); markFlag("quiz"); }
+        if (t > 0) { addTickets(t); markFlag("quiz"); playWin(); }
         setPhase("done");
       }
     }, 1300);

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import PixelIcon from "@/components/PixelIcon";
 import CharacterReaction from "@/components/CharacterReaction";
+import CinematicOverlay from "@/components/CinematicOverlay";
 import { getProgress } from "@/lib/progressClient";
 import { getUnlocks } from "@/lib/unlocks";
 import { getFlags } from "@/lib/flags";
@@ -26,9 +27,9 @@ const CREDIT = {
 
 // 정성 스탯 (실제 콘텐츠 개수 — 스크롤 시 숫자가 카운트업)
 const STATS: { to: number; prefix?: string; label: string }[] = [
-  { to: 16, label: "화면" },
+  { to: 15, label: "화면" },
   { to: 7, label: "추억" },
-  { to: 21, label: "업적" },
+  { to: 20, label: "업적" },
   { to: 8, label: "숨은하트" },
   { to: 4, label: "편지" },
   { to: 1000, prefix: "D+", label: "함께한 날" },
@@ -172,7 +173,7 @@ const SCREENS: ScreenDef[] = [
     blurb: "모든 콘텐츠로 통하는 우리만의 방. 가구를 톡 누르면 화면이 열려요.",
     mock: (
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 6 }}>
-        {tile("슬라이드쇼", "🎞️")}{tile("편지함", "💌")}{tile("사주", "🔮")}
+        {tile("룰렛", "🎁")}{tile("편지함", "💌")}{tile("사주", "🔮")}
         {tile("유형테스트", "🃏")}{tile("포토부스", "📸")}{tile("업적", "🏆")}
       </div>
     ),
@@ -188,21 +189,6 @@ const SCREENS: ScreenDef[] = [
               <div style={{ width: 34, height: 30, background: c, borderRadius: 2 }} />
             </div>
           ))}
-        </div>
-      </Mini>
-    ),
-  },
-  {
-    n: "05", route: "/slideshow", icon: "film", title: "추억 슬라이드쇼",
-    blurb: "우리들의 작은 영화관. 추억이 한 장씩 음악과 함께 흘러가요.",
-    mock: (
-      <Mini bg="#3F3B45">
-        <div style={{ position: "relative", background: "#9FC7E8", borderRadius: 6, height: 56, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <span className="stagger" style={{ fontSize: 24 }}>▶</span>
-          <span className="stagger sparkle" style={{ position: "absolute", top: 6, right: 8, fontSize: 14 }}>✨</span>
-        </div>
-        <div style={{ display: "flex", gap: 4, justifyContent: "center", marginTop: 6 }}>
-          {[0, 1, 2, 3].map((i) => <div key={i} style={{ width: i === 0 ? 16 : 6, height: 6, borderRadius: 3, background: i === 0 ? "#E8799F" : "#6A5A66" }} />)}
         </div>
       </Mini>
     ),
@@ -354,7 +340,7 @@ const SCREENS: ScreenDef[] = [
   },
   {
     n: "16", route: "/achievements", icon: "trophy", title: "업적 도감",
-    blurb: "21개의 업적을 모으는 컬렉션. 모두 채우면… 이 페이지가 열려요. 🔓",
+    blurb: "20개의 업적을 모으는 컬렉션. 모두 채우면… 이 페이지가 열려요. 🔓",
     mock: (
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 5 }}>
         {["🌱", "🐱", "💖", "📷", "🌸", "💌", "🔮", "🏆"].map((e, i) => (
@@ -371,6 +357,7 @@ export default function Showcase() {
   const [got, setGot] = useState(0);
   const [totalAch, setTotalAch] = useState(0);
   const [progress, setProgress] = useState(0);
+  const [cine, setCine] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
   // 잠금 판정: 모든 업적 달성 여부
@@ -382,6 +369,14 @@ export default function Showcase() {
       setPhase(done === list.length && list.length > 0 ? "open" : "locked");
     });
   }, []);
+
+  // 첫 방문이면 시네마틱 자동재생 (1회)
+  useEffect(() => {
+    if (phase !== "open") return;
+    try { if (!localStorage.getItem("showcase-cine-seen")) setCine(true); } catch {}
+  }, [phase]);
+
+  const endCine = () => { setCine(false); try { localStorage.setItem("showcase-cine-seen", "1"); } catch {} };
 
   // 스크롤 등장 애니메이션 + 진행바
   useEffect(() => {
@@ -456,6 +451,9 @@ export default function Showcase() {
   // ── 열림: 풀 쇼케이스 ──
   return (
     <main ref={rootRef} style={{ maxWidth: 460, margin: "0 auto", padding: "0 0 60px", position: "relative", overflowX: "clip" }}>
+      {/* 인트로 시네마틱 (첫 방문 자동재생 / 다시보기) */}
+      {cine && <CinematicOverlay onDone={endCine} />}
+
       {/* 배경에 은은히 떠다니는 장식 (클릭 통과) */}
       <div aria-hidden style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none", zIndex: 0 }}>
         {BG.map((b, i) => (
@@ -479,6 +477,7 @@ export default function Showcase() {
           <div className="sparkle" style={{ fontSize: 11, letterSpacing: 2, color: "#B85C82" }}>OUR LITTLE WORLD · ALL SCREENS</div>
           <h1 style={{ fontSize: 24, color: "#B85C82", margin: "8px 0 4px", lineHeight: 1.4 }}>한눈에 보는 우리의 1000일 🎞️</h1>
           <p style={{ fontSize: 12, color: "#8A7A85", margin: 0 }}>스크롤하면 모든 화면이 하나씩 펼쳐져요</p>
+          <button onClick={() => setCine(true)} className="chip" style={{ cursor: "pointer", border: "none", marginTop: 12, fontSize: 11 }}>🎬 인트로 영상 다시보기</button>
           <div className="floaty" style={{ display: "flex", justifyContent: "center", marginTop: 14 }}>
             <CharacterReaction mood="happy" who="boy" size={92} />
             <span style={{ marginLeft: -22 }}><CharacterReaction mood="excited" who="girl" size={92} /></span>
@@ -500,7 +499,7 @@ export default function Showcase() {
               }}
             >
               <div className="stagger" style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 9 }}>
-                <span className="num-badge" style={{ background: "var(--rose)", color: "#fff", borderRadius: 999, minWidth: 26, height: 22, padding: "0 8px", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 11, boxShadow: "0 2px 0 rgba(124,90,150,0.25)" }}>{s.n}</span>
+                <span className="num-badge" style={{ background: "var(--rose)", color: "#fff", borderRadius: 999, minWidth: 26, height: 22, padding: "0 8px", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 11, boxShadow: "0 2px 0 rgba(124,90,150,0.25)" }}>{String(i + 1).padStart(2, "0")}</span>
                 <PixelIcon name={s.icon} size={18} />
                 <span style={{ fontSize: 14, color: "#B85C82", fontWeight: 700 }}>{s.title}</span>
                 <span style={{ marginLeft: "auto", fontSize: 11, color: "#C9A0B4" }}>→</span>

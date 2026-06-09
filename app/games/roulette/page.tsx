@@ -7,6 +7,7 @@ import GameIntro from "@/components/GameIntro";
 import CharacterReaction from "@/components/CharacterReaction";
 import { getProgress, spendTicket } from "@/lib/progressClient";
 import { markFlag } from "@/lib/flags";
+import { playSpin, playWin, playWrong } from "@/lib/sfx";
 
 const TOTAL = WISHES.reduce((s, w) => s + w.weight, 0);
 // 각 칸의 시작 각도/크기 (꼭대기 0°, 시계방향)
@@ -67,6 +68,7 @@ export default function RoulettePage() {
 
   const spin = () => {
     if (spinning || !tickets || tickets < 1) return;
+    playSpin();
     setSpinning(true);
     setResult(null);
     setTickets((t) => Math.max(0, (t ?? 1) - 1));   // 즉시 반영
@@ -88,6 +90,7 @@ export default function RoulettePage() {
     setTimeout(() => {
       setSpinning(false);
       setResult(i);
+      if (WISHES[i].kind === "miss") playWrong(); else playWin();
       if (WISHES[i].kind !== "miss") {
         fetch("/api/coupons", {
           method: "POST", headers: { "Content-Type": "application/json" },

@@ -12,6 +12,7 @@ import DateModal from "@/components/DateModal";
 import PixelIcon from "@/components/PixelIcon";
 import { Stage, STAGES, HEART_PIECES, CAT_INTRO, CAT_EVENTS, CAT_CONGRATS } from "@/lib/gameData";
 import { getProgress, addCollected, addHeart, addTickets, resetProgress } from "@/lib/progressClient";
+import { playMeow, playCollect, playPop, playSuccess, playWrong, playWin } from "@/lib/sfx";
 
 export default function MapPage() {
   const router = useRouter();
@@ -64,6 +65,7 @@ export default function MapPage() {
 
   const openMemory = useCallback((s: Stage) => {
     setModal(s);
+    playPop();
     setCollected((c) => {
       if (c.includes(s.id)) return c;
       saveSpot(s.id);
@@ -98,8 +100,10 @@ export default function MapPage() {
     if (success) {
       setCollected((c) => (c.includes("ch:" + s.id) ? c : [...c, "ch:" + s.id]));
       saveSpot("ch:" + s.id);
+      playSuccess();
       reward(1, "미션 성공!");
     } else {
+      playWrong();
       showToast("아쉽다! 추억은 열어줄게 💗");
     }
     openMemory(s);
@@ -111,6 +115,7 @@ export default function MapPage() {
       const next = [...prev, id];
       const p = addHeart(id); // localStorage 저장 + 티켓 +1
       setTickets(p.tickets);
+      playCollect();
       showToast(`💗 하트 조각 발견! (${next.length}/${HEART_PIECES.length}) · 🎟 +1`);
       return next;
     });
@@ -118,6 +123,7 @@ export default function MapPage() {
 
   // 고양이가 다가와서 말 걸기
   const onCatTalk = useCallback(() => {
+    playMeow();
     setCollected((c) => {
       if (!c.includes("cat-intro")) { setDialog({ lines: CAT_INTRO, intro: true }); return c; }
       const idx = CAT_EVENTS.findIndex((_, i) => !c.includes("cat-ev:" + i));
@@ -149,7 +155,7 @@ export default function MapPage() {
 
   const onGoal = useCallback(() => {
     setCollected((c) => {
-      if (!c.includes("reunion")) setCelebrate(true);
+      if (!c.includes("reunion")) { setCelebrate(true); playWin(); }
       return c;
     });
   }, []);

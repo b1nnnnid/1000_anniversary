@@ -117,14 +117,6 @@ export default function UsHub() {
             <rect x="100" y="250" width="130" height="48" fill="#C49A6E" /><rect x="100" y="250" width="130" height="6" fill="#B0865A" />
             <rect x="108" y="276" width="6" height="22" fill="#A87C50" /><rect x="216" y="276" width="6" height="22" fill="#A87C50" />
           </g>
-          {/* 슬라이드쇼 */}
-          <g className="hot" onClick={go("/slideshow")}>
-            <g className="obj">
-              <rect x="110" y="204" width="72" height="46" fill="#3F3B45" /><rect x="116" y="210" width="60" height="34" fill="#9FC7E8" />
-              <path d="M146 227c0-5-8-6-8 0 0 4 8 9 8 9s8-5 8-9c0-6-8-5-8 0Z" fill="#fff" />
-            </g>
-            <rect className="ring" x="106" y="200" width="80" height="54" rx="8" />
-          </g>
           {/* 포토부스 */}
           <g className="hot" onClick={go("/photobooth")}>
             <g className="obj">

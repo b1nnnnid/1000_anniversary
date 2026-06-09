@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import PixelIcon from "@/components/PixelIcon";
 import HelpModal from "@/components/HelpModal";
 import { toggleBgm, isPlaying } from "@/lib/bgm";
+import { playClick, playLocked } from "@/lib/sfx";
 import { getProgress } from "@/lib/progressClient";
 import { getUnlocks } from "@/lib/unlocks";
 import { getFlags } from "@/lib/flags";
@@ -52,7 +53,7 @@ export default function GameDock({ onHome, gamesLocked = false, onLockedTry, onS
       <div style={{ position: "absolute", top: 4, right: 4, zIndex: 30, display: "flex", flexDirection: "column", gap: 8 }}>
         {items.map((it) => (
           <button key={it.label} aria-label={it.label + (it.locked ? " (잠김)" : "")}
-            onClick={() => (it.locked ? it.onLocked?.() : it.act())}
+            onClick={() => { if (it.locked) { playLocked(); it.onLocked?.(); } else { playClick(); it.act(); } }}
             style={{
               width: 50, height: 50, borderRadius: 14, border: "2px solid #fff",
               background: it.locked ? "#E2DCE0" : "var(--blush)", boxShadow: "0 3px 0 rgba(124,90,150,0.25)",

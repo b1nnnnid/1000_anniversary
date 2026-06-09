@@ -26,7 +26,6 @@ export const ACHIEVEMENTS: Achievement[] = [
   // ── 우리의 공간 콘텐츠 ──
   { id: "together", emoji: "⏳", title: "시간 여행자", desc: "함께한 시간을 확인했어요", done: (x) => x.flags.includes("together") },
   { id: "album", emoji: "🖼️", title: "추억 큐레이터", desc: "추억 앨범을 열어봤어요", done: (x) => x.flags.includes("album") },
-  { id: "slideshow", emoji: "🎞️", title: "우리들의 영화관", desc: "추억 슬라이드쇼를 봤어요", done: (x) => x.flags.includes("slideshow") },
   { id: "letters", emoji: "💌", title: "편지 수집가", desc: "숨겨둔 편지를 모두 열었어요", done: (x) => LETTERS.every((l) => x.unlocks.includes("letter:" + l.id)) },
   { id: "wishes", emoji: "🎟️", title: "소원 지기", desc: "소원권 보관함을 열어봤어요", done: (x) => x.flags.includes("wishes") },
   { id: "kakao", emoji: "💬", title: "대화 분석가", desc: "카톡 대화를 분석했어요", done: (x) => x.flags.includes("kakao") },
