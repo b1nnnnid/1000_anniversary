@@ -64,6 +64,62 @@ function Mini({ children, bg = "#FBF3F8", pad = 10 }: { children: ReactNode; bg?
   );
 }
 
+// 땀 뻘뻘 흘리며 컴퓨터로 작업하는 여자 캐릭터 (픽셀 애니메이션)
+function GirlAtComputer({ size = 104 }: { size?: number }) {
+  return (
+    <svg width={size} height={size * 0.8} viewBox="0 0 120 96" shapeRendering="crispEdges"
+      role="img" aria-label="컴퓨터로 작업하며 땀 흘리는 캐릭터" style={{ display: "block" }}>
+      {/* 데스크 */}
+      <rect x="0" y="70" width="120" height="4" fill="#D6B488" />
+      <rect x="0" y="74" width="120" height="22" fill="#C49A6E" />
+      {/* 머리카락 뒤 + 옆머리 */}
+      <rect x="46" y="12" width="32" height="30" fill="#E889AC" />
+      <rect x="44" y="16" width="6" height="26" fill="#E889AC" />
+      <rect x="74" y="16" width="6" height="26" fill="#E889AC" />
+      {/* 얼굴 */}
+      <rect x="52" y="20" width="20" height="20" fill="#FBE0CC" />
+      {/* 앞머리 */}
+      <rect x="50" y="14" width="24" height="8" fill="#E889AC" />
+      <rect x="50" y="20" width="6" height="5" fill="#E889AC" />
+      <rect x="68" y="20" width="6" height="5" fill="#E889AC" />
+      {/* 살짝 올라간 부드러운 눈썹 (귀엽고 야무진) */}
+      <rect x="54" y="27" width="2" height="2" fill="#D79AAE" />
+      <rect x="56" y="26" width="3" height="2" fill="#D79AAE" />
+      <rect x="61" y="26" width="3" height="2" fill="#D79AAE" />
+      <rect x="64" y="27" width="2" height="2" fill="#D79AAE" />
+      {/* 크고 초롱초롱한 눈 */}
+      <rect x="54" y="29" width="5" height="4" fill="#4A3A2E" />
+      <rect x="65" y="29" width="5" height="4" fill="#4A3A2E" />
+      <rect x="55" y="29" width="2" height="2" fill="#FFFFFF" />
+      <rect x="66" y="29" width="2" height="2" fill="#FFFFFF" />
+      <rect x="57" y="32" width="1" height="1" fill="#FFFFFF" />
+      <rect x="68" y="32" width="1" height="1" fill="#FFFFFF" />
+      {/* 볼 홍조 + 앙 다문 작은 입 */}
+      <rect x="52" y="34" width="3" height="3" fill="#F4A3BE" />
+      <rect x="69" y="34" width="3" height="3" fill="#F4A3BE" />
+      <rect x="60" y="36" width="4" height="3" fill="#C96A6A" />
+      <rect x="61" y="37" width="2" height="1" fill="#E89AA0" />
+      {/* 상의 */}
+      <rect x="50" y="40" width="24" height="14" fill="#FFFFFF" />
+      <rect x="58" y="40" width="8" height="3" fill="#F4B8CC" />
+      {/* 타이핑하는 팔 (좌우 번갈아) */}
+      <g className="gw-typeL"><rect x="44" y="46" width="7" height="16" fill="#FBE0CC" /><rect x="43" y="60" width="10" height="6" fill="#FBE0CC" /></g>
+      <g className="gw-typeR"><rect x="73" y="46" width="7" height="16" fill="#FBE0CC" /><rect x="71" y="60" width="10" height="6" fill="#FBE0CC" /></g>
+      {/* 노트북 */}
+      <rect x="40" y="50" width="44" height="3" className="gw-screen" fill="#BFE0F5" />
+      <rect x="40" y="52" width="44" height="20" fill="#5A4A55" />
+      <rect x="59" y="59" width="6" height="6" fill="#E8799F" />
+      <rect x="36" y="70" width="52" height="5" fill="#7A6A75" />
+      {/* 얼굴에 흐르는 땀 두 방울 */}
+      <g className="gw-drip"><rect x="71" y="25" width="3" height="4" fill="#9FD9F0" /><rect x="72" y="24" width="1" height="2" fill="#D6F2FF" /></g>
+      <g className="gw-drip" style={{ animationDelay: ".75s" }}><rect x="50" y="27" width="3" height="4" fill="#9FD9F0" /></g>
+      {/* 머리 위로 튀는 땀 */}
+      <g className="gw-fling" style={{ animationDelay: ".2s" }}><rect x="80" y="16" width="4" height="5" fill="#9FD9F0" /><rect x="81" y="15" width="2" height="2" fill="#D6F2FF" /></g>
+      <g className="gw-fling2" style={{ animationDelay: "1s" }}><rect x="40" y="18" width="4" height="5" fill="#9FD9F0" /></g>
+    </svg>
+  );
+}
+
 const tile = (label: string, emoji: string) => (
   <div className="stagger" style={{ background: "#fff", borderRadius: 9, padding: "9px 3px", textAlign: "center", boxShadow: "0 2px 0 rgba(124,90,150,0.1)" }}>
     <span style={{ fontSize: 20 }}>{emoji}</span>
@@ -476,8 +532,8 @@ export default function Showcase() {
 
         {/* 크레딧 (편집용 플레이스홀더) */}
         <section className="reveal" style={{ marginTop: 22, border: "3px solid #fff", background: "#FBF3F8", boxShadow: "0 0 0 3px var(--lav), 4px 6px 0 rgba(124,90,150,0.22)", borderRadius: 16, padding: "18px 16px", textAlign: "center" }}>
-          <div className="stagger floaty" style={{ display: "flex", justifyContent: "center", marginBottom: 8 }}>
-            <CharacterReaction mood="happy" who="girl" size={72} />
+          <div className="stagger" style={{ display: "flex", justifyContent: "center", marginBottom: 8 }}>
+            <GirlAtComputer size={112} />
           </div>
           <div className="stagger" style={{ fontSize: 14, color: "#B85C82", fontWeight: 700 }}>{CREDIT.title}</div>
           <div className="stagger" style={{ fontSize: 11.5, color: "#8A7A85", lineHeight: 1.8, marginTop: 7 }}>

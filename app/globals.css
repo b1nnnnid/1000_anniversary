@@ -107,3 +107,18 @@ button { cursor: pointer; }
 @keyframes trailFill { from { width: 0 } }
 .reveal.in .trail-fill { animation: trailFill 1.5s .25s cubic-bezier(.3,.7,.2,1) both; }
 @media (prefers-reduced-motion: reduce) { .reveal.in .trail-fill { animation: none; } }
+
+/* 땀 흘리며 컴퓨터 작업하는 캐릭터 */
+@keyframes gwTypeL { 0%,100%{transform:translateY(0)} 50%{transform:translateY(2px)} }
+@keyframes gwTypeR { 0%,100%{transform:translateY(2px)} 50%{transform:translateY(0)} }
+.gw-typeL { animation: gwTypeL .5s ease-in-out infinite; }
+.gw-typeR { animation: gwTypeR .5s ease-in-out infinite; }
+@keyframes gwDrip { 0%{opacity:0;transform:translateY(-2px)} 15%{opacity:1} 75%{opacity:1} 100%{opacity:0;transform:translateY(11px)} }
+.gw-drip { animation: gwDrip 1.5s ease-in infinite; }
+@keyframes gwScreen { 0%,100%{opacity:1} 50%{opacity:.6} }
+.gw-screen { animation: gwScreen 1.3s ease-in-out infinite; }
+@keyframes gwFling { 0%{opacity:0;transform:translate(0,0)} 25%{opacity:1} 100%{opacity:0;transform:translate(6px,-7px)} }
+@keyframes gwFling2 { 0%{opacity:0;transform:translate(0,0)} 25%{opacity:1} 100%{opacity:0;transform:translate(-6px,-7px)} }
+.gw-fling { animation: gwFling 1.4s ease-out infinite; }
+.gw-fling2 { animation: gwFling2 1.4s ease-out infinite; }
+@media (prefers-reduced-motion: reduce) { .gw-typeL,.gw-typeR,.gw-drip,.gw-screen,.gw-fling,.gw-fling2 { animation: none; } }
