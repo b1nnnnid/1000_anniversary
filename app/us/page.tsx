@@ -186,8 +186,11 @@ export default function UsHub() {
         </svg>
 
         {/* ===== 가운데 커플 (크게 + 표정 + 말풍선) — SVG 위 HTML 오버레이 ===== */}
-        <div onClick={poke} className="floaty"
+        {/* 정렬용 래퍼(translate로 중앙 고정)와 흔들림 애니메이션 래퍼를 분리.
+            .floaty의 keyframes transform이 인라인 translate(-50%,-50%)를 덮어쓰지 않도록 함 */}
+        <div onClick={poke}
           style={{ position: "absolute", left: "50%", top: "63%", transform: "translate(-50%,-50%)", cursor: "pointer", textAlign: "center", width: "100%" }}>
+          <div className="floaty">
           <div style={{
             display: "inline-block", background: "#fff", border: "2px solid #E2B2CB", borderRadius: 12,
             padding: "6px 14px", fontSize: 13, color: "#B85C82", fontFamily: "var(--font-pixel)",
@@ -199,6 +202,7 @@ export default function UsHub() {
           <div style={{ display: "flex", justifyContent: "center", alignItems: "flex-end" }}>
             <CharacterReaction mood={MOODS[mood]} who="boy" size={150} />
             <span style={{ marginLeft: -34 }}><CharacterReaction mood={MOODS[mood]} who="girl" size={150} /></span>
+          </div>
           </div>
         </div>
       </div>
