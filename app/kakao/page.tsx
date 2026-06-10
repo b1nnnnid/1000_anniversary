@@ -77,6 +77,8 @@ function Dashboard({ a: raw }: { a: Analysis }) {
     byHour: new Array(24).fill(0), topWeekday: null, longestMsg: null, firstDate: null, lastDate: null,
     ...raw,
   };
+  // 새 지표(byHour 등)가 있는 분석만 재미 카드 노출 — 예전 분석은 데이터가 없어 숨김
+  const hasFun = Array.isArray(raw.byHour) && raw.byHour.length === 24;
   const card: React.CSSProperties = { background: "#fff", borderRadius: 14, padding: "14px 16px", marginBottom: 12, boxShadow: "0 3px 0 rgba(124,90,150,0.1)" };
   const ampm = a.peakHour < 12 ? "오전" : "오후";
   const h12 = a.peakHour % 12 === 0 ? 12 : a.peakHour % 12;
@@ -93,42 +95,54 @@ function Dashboard({ a: raw }: { a: Analysis }) {
         </div>
       </div>
 
+      {!hasFun && (
+        <p style={{ textAlign: "center", fontSize: 11.5, color: "#B07E96", background: "var(--cream)", borderRadius: 10, padding: "9px 12px", margin: "0 0 12px" }}>
+          ✨ 이 분석은 예전 버전이라 새 재미 요소가 없어요. <b>＋ 새 분석</b>으로 다시 올리면 더 많이 볼 수 있어요!
+        </p>
+      )}
+
       {/* 재미 요소: 웃음·사랑·하트 하이라이트 */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 12 }}>
-        {[
-          { emoji: "😂", v: a.laughs, label: "웃음" },
-          { emoji: "💕", v: a.loveWords, label: "사랑표현" },
-          { emoji: "❤️", v: a.hearts, label: "하트" },
-        ].map((x, i) => (
-          <div key={x.label} className="k-pop" style={{ background: "linear-gradient(135deg,#fff,var(--cream))", borderRadius: 14, padding: "12px 6px", textAlign: "center", boxShadow: "0 2px 0 rgba(124,90,150,0.1)", animationDelay: `${i * 0.1}s` }}>
-            <div style={{ fontSize: 22 }}>{x.emoji}</div>
-            <p style={{ margin: "3px 0 0", fontSize: 17, fontWeight: 800, color: "#E8556F" }}><CountUp target={x.v} /></p>
-            <p style={{ margin: 0, fontSize: 10.5, color: "#9A8A95" }}>{x.label}</p>
-          </div>
-        ))}
-      </div>
+      {hasFun && (
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 12 }}>
+          {[
+            { emoji: "😂", v: a.laughs, label: "웃음" },
+            { emoji: "💕", v: a.loveWords, label: "사랑표현" },
+            { emoji: "❤️", v: a.hearts, label: "하트" },
+          ].map((x, i) => (
+            <div key={x.label} className="k-pop" style={{ background: "linear-gradient(135deg,#fff,var(--cream))", borderRadius: 14, padding: "12px 6px", textAlign: "center", boxShadow: "0 2px 0 rgba(124,90,150,0.1)", animationDelay: `${i * 0.1}s` }}>
+              <div style={{ fontSize: 22 }}>{x.emoji}</div>
+              <p style={{ margin: "3px 0 0", fontSize: 17, fontWeight: 800, color: "#E8556F" }}><CountUp target={x.v} /></p>
+              <p style={{ margin: 0, fontSize: 10.5, color: "#9A8A95" }}>{x.label}</p>
+            </div>
+          ))}
+        </div>
+      )}
 
       <div style={card}><p style={{ margin: "0 0 10px", fontSize: 13, color: "#B85C82" }}>💌 누가 더 많이 보냈을까</p><Bar items={a.bySender} color="#E8799F" unit="개" /></div>
       <div style={card}><p style={{ margin: "0 0 10px", fontSize: 13, color: "#B85C82" }}>👋 누가 먼저 연락했을까</p><Bar items={a.firstByDay} color="#C9A7F0" unit="일" /></div>
 
       {/* 시간대 활동 */}
-      <div style={card}>
-        <p style={{ margin: "0 0 4px", fontSize: 13, color: "#B85C82" }}>⏰ 우리의 대화 시간대</p>
-        <p style={{ margin: "0 0 10px", fontSize: 12, color: "#8A7A85" }}>가장 활발한 시간: <b style={{ color: "#E8556F" }}>{ampm} {h12}시</b></p>
-        <HourChart byHour={a.byHour} peak={a.peakHour} />
-      </div>
+      {hasFun && (
+        <div style={card}>
+          <p style={{ margin: "0 0 4px", fontSize: 13, color: "#B85C82" }}>⏰ 우리의 대화 시간대</p>
+          <p style={{ margin: "0 0 10px", fontSize: 12, color: "#8A7A85" }}>가장 활발한 시간: <b style={{ color: "#E8556F" }}>{ampm} {h12}시</b></p>
+          <HourChart byHour={a.byHour} peak={a.peakHour} />
+        </div>
+      )}
 
       {/* 요일 + 연속대화 */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 12 }}>
-        <div style={{ ...card, marginBottom: 0, textAlign: "center" }}>
-          <p style={{ margin: 0, fontSize: 12, color: "#8A7A85" }}>제일 수다스러운 요일</p>
-          <p style={{ margin: "4px 0 0", fontSize: 22, color: "#E8556F" }}>{a.topWeekday ? `${WD[a.topWeekday.day]}요일` : "-"}</p>
+      {hasFun && (
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 12 }}>
+          <div style={{ ...card, marginBottom: 0, textAlign: "center" }}>
+            <p style={{ margin: 0, fontSize: 12, color: "#8A7A85" }}>제일 수다스러운 요일</p>
+            <p style={{ margin: "4px 0 0", fontSize: 22, color: "#E8556F" }}>{a.topWeekday ? `${WD[a.topWeekday.day]}요일` : "-"}</p>
+          </div>
+          <div style={{ ...card, marginBottom: 0, textAlign: "center" }}>
+            <p style={{ margin: 0, fontSize: 12, color: "#8A7A85" }}>최장 연속 대화 🔥</p>
+            <p style={{ margin: "4px 0 0", fontSize: 22, color: "#E8556F" }}><CountUp target={a.longestStreak} suffix="일" /></p>
+          </div>
         </div>
-        <div style={{ ...card, marginBottom: 0, textAlign: "center" }}>
-          <p style={{ margin: 0, fontSize: 12, color: "#8A7A85" }}>최장 연속 대화 🔥</p>
-          <p style={{ margin: "4px 0 0", fontSize: 22, color: "#E8556F" }}><CountUp target={a.longestStreak} suffix="일" /></p>
-        </div>
-      </div>
+      )}
 
       <div style={card}><p style={{ margin: "0 0 10px", fontSize: 13, color: "#B85C82" }}>🔤 제일 많이 쓴 말</p><Bar items={a.words} color="#9FC7E8" unit="번" /></div>
       <div style={card}>
@@ -264,7 +278,7 @@ export default function KakaoPage() {
         @keyframes k-bar { from { width:0;} to { width:100%;} }
         @keyframes k-pop { from { opacity:0; transform: scale(.8);} 70% { transform: scale(1.05);} 100% { opacity:1; transform: scale(1);} }
         .k-pop { animation: k-pop .45s ease-out both; }
-        @media (prefers-reduced-motion: reduce){ [class^='k-'], .slideup { animation: none !important; } }
+        @media (prefers-reduced-motion: reduce){ .k-pop, .slideup { animation: none !important; } }
       `}</style>
 
       <Link href="/us" style={{ color: "#B85C82", fontSize: 13, textDecoration: "none" }}>← 우리의 공간</Link>

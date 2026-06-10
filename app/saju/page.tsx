@@ -53,7 +53,7 @@ function SajuContent() {
         @keyframes sj-twinkle { 0%,100%{opacity:.25; transform:scale(.7);} 50%{opacity:1; transform:scale(1.1);} }
         @keyframes sj-orbit { from { transform: rotate(0);} to { transform: rotate(360deg);} }
         .sj-card { animation: sj-rise .55s ease-out both; }
-        @media (prefers-reduced-motion: reduce){ .sj-card,[class^='sj-']{ animation:none !important; } }
+        @media (prefers-reduced-motion: reduce){ .sj-card{ animation:none !important; } }
       `}</style>
 
       <Link href="/us" style={{ color: "#B85C82", fontSize: 13, textDecoration: "none" }}>← 우리의 공간</Link>
