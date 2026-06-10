@@ -83,7 +83,7 @@ function Dashboard({ a: raw }: { a: Analysis }) {
   const ampm = a.peakHour < 12 ? "오전" : "오후";
   const h12 = a.peakHour % 12 === 0 ? 12 : a.peakHour % 12;
   return (
-    <div className="slideup">
+    <div className="slideup k-dash">
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 12 }}>
         <div style={{ ...card, marginBottom: 0, textAlign: "center" }}>
           <p style={{ margin: 0, fontSize: 12, color: "#8A7A85" }}>총 메시지</p>
@@ -110,7 +110,7 @@ function Dashboard({ a: raw }: { a: Analysis }) {
             { emoji: "❤️", v: a.hearts, label: "하트" },
           ].map((x, i) => (
             <div key={x.label} className="k-pop" style={{ background: "linear-gradient(135deg,#fff,var(--cream))", borderRadius: 14, padding: "12px 6px", textAlign: "center", boxShadow: "0 2px 0 rgba(124,90,150,0.1)", animationDelay: `${i * 0.1}s` }}>
-              <div style={{ fontSize: 22 }}>{x.emoji}</div>
+              <div className="k-bob" style={{ fontSize: 22, animationDelay: `${i * 0.3}s` }}>{x.emoji}</div>
               <p style={{ margin: "3px 0 0", fontSize: 17, fontWeight: 800, color: "#E8556F" }}><CountUp target={x.v} /></p>
               <p style={{ margin: 0, fontSize: 10.5, color: "#9A8A95" }}>{x.label}</p>
             </div>
@@ -161,7 +161,7 @@ function Dashboard({ a: raw }: { a: Analysis }) {
 
       {a.busiestDay && (
         <div style={{ ...card, textAlign: "center" }}>
-          <p style={{ margin: 0, fontSize: 13, color: "#B85C82" }}>🔥 가장 폭발한 날</p>
+          <p style={{ margin: 0, fontSize: 13, color: "#B85C82" }}><span className="k-bob" style={{ display: "inline-block" }}>🔥</span> 가장 폭발한 날</p>
           <p style={{ margin: "6px 0 0", fontSize: 16, color: "#5A4A55" }}>{a.busiestDay.date}</p>
           <p style={{ margin: "2px 0 0", fontSize: 13, color: "#E8556F" }}>하루에 {a.busiestDay.count.toLocaleString()}개!</p>
         </div>
@@ -277,8 +277,23 @@ export default function KakaoPage() {
         @keyframes k-fade { 0% { opacity:0; transform: translateY(6px);} 100% { opacity:1; transform:none;} }
         @keyframes k-bar { from { width:0;} to { width:100%;} }
         @keyframes k-pop { from { opacity:0; transform: scale(.8);} 70% { transform: scale(1.05);} 100% { opacity:1; transform: scale(1);} }
+        @keyframes k-rise { from { opacity:0; transform: translateY(16px) scale(.98);} to { opacity:1; transform:none;} }
+        @keyframes k-bob { 0%,100% { transform: translateY(0);} 50% { transform: translateY(-4px);} }
         .k-pop { animation: k-pop .45s ease-out both; }
-        @media (prefers-reduced-motion: reduce){ .k-pop, .slideup { animation: none !important; } }
+        .k-dash > * { animation: k-rise .55s both; }
+        .k-dash > *:nth-child(2){ animation-delay:.06s; }
+        .k-dash > *:nth-child(3){ animation-delay:.12s; }
+        .k-dash > *:nth-child(4){ animation-delay:.18s; }
+        .k-dash > *:nth-child(5){ animation-delay:.24s; }
+        .k-dash > *:nth-child(6){ animation-delay:.30s; }
+        .k-dash > *:nth-child(7){ animation-delay:.36s; }
+        .k-dash > *:nth-child(8){ animation-delay:.42s; }
+        .k-dash > *:nth-child(9){ animation-delay:.48s; }
+        .k-dash > *:nth-child(10){ animation-delay:.54s; }
+        .k-dash > *:nth-child(11){ animation-delay:.60s; }
+        .k-dash > *:nth-child(12){ animation-delay:.66s; }
+        .k-bob { animation: k-bob 2.6s ease-in-out infinite; }
+        @media (prefers-reduced-motion: reduce){ .k-pop, .slideup, .k-dash > * { animation: none !important; } }
       `}</style>
 
       <Link href="/us" style={{ color: "#B85C82", fontSize: 13, textDecoration: "none" }}>← 우리의 공간</Link>
