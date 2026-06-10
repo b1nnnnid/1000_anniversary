@@ -75,6 +75,24 @@ const ICONS: Record<string, Icon> = {
   mute: { pal: { k, r: "#E24B4A" }, rows: [
     "            ", "     kk     ", "    kkk     ", "  kkkkk r r ", "kkkkkkk rr  ", "kkkkkkk  r  ",
     "kkkkkkk rr  ", "  kkkkk r r ", "    kkk     ", "     kk     ", "            ", "            "] },
+  fire: { pal: { r: "#E24B4A", o, y: "#FBE6A8" }, rows: [
+    "     r      ", "    rr      ", "    rro     ", "   rroo     ", "   rooy     ", "  rrooy     ",
+    "  roooyy    ", "  rooyyy    ", "  roooyy    ", "   roooy    ", "    rooy    ", "     oo     "] },
+  laugh: { pal: { o, g, k }, rows: [
+    "   gggggg   ", "  goooooog  ", " gooooooooo ", " gokoookoog ", " goooooooog ", " gooooooooo ",
+    " gokoooookg ", " gookkkkoog ", " gooooooog  ", "  goooooog  ", "   gggggg   ", "            "] },
+  palette: { pal: { n: "#D9B68A", R, b, v, o, m, k }, rows: [
+    "   nnnnnn   ", "  nnnnnnnn  ", " nnRnnnbnnn ", " nnnnnnnnnn ", " nvnnnnnonn ", " nnnnnnnnnn ",
+    " nnnnnnkknn ", " nnmnnnnknn ", "  nnnnnnnn  ", "   nnnnnn   ", "            ", "            "] },
+  number: { pal: { R }, rows: [
+    "            ", "   R    R   ", "   R    R   ", " RRRRRRRRRR ", "   R    R   ", "   R    R   ",
+    " RRRRRRRRRR ", "   R    R   ", "   R    R   ", "            ", "            ", "            "] },
+  couple: { pal: { R, b, s: "#FBE0CC", t }, rows: [
+    "            ", "   RR  tt   ", "  RRRR tttt ", "  RssR tsst ", "  RssR tsst ", "   ss   ss  ",
+    "  RRRR bbbb ", "  RRRR bbbb ", "   RR   bb  ", "   RR   bb  ", "            ", "            "] },
+  word: { pal: { R, W, k }, rows: [
+    "            ", " RRRRRRRRRR ", " RWWWWWWWWR ", " RWkkWkkkWR ", " RWWWWWWWWR ", " RWkkkWkkWR ",
+    " RWWWWWWWWR ", " RWkWkkkkWR ", " RRRRRRRRRR ", "            ", "            ", "            "] },
 };
 
 export default function PixelIcon({ name, size = 16, style }: { name: string; size?: number; style?: React.CSSProperties }) {

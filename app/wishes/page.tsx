@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { markFlag } from "@/lib/flags";
 import { Coupon, listCoupons, setCouponUsed } from "@/lib/couponsClient";
+import PixelIcon from "@/components/PixelIcon";
 
 const PAGE_BG = "#F3E7EF";
 
@@ -29,7 +30,7 @@ export default function WishesPage() {
   return (
     <main style={{ maxWidth: 460, margin: "0 auto", padding: "20px 16px 36px", minHeight: "100dvh" }}>
       <Link href="/us" style={{ color: "#B85C82", fontSize: 13, textDecoration: "none" }}>← 우리의 공간</Link>
-      <h1 style={{ fontSize: 20, color: "#B85C82", textAlign: "center", margin: "12px 0 4px" }}>소원권 보관함 🎟</h1>
+      <h1 style={{ fontSize: 20, color: "#B85C82", textAlign: "center", margin: "12px 0 4px" }}>소원권 보관함 <PixelIcon name="ticket" size={18} /></h1>
       <p style={{ fontSize: 12, color: "#8A7A85", textAlign: "center", margin: "0 0 16px" }}>룰렛에서 뽑은 소원권을 모아둬요</p>
 
       {/* 통계 배너 */}

@@ -6,6 +6,7 @@ import { STAGES, Stage } from "@/lib/gameData";
 import { sortedTimeline, timelineYear, TimelineItem } from "@/lib/album";
 import { getProgress } from "@/lib/progressClient";
 import { markFlag } from "@/lib/flags";
+import PixelIcon from "@/components/PixelIcon";
 
 type Tab = "journey" | "timeline";
 
@@ -39,7 +40,7 @@ export default function AlbumPage() {
   return (
     <main style={{ maxWidth: 480, margin: "0 auto", padding: "20px 16px 36px", minHeight: "100dvh" }}>
       <Link href="/us" style={{ color: "#B85C82", fontSize: 13, textDecoration: "none" }}>← 우리의 공간</Link>
-      <h1 style={{ fontSize: 20, color: "#B85C82", textAlign: "center", margin: "12px 0 12px" }}>추억 앨범 📷</h1>
+      <h1 style={{ fontSize: 20, color: "#B85C82", textAlign: "center", margin: "12px 0 12px" }}>추억 앨범 <PixelIcon name="camera" size={18} /></h1>
 
       {/* 탭 */}
       <div style={{ display: "flex", gap: 6, background: "#F1EBF0", borderRadius: 12, padding: 4, marginBottom: 16 }}>

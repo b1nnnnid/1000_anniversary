@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { elapsed } from "@/lib/config";
 import { markFlag } from "@/lib/flags";
+import PixelIcon from "@/components/PixelIcon";
 
 // 기념일: 100·200일 + 1주년 단위 + 1000일 단위
 const MILESTONES: { day: number; label: string }[] = [
@@ -85,7 +86,7 @@ export default function TogetherPage() {
     <main style={{ maxWidth: 460, margin: "0 auto", padding: "20px 18px 40px", minHeight: "100dvh", textAlign: "center" }}>
       <Link href="/us" style={{ color: "#B85C82", fontSize: 13, textDecoration: "none", display: "block", textAlign: "left" }}>← 우리의 공간</Link>
       <p className="sparkle" style={{ fontSize: 12, color: "#B85C82", letterSpacing: 2, marginTop: 16 }}>SINCE 2023.10.08</p>
-      <h1 className="slideup" style={{ fontSize: 22, color: "#B85C82", margin: "6px 0 2px" }}>우리가 함께한 시간 💗</h1>
+      <h1 className="slideup" style={{ fontSize: 22, color: "#B85C82", margin: "6px 0 2px" }}>우리가 함께한 시간 <PixelIcon name="heart" size={18} /></h1>
 
       <div className="pixel-border" style={{ background: "var(--cream)", borderRadius: 18, padding: "22px 16px", margin: "18px 0", animation: "slideup .5s .05s both" }}>
         <p style={{ fontSize: 13, color: "#8A7A85", margin: 0 }}>오늘로</p>

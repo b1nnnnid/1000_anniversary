@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ME, OPPA, zodiacAnimal, starSign, dayElement, compatibility, Person } from "@/lib/fortune";
 import TicketGate from "@/components/TicketGate";
+import PixelIcon from "@/components/PixelIcon";
 
 function CountUp({ target, duration = 1100 }: { target: number; duration?: number }) {
   const [v, setV] = useState(0);
@@ -52,7 +53,7 @@ function SajuContent() {
         <span style={{ position: "absolute", left: "18%", top: 0, fontSize: 12, color: "#CDB8E6", animation: "sj-twinkle 1.8s ease-in-out infinite" }}>✦</span>
         <span style={{ position: "absolute", right: "20%", top: 4, fontSize: 13, color: "#E8799F", animation: "sj-twinkle 2.2s .4s ease-in-out infinite" }}>✧</span>
         <h1 style={{ fontSize: 20, color: "#B85C82", margin: 0, display: "inline-block" }}>
-          커플 사주 · 궁합 <span style={{ display: "inline-block", animation: "sj-bob 3s ease-in-out infinite" }}>🔮</span>
+          커플 사주 · 궁합 <span style={{ display: "inline-block", animation: "sj-bob 3s ease-in-out infinite" }}><PixelIcon name="crystal" size={18} /></span>
         </h1>
       </div>
       <p style={{ fontSize: 11, color: "#A89AA3", textAlign: "center", margin: "0 0 16px" }}>재미로 보는 우리 둘의 기운</p>
@@ -86,7 +87,7 @@ function SajuContent() {
       </div>
 
       <p style={{ textAlign: "center", marginTop: 18 }}>
-        <Link href="/fortune" style={{ fontSize: 13, color: "#B85C82" }}>🌙 오늘의 운세 보러가기 →</Link>
+        <Link href="/fortune" style={{ fontSize: 13, color: "#B85C82" }}><PixelIcon name="moon" size={13} /> 오늘의 운세 보러가기 →</Link>
       </p>
       <p style={{ fontSize: 10, color: "#B8AEB4", textAlign: "center", marginTop: 8 }}>
         ※ 정통 명리학이 아닌 재미용 콘텐츠예요

@@ -45,7 +45,7 @@ export default function LettersPage() {
       <Link href="/us" style={{ color: "#B85C82", fontSize: 13, textDecoration: "none" }}>← 우리의 공간</Link>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "12px 0 4px" }}>
         <h1 style={{ fontSize: 20, color: "#B85C82" }}>
-          숨겨둔 편지함 <span style={{ display: "inline-block", animation: "lt-sealbob 2.6s ease-in-out infinite" }}>💌</span>
+          숨겨둔 편지함 <span style={{ display: "inline-block", animation: "lt-sealbob 2.6s ease-in-out infinite" }}><PixelIcon name="letter" size={18} /></span>
         </h1>
         <span className="chip"><PixelIcon name="ticket" size={14} /> {tickets ?? "..."}</span>
       </div>

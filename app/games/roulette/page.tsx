@@ -5,6 +5,7 @@ import Link from "next/link";
 import { WISHES } from "@/lib/gameData";
 import GameIntro from "@/components/GameIntro";
 import CharacterReaction from "@/components/CharacterReaction";
+import PixelIcon from "@/components/PixelIcon";
 import { getProgress, spendTicket } from "@/lib/progressClient";
 import { addCoupon, listCoupons } from "@/lib/couponsClient";
 import { markFlag } from "@/lib/flags";
@@ -153,7 +154,7 @@ export default function RoulettePage() {
         <div className="slideup">
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <Link href="/map" style={{ color: "#B85C82", fontSize: 13, textDecoration: "none" }}>← 맵으로</Link>
-            <span className="chip">🎟 {tickets ?? "..."}</span>
+            <span className="chip"><PixelIcon name="ticket" size={14} /> {tickets ?? "..."}</span>
           </div>
 
           {/* 가랜드 장식 */}
@@ -165,7 +166,7 @@ export default function RoulettePage() {
               }} />
             ))}
           </div>
-          <h1 style={{ fontSize: 19, color: "#B85C82", margin: "4px 0 16px" }}>소원권 룰렛 🎁</h1>
+          <h1 style={{ fontSize: 19, color: "#B85C82", margin: "4px 0 16px" }}>소원권 룰렛 <PixelIcon name="gift" size={17} /></h1>
 
           <div style={{ position: "relative", width: 296, height: 296, margin: "0 auto" }}>
             <div style={{
@@ -222,7 +223,7 @@ export default function RoulettePage() {
                   <button onClick={spin} style={{
                     background: "#fff", color: "#B85C82", border: "2px solid var(--lav)",
                     borderRadius: 12, padding: "11px 18px", fontSize: 13,
-                  }}>한 번 더! (🎟 {tickets})</button>
+                  }}>한 번 더! (<PixelIcon name="ticket" size={12} /> {tickets})</button>
                 )}
               </div>
               {noTicket && (

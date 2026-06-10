@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import CharacterReaction from "@/components/CharacterReaction";
+import PixelIcon from "@/components/PixelIcon";
 import { Mood } from "@/lib/pixelArt";
 
 const LINES = [
@@ -22,7 +23,7 @@ export default function UsHub() {
   return (
     <main style={{ maxWidth: 440, margin: "0 auto", padding: "12px 12px 24px", minHeight: "100dvh" }}>
       <button onClick={go("/map")} style={{ color: "#B85C82", fontSize: 13, background: "none", border: "none", fontFamily: "var(--font-pixel)" }}>← 맵으로</button>
-      <h1 style={{ fontSize: 19, color: "#B85C82", textAlign: "center", margin: "4px 0 2px" }}>우리집 🏡</h1>
+      <h1 style={{ fontSize: 19, color: "#B85C82", textAlign: "center", margin: "4px 0 2px" }}>우리집 <PixelIcon name="home" size={17} /></h1>
       <p style={{ fontSize: 11, color: "#8A7A85", textAlign: "center", margin: "0 0 8px" }}>반짝이는 가구를 톡 눌러보세요</p>
 
       <div style={{ position: "relative" }}>

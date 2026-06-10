@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ME, OPPA, dailyFortune, coupleTip, todayKey, Person } from "@/lib/fortune";
 import TicketGate from "@/components/TicketGate";
+import PixelIcon from "@/components/PixelIcon";
 
 function CountUp({ target, duration = 900 }: { target: number; duration?: number }) {
   const [v, setV] = useState(0);
@@ -50,10 +51,10 @@ function FortuneCard({ p, dateKey, index }: { p: Person; dateKey: string; index:
           </div>
         ))}
       </div>
-      <p style={{ margin: "0 0 8px", fontSize: 12, color: "#8A7A85", lineHeight: 1.6 }}>💕 {f.love}</p>
+      <p style={{ margin: "0 0 8px", fontSize: 12, color: "#8A7A85", lineHeight: 1.6 }}><PixelIcon name="heart" size={12} /> {f.love}</p>
       <div style={{ display: "flex", gap: 6, fontSize: 11 }}>
-        <span className="chip">🎨 행운색 {f.color}</span>
-        <span className="chip">🔢 행운수 {f.number}</span>
+        <span className="chip"><PixelIcon name="palette" size={13} /> 행운색 {f.color}</span>
+        <span className="chip"><PixelIcon name="number" size={13} /> 행운수 {f.number}</span>
       </div>
     </div>
   );
@@ -80,7 +81,7 @@ export default function FortunePage() {
         <span style={{ position: "absolute", right: "18%", top: 6, fontSize: 14, color: "#CDB8E6", animation: "ft-twinkle 2.2s .4s ease-in-out infinite" }}>✧</span>
         <span style={{ position: "absolute", right: "30%", top: -4, fontSize: 9, color: "#E8799F", animation: "ft-twinkle 1.5s .7s ease-in-out infinite" }}>⋆</span>
         <h1 style={{ fontSize: 20, color: "#B85C82", margin: 0, display: "inline-block" }}>
-          오늘의 운세 <span style={{ display: "inline-block", animation: "ft-moon 3s ease-in-out infinite" }}>🌙</span>
+          오늘의 운세 <span style={{ display: "inline-block", animation: "ft-moon 3s ease-in-out infinite" }}><PixelIcon name="moon" size={18} /></span>
         </h1>
       </div>
       <p style={{ fontSize: 11, color: "#A89AA3", textAlign: "center", margin: "0 0 16px" }}>
@@ -93,12 +94,12 @@ export default function FortunePage() {
       </div>
 
       <div className="pixel-border ft-card" style={{ background: "#fff", borderRadius: 16, padding: "16px", marginTop: 14, textAlign: "center", animationDelay: "0.3s" }}>
-        <p style={{ margin: 0, fontSize: 13, color: "#B85C82" }}>💑 오늘 둘이 하면 좋은 것</p>
+        <p style={{ margin: 0, fontSize: 13, color: "#B85C82" }}><PixelIcon name="couple" size={14} /> 오늘 둘이 하면 좋은 것</p>
         <p style={{ margin: "6px 0 0", fontSize: 14, color: "#5A4A55" }}>{tip}</p>
       </div>
 
       <p style={{ textAlign: "center", marginTop: 16 }}>
-        <Link href="/saju" style={{ fontSize: 13, color: "#B85C82" }}>🔮 커플 사주·궁합 보기 →</Link>
+        <Link href="/saju" style={{ fontSize: 13, color: "#B85C82" }}><PixelIcon name="crystal" size={13} /> 커플 사주·궁합 보기 →</Link>
       </p>
     </main>
     </TicketGate>

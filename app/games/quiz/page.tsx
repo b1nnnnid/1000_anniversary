@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { QUIZ_SETS, QuizSet } from "@/lib/gameData";
 import CharacterReaction from "@/components/CharacterReaction";
+import PixelIcon from "@/components/PixelIcon";
 import { addTickets } from "@/lib/progressClient";
 import { markFlag, hasFlag, getFlags } from "@/lib/flags";
 import { playSuccess, playWrong, playWin } from "@/lib/sfx";
@@ -101,7 +102,7 @@ export default function QuizPage() {
           <span style={{ position: "absolute", left: "20%", top: 0, fontSize: 11, color: "#CDB8E6", animation: "qz-twinkle 1.8s ease-in-out infinite" }}>✦</span>
           <span style={{ position: "absolute", right: "22%", top: 4, fontSize: 13, color: "#E8799F", animation: "qz-twinkle 2.2s .4s ease-in-out infinite" }}>✧</span>
           <h1 style={{ fontSize: 20, color: "#B85C82", margin: 0, display: "inline-block" }}>
-            커플 퀴즈 <span style={{ display: "inline-block", animation: "k-bob 2.6s ease-in-out infinite" }}>💭</span>
+            커플 퀴즈 <span style={{ display: "inline-block", animation: "k-bob 2.6s ease-in-out infinite" }}><PixelIcon name="bubble" size={18} /></span>
           </h1>
         </div>
         <p style={{ fontSize: 11.5, color: "#8A7A85", textAlign: "center", margin: "0 0 12px", lineHeight: 1.6 }}>

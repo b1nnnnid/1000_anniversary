@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import CharacterReaction from "@/components/CharacterReaction";
+import PixelIcon from "@/components/PixelIcon";
 import { getProgress } from "@/lib/progressClient";
 import { getUnlocks } from "@/lib/unlocks";
 import { getFlags } from "@/lib/flags";
@@ -122,7 +123,7 @@ export default function AchievementsPage() {
   return (
     <main style={{ maxWidth: 480, margin: "0 auto", padding: "20px 16px 36px", minHeight: "100dvh" }}>
       <Link href="/us" style={{ color: "#B85C82", fontSize: 13, textDecoration: "none" }}>← 우리의 공간</Link>
-      <h1 style={{ fontSize: 20, color: "#B85C82", textAlign: "center", margin: "12px 0 2px" }}>업적 도감 🏆</h1>
+      <h1 style={{ fontSize: 20, color: "#B85C82", textAlign: "center", margin: "12px 0 2px" }}>업적 도감 <PixelIcon name="trophy" size={18} /></h1>
       {loaded && (
         <p style={{ fontSize: 12, color: "#8A7A85", textAlign: "center", margin: "0 0 16px" }}>
           {got} / {list.length} 달성{allDone && " · 올 클리어! 🎉"}

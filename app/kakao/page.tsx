@@ -114,12 +114,12 @@ function Dashboard({ a: raw }: { a: Analysis }) {
       {hasFun && (
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 12 }}>
           {[
-            { emoji: "😂", v: a.laughs, label: "웃음" },
-            { emoji: "💕", v: a.loveWords, label: "사랑표현" },
-            { emoji: "❤️", v: a.hearts, label: "하트" },
+            { icon: "laugh", v: a.laughs, label: "웃음" },
+            { icon: "heart", v: a.loveWords, label: "사랑표현" },
+            { icon: "heart", v: a.hearts, label: "하트" },
           ].map((x, i) => (
             <div key={x.label} className="k-pop" style={{ background: "linear-gradient(135deg,#fff,var(--cream))", borderRadius: 14, padding: "12px 6px", textAlign: "center", boxShadow: "0 2px 0 rgba(124,90,150,0.1)", animationDelay: `${i * 0.1}s` }}>
-              <div className="k-bob" style={{ fontSize: 22, animationDelay: `${i * 0.3}s` }}>{x.emoji}</div>
+              <div className="k-bob" style={{ animationDelay: `${i * 0.3}s` }}><PixelIcon name={x.icon} size={22} /></div>
               <p style={{ margin: "3px 0 0", fontSize: 17, fontWeight: 800, color: "#E8556F" }}><CountUp target={x.v} /></p>
               <p style={{ margin: 0, fontSize: 10.5, color: "#9A8A95" }}>{x.label}</p>
             </div>
@@ -127,13 +127,13 @@ function Dashboard({ a: raw }: { a: Analysis }) {
         </div>
       )}
 
-      <div style={card}><p style={{ margin: "0 0 10px", fontSize: 13, color: "#B85C82" }}>💌 누가 더 많이 보냈을까</p><Bar items={a.bySender} color="#E8799F" unit="개" /></div>
-      <div style={card}><p style={{ margin: "0 0 10px", fontSize: 13, color: "#B85C82" }}>👋 누가 먼저 연락했을까</p><Bar items={a.firstByDay} color="#C9A7F0" unit="일" /></div>
+      <div style={card}><p style={{ margin: "0 0 10px", fontSize: 13, color: "#B85C82" }}><PixelIcon name="letter" size={13} /> 누가 더 많이 보냈을까</p><Bar items={a.bySender} color="#E8799F" unit="개" /></div>
+      <div style={card}><p style={{ margin: "0 0 10px", fontSize: 13, color: "#B85C82" }}><PixelIcon name="chat" size={13} /> 누가 먼저 연락했을까</p><Bar items={a.firstByDay} color="#C9A7F0" unit="일" /></div>
 
       {/* 시간대 활동 */}
       {hasFun && (
         <div style={card}>
-          <p style={{ margin: "0 0 4px", fontSize: 13, color: "#B85C82" }}>⏰ 우리의 대화 시간대</p>
+          <p style={{ margin: "0 0 4px", fontSize: 13, color: "#B85C82" }}><PixelIcon name="clock" size={13} /> 우리의 대화 시간대</p>
           <p style={{ margin: "0 0 10px", fontSize: 12, color: "#8A7A85" }}>가장 활발한 시간: <b style={{ color: "#E8556F" }}>{ampm} {h12}시</b></p>
           <HourChart byHour={a.byHour} peak={a.peakHour} />
         </div>
@@ -147,22 +147,22 @@ function Dashboard({ a: raw }: { a: Analysis }) {
             <p style={{ margin: "4px 0 0", fontSize: 22, color: "#E8556F" }}>{a.topWeekday ? `${WD[a.topWeekday.day]}요일` : "-"}</p>
           </div>
           <div style={{ ...card, marginBottom: 0, textAlign: "center" }}>
-            <p style={{ margin: 0, fontSize: 12, color: "#8A7A85" }}>최장 연속 대화 🔥</p>
+            <p style={{ margin: 0, fontSize: 12, color: "#8A7A85" }}>최장 연속 대화 <PixelIcon name="fire" size={12} /></p>
             <p style={{ margin: "4px 0 0", fontSize: 22, color: "#E8556F" }}><CountUp target={a.longestStreak} suffix="일" /></p>
           </div>
         </div>
       )}
 
-      <div style={card}><p style={{ margin: "0 0 10px", fontSize: 13, color: "#B85C82" }}>🔤 제일 많이 쓴 말</p><Bar items={a.words} color="#9FC7E8" unit="번" /></div>
+      <div style={card}><p style={{ margin: "0 0 10px", fontSize: 13, color: "#B85C82" }}><PixelIcon name="word" size={13} /> 제일 많이 쓴 말</p><Bar items={a.words} color="#9FC7E8" unit="번" /></div>
       <div style={card}>
-        <p style={{ margin: "0 0 4px", fontSize: 13, color: "#B85C82" }}>🌙 새벽 감성 (0~5시)</p>
+        <p style={{ margin: "0 0 4px", fontSize: 13, color: "#B85C82" }}><PixelIcon name="moon" size={13} /> 새벽 감성 (0~5시)</p>
         <p style={{ margin: "0 0 10px", fontSize: 12, color: "#8A7A85" }}>총 {a.lateTotal.toLocaleString()}개</p>
         <Bar items={a.lateNight} color="#7E6CC4" unit="개" />
       </div>
 
       {a.longestMsg && (
         <div style={card}>
-          <p style={{ margin: "0 0 8px", fontSize: 13, color: "#B85C82" }}>📜 가장 길게 쓴 메시지</p>
+          <p style={{ margin: "0 0 8px", fontSize: 13, color: "#B85C82" }}><PixelIcon name="letter" size={13} /> 가장 길게 쓴 메시지</p>
           <p style={{ margin: 0, fontSize: 12.5, color: "#5A4A55", lineHeight: 1.6, fontStyle: "italic" }}>&ldquo;{a.longestMsg.text}&rdquo;</p>
           <p style={{ margin: "6px 0 0", fontSize: 11, color: "#A89AA3", textAlign: "right" }}>— {a.longestMsg.sender} ({a.longestMsg.text.length}자)</p>
         </div>
@@ -170,15 +170,15 @@ function Dashboard({ a: raw }: { a: Analysis }) {
 
       {a.busiestDay && (
         <div style={{ ...card, textAlign: "center" }}>
-          <p style={{ margin: 0, fontSize: 13, color: "#B85C82" }}><span className="k-bob" style={{ display: "inline-block" }}>🔥</span> 가장 폭발한 날</p>
+          <p style={{ margin: 0, fontSize: 13, color: "#B85C82" }}><span className="k-bob" style={{ display: "inline-block" }}><PixelIcon name="fire" size={14} /></span> 가장 폭발한 날</p>
           <p style={{ margin: "6px 0 0", fontSize: 16, color: "#5A4A55" }}>{a.busiestDay.date}</p>
           <p style={{ margin: "2px 0 0", fontSize: 13, color: "#E8556F" }}>하루에 {a.busiestDay.count.toLocaleString()}개!</p>
         </div>
       )}
 
       <p style={{ textAlign: "center", fontSize: 12, color: "#8A7A85", marginTop: 8 }}>
-        함께 나눈 글자 수: <b style={{ color: "#B85C82" }}>{a.totalChars.toLocaleString()}자</b> ✍️
-        {a.mediaCount > 0 && <> · 사진·이모티콘 <b style={{ color: "#B85C82" }}>{a.mediaCount.toLocaleString()}개</b> 📸</>}
+        함께 나눈 글자 수: <b style={{ color: "#B85C82" }}>{a.totalChars.toLocaleString()}자</b> <PixelIcon name="word" size={12} />
+        {a.mediaCount > 0 && <> · 사진·이모티콘 <b style={{ color: "#B85C82" }}>{a.mediaCount.toLocaleString()}개</b> <PixelIcon name="camera" size={12} /></>}
       </p>
     </div>
   );
@@ -282,7 +282,7 @@ export default function KakaoPage() {
     <main style={{ maxWidth: 480, margin: "0 auto", padding: "20px 16px 36px", minHeight: "100dvh" }}>
       <Link href="/us" style={{ color: "#B85C82", fontSize: 13, textDecoration: "none" }}>← 우리의 공간</Link>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "12px 0 4px" }}>
-        <h1 style={{ fontSize: 20, color: "#B85C82" }}>카톡 대화 분석 💬</h1>
+        <h1 style={{ fontSize: 20, color: "#B85C82" }}>카톡 대화 분석 <PixelIcon name="chat" size={18} /></h1>
         <span className="chip"><PixelIcon name="ticket" size={14} /> {tickets ?? "..."}</span>
       </div>
       <p style={{ fontSize: 11.5, color: "#8A7A85", textAlign: "center", margin: "0 0 16px", lineHeight: 1.6 }}>
