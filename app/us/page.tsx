@@ -26,7 +26,7 @@ export default function UsHub() {
       <p style={{ fontSize: 11, color: "#8A7A85", textAlign: "center", margin: "0 0 8px" }}>반짝이는 가구를 톡 눌러보세요</p>
 
       <div style={{ position: "relative" }}>
-        <svg width="100%" viewBox="0 0 380 540" role="img" shapeRendering="crispEdges"
+        <svg width="100%" viewBox="0 0 380 680" role="img" shapeRendering="crispEdges"
           style={{ display: "block", borderRadius: 16, border: "3px solid #fff", boxShadow: "0 0 0 3px var(--lav)" }}>
           <title>우리집 — 콘텐츠 허브</title>
           <style>{`
@@ -39,14 +39,14 @@ export default function UsHub() {
 
           {/* 방 구조 */}
           <rect x="0" y="0" width="380" height="300" fill="#F3DCE7" />
-          <rect x="0" y="300" width="380" height="240" fill="#E6C7A0" />
+          <rect x="0" y="300" width="380" height="380" fill="#E6C7A0" />
           <rect x="0" y="296" width="380" height="6" fill="#D6B488" />
           <rect x="0" y="92" width="380" height="3" fill="#EAD0DC" />
           <g opacity="0.4" stroke="#D6B488" strokeWidth="1">
             <line x1="0" y1="340" x2="380" y2="340" /><line x1="0" y1="392" x2="380" y2="392" /><line x1="0" y1="452" x2="380" y2="452" />
           </g>
-          <ellipse cx="190" cy="470" rx="156" ry="56" fill="#EFC9DC" />
-          <ellipse cx="190" cy="470" rx="156" ry="56" fill="none" stroke="#E2B2CB" strokeWidth="3" />
+          <ellipse cx="190" cy="548" rx="156" ry="56" fill="#EFC9DC" />
+          <ellipse cx="190" cy="548" rx="156" ry="56" fill="none" stroke="#E2B2CB" strokeWidth="3" />
 
           {/* 운세 */}
           <g className="hot" onClick={go("/fortune")}>
@@ -158,31 +158,32 @@ export default function UsHub() {
           {/* 룰렛 */}
           <g className="hot" onClick={go("/games/roulette")}>
             <g className="obj">
-              <rect x="34" y="396" width="46" height="78" fill="#E8556F" /><rect x="34" y="396" width="46" height="78" fill="none" stroke="#C73A57" strokeWidth="2" />
-              <circle cx="57" cy="418" r="16" fill="#FBF3F8" />
-              <rect x="49" y="414" width="6" height="6" fill="#F2C76B" /><rect x="58" y="420" width="6" height="6" fill="#9FC7E8" /><rect x="53" y="410" width="6" height="6" fill="#C9A7F0" /><rect x="60" y="412" width="6" height="6" fill="#A8E0C8" />
-              <rect x="44" y="444" width="26" height="16" fill="#fff" /><rect x="50" y="448" width="14" height="9" fill="#F4D6E6" />
+              <rect x="34" y="546" width="46" height="78" fill="#E8556F" /><rect x="34" y="546" width="46" height="78" fill="none" stroke="#C73A57" strokeWidth="2" />
+              <circle cx="57" cy="568" r="16" fill="#FBF3F8" />
+              <rect x="49" y="564" width="6" height="6" fill="#F2C76B" /><rect x="58" y="570" width="6" height="6" fill="#9FC7E8" /><rect x="53" y="560" width="6" height="6" fill="#C9A7F0" /><rect x="60" y="562" width="6" height="6" fill="#A8E0C8" />
+              <rect x="44" y="594" width="26" height="16" fill="#fff" /><rect x="50" y="598" width="14" height="9" fill="#F4D6E6" />
             </g>
-            <rect className="ring" x="30" y="392" width="54" height="86" rx="8" />
+            <rect className="ring" x="30" y="542" width="54" height="86" rx="8" />
           </g>
 
           {/* 퀴즈 */}
           <g className="hot" onClick={go("/games/quiz")}>
             <g className="obj">
-              <rect x="300" y="396" width="46" height="78" fill="#7E6CC4" /><rect x="300" y="396" width="46" height="78" fill="none" stroke="#5E4FA0" strokeWidth="2" />
-              <rect x="306" y="404" width="34" height="26" fill="#2E2B33" /><rect x="312" y="410" width="9" height="7" fill="#F2C76B" /><rect x="326" y="414" width="9" height="7" fill="#9FC7E8" />
-              <rect x="308" y="436" width="30" height="9" fill="#C9A7F0" /><circle cx="317" cy="456" r="5" fill="#E8799F" /><circle cx="332" cy="456" r="5" fill="#9FC7E8" />
+              <rect x="300" y="546" width="46" height="78" fill="#7E6CC4" /><rect x="300" y="546" width="46" height="78" fill="none" stroke="#5E4FA0" strokeWidth="2" />
+              <rect x="306" y="554" width="34" height="26" fill="#2E2B33" /><rect x="312" y="560" width="9" height="7" fill="#F2C76B" /><rect x="326" y="564" width="9" height="7" fill="#9FC7E8" />
+              <rect x="308" y="586" width="30" height="9" fill="#C9A7F0" /><circle cx="317" cy="606" r="5" fill="#E8799F" /><circle cx="332" cy="606" r="5" fill="#9FC7E8" />
             </g>
-            <rect className="ring" x="296" y="392" width="54" height="86" rx="8" />
+            <rect className="ring" x="296" y="542" width="54" height="86" rx="8" />
           </g>
         </svg>
 
         {/* ===== 가운데 커플 (크게 + 표정 + 말풍선) — SVG 위 HTML 오버레이 ===== */}
         {/* 정렬용 래퍼(translate로 중앙 고정)와 흔들림 애니메이션 래퍼를 분리.
             .floaty의 keyframes transform이 인라인 translate(-50%,-50%)를 덮어쓰지 않도록 함 */}
-        <div onClick={poke}
-          style={{ position: "absolute", left: "50%", top: "63%", transform: "translate(-50%,-50%)", cursor: "pointer", textAlign: "center", width: "100%" }}>
-          <div className="floaty">
+        {/* 위치용 래퍼는 클릭 통과(pointerEvents:none), 캐릭터 본체만 클릭 가능하게 해서
+            주변 가구가 잘못 눌리지 않도록 함 */}
+        <div style={{ position: "absolute", left: "50%", top: "70%", transform: "translate(-50%,-50%)", textAlign: "center", width: "100%", pointerEvents: "none" }}>
+          <div className="floaty" onClick={poke} style={{ display: "inline-block", cursor: "pointer", pointerEvents: "auto" }}>
           <div style={{
             display: "inline-block", background: "#fff", border: "2px solid #E2B2CB", borderRadius: 12,
             padding: "6px 14px", fontSize: 13, color: "#B85C82", fontFamily: "var(--font-pixel)",
@@ -192,8 +193,8 @@ export default function UsHub() {
             <span style={{ position: "absolute", left: "50%", bottom: -8, transform: "translateX(-50%)", width: 0, height: 0, borderLeft: "7px solid transparent", borderRight: "7px solid transparent", borderTop: "8px solid #E2B2CB" }} />
           </div>
           <div style={{ display: "flex", justifyContent: "center", alignItems: "flex-end" }}>
-            <CharacterReaction mood={MOODS[mood]} who="boy" size={150} />
-            <span style={{ marginLeft: -34 }}><CharacterReaction mood={MOODS[mood]} who="girl" size={150} /></span>
+            <CharacterReaction mood={MOODS[mood]} who="boy" size={140} />
+            <span style={{ marginLeft: -32 }}><CharacterReaction mood={MOODS[mood]} who="girl" size={140} /></span>
           </div>
           </div>
         </div>
