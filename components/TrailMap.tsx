@@ -5,8 +5,9 @@ import { isBlocked, isPath, TREES } from "@/lib/trail";
 import {
   drawGrass, drawPathTile, drawTree, drawFlower, drawStageNode, drawGoal,
   drawCharacter, drawGirlfriend, drawGirlfriendWalk, drawHeartPiece, drawCat, drawEmote, drawPlace,
+  drawSign, drawBench, drawGhost, drawBlackCat, drawFlowerBloom, drawFootprint, drawBounce,
 } from "@/lib/pixelArt";
-import { STAGES, GOAL, CAT, HEART_PIECES, Stage, TILE, WORLD_COLS, WORLD_ROWS } from "@/lib/gameData";
+import { STAGES, GOAL, CAT, HEART_PIECES, MARKERS, Marker, Stage, TILE, WORLD_COLS, WORLD_ROWS } from "@/lib/gameData";
 
 type Dir = "down" | "up" | "left" | "right";
 const VW = WORLD_COLS * TILE;
@@ -24,15 +25,17 @@ interface Props {
   celebrated: boolean;       // 상봉 후 핑크 월드
   busy: boolean;             // 모달/대화 등 UI가 떠 있으면 이동·고양이 정지
   catActive: boolean;        // false면 고양이가 더 이상 다가오지 않음
+  thiefRun: number;          // 값이 바뀌면 도둑 검은 고양이 달리기 연출 시작
   onStage: (s: Stage) => void;
   onGoal: () => void;
   onHeart: (id: string) => void;
   onCatTalk: () => void;     // 고양이가 말을 걸 때
+  onMarker: (m: Marker) => void; // 표지판·과거의우리·벤치에 닿았을 때
 }
 
 export default function TrailMap({
-  collected, allCollected, heartPieces, lockedIds, celebrated, busy, catActive,
-  onStage, onGoal, onHeart, onCatTalk,
+  collected, allCollected, heartPieces, lockedIds, celebrated, busy, catActive, thiefRun,
+  onStage, onGoal, onHeart, onCatTalk, onMarker,
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const keys = useRef<Record<string, boolean>>({});
@@ -53,6 +56,13 @@ export default function TrailMap({
   });
   const [near, setNear] = useState<string | null>(null);
   const nearId = useRef<string | null>(null);
+  // 표지판/과거의우리/벤치, 꽃, 발자국, 튕김, 도둑고양이
+  const standMarker = useRef<string | null>(null);
+  const bloom = useRef<Set<string>>(new Set());
+  const foot = useRef<{ x: number; y: number }[]>([]);
+  const bounce = useRef({ x: 0, y: 0, t: 0, cd: 0 });
+  const thief = useRef({ active: false, x: 0, y: 0, t: 0 });
+  const thiefInit = useRef(true);
 
   useEffect(() => { collectedRef.current = collected; }, [collected]);
   useEffect(() => { allRef.current = allCollected; }, [allCollected]);
@@ -61,6 +71,14 @@ export default function TrailMap({
   useEffect(() => { celebRef.current = celebrated; }, [celebrated]);
   useEffect(() => { busyRef.current = busy; }, [busy]);
   useEffect(() => { catActiveRef.current = catActive; }, [catActive]);
+
+  // 도둑 검은 고양이 달리기 연출 시작 (thiefRun 값이 바뀔 때)
+  useEffect(() => {
+    if (thiefInit.current) { thiefInit.current = false; return; }
+    const m = MARKERS.find((x) => x.event === "thiefcat");
+    const sx = (m ? m.col : 6) * TILE, sy = (m ? m.row : 8) * TILE;
+    thief.current = { active: true, x: sx, y: sy - 10, t: 150 };
+  }, [thiefRun]);
 
   const canMove = (nx: number, ny: number) => {
     const pts = [[nx + 8, ny + 18], [nx + 23, ny + 18], [nx + 8, ny + 30], [nx + 23, ny + 30]];
@@ -85,8 +103,29 @@ export default function TrailMap({
         if (k["right"]) { dx += SPEED; dir.current = "right"; }
       }
       const moving = dx !== 0 || dy !== 0;
-      if (dx !== 0 && canMove(pos.current.x + dx, pos.current.y)) pos.current.x += dx;
-      if (dy !== 0 && canMove(pos.current.x, pos.current.y + dy)) pos.current.y += dy;
+      // 나무에 막히면 "띠용" 튕김
+      const tryBounce = (fx: number, fy: number) => {
+        const tc = Math.floor(fx / TILE), tr = Math.floor(fy / TILE);
+        if (TREES.has(`${tc},${tr}`) && bounce.current.cd <= 0) {
+          bounce.current = { x: pos.current.x, y: pos.current.y, t: 16, cd: 30 };
+        }
+      };
+      if (dx !== 0) {
+        if (canMove(pos.current.x + dx, pos.current.y)) pos.current.x += dx;
+        else tryBounce(pos.current.x + 16 + Math.sign(dx) * 13, pos.current.y + 24);
+      }
+      if (dy !== 0) {
+        if (canMove(pos.current.x, pos.current.y + dy)) pos.current.y += dy;
+        else tryBounce(pos.current.x + 16, pos.current.y + 24 + Math.sign(dy) * 8);
+      }
+      if (bounce.current.cd > 0) bounce.current.cd--;
+      if (bounce.current.t > 0) bounce.current.t--;
+
+      // 발자국 기록
+      if (moving && tick % 7 === 0) {
+        foot.current.push({ x: pos.current.x, y: pos.current.y });
+        if (foot.current.length > 24) foot.current.shift();
+      }
 
       // 동행하는 여자친구용 위치 기록
       if (celebRef.current) {
@@ -160,6 +199,17 @@ export default function TrailMap({
         else if (onGoalTile && allRef.current) onGoal();
       } else if (!hereId) standing.current = null;
 
+      // 표지판·과거의우리·벤치 — 닿으면 말 걸기 (칸 진입 시 1회)
+      const hereMarker = MARKERS.find((m) => m.col === ptx && m.row === pty);
+      const hereMkId = hereMarker ? hereMarker.id : null;
+      if (hereMkId && standMarker.current !== hereMkId) {
+        standMarker.current = hereMkId;
+        if (!busyRef.current) onMarker(hereMarker!);
+      } else if (!hereMkId) standMarker.current = null;
+
+      // 꽃 밟으면 피어남
+      if ((ptx * 5 + pty * 3) % 11 === 0) bloom.current.add(`${ptx},${pty}`);
+
       // 숨은 하트 조각
       for (const h of HEART_PIECES) {
         if (h.col === ptx && h.row === pty && !piecesRef.current.includes(h.id) && !grabbedRef.current.has(h.id)) {
@@ -199,9 +249,16 @@ export default function TrailMap({
           if (isPath(col, row)) drawPathTile(ctx, col, row);
           else if (TREES.has(`${col},${row}`)) drawTree(ctx, col, row, pink);
           else if (col === 0 || col === WORLD_COLS - 1 || row === 0 || row === WORLD_ROWS - 1) drawTree(ctx, col, row, pink);
-          else if ((col * 5 + row * 3) % 11 === 0) drawFlower(ctx, col, row);
+          else if ((col * 5 + row * 3) % 11 === 0) {
+            if (bloom.current.has(`${col},${row}`)) drawFlowerBloom(ctx, col, row, tick);
+            else drawFlower(ctx, col, row);
+          }
         }
       }
+      // 지나온 발자국 (오래된 것일수록 흐리게)
+      const fl = foot.current.length;
+      foot.current.forEach((f, i) => drawFootprint(ctx, f.x, f.y, 0.08 + (i / Math.max(1, fl)) * 0.22));
+
       const bob = Math.floor(Math.abs(Math.sin(tick / 18)) * 3);
       for (const s of STAGES) {
         if (s.row < r0 - 4 || s.row > r1 + 2) continue;
@@ -221,6 +278,15 @@ export default function TrailMap({
         if (h.row < r0 - 1 || h.row > r1 + 1) continue;
         drawHeartPiece(ctx, h.col, h.row, bob);
       }
+      // 표지판 · 과거의 우리 · 벤치
+      const gbob = Math.floor(Math.abs(Math.sin(tick / 26)) * 3);
+      for (const m of MARKERS) {
+        if (m.row < r0 - 2 || m.row > r1 + 2) continue;
+        if (m.kind === "sign") drawSign(ctx, m.col, m.row, 0);
+        else if (m.kind === "bench") drawBench(ctx, m.col, m.row);
+        else drawGhost(ctx, m.col, m.row, gbob);
+      }
+
       drawGoal(ctx, GOAL.col, GOAL.row, allRef.current, bob);
 
       // 고양이
@@ -241,6 +307,19 @@ export default function TrailMap({
         drawGirlfriend(ctx, (GOAL.col + 1) * TILE + 6, GOAL.row * TILE, Math.floor(tick / 22) % 2);
       }
       drawCharacter(ctx, pos.current.x, pos.current.y, dir.current, frame, pink);
+
+      // 도둑 검은 고양이 달리기 (티켓 물고 도망)
+      if (thief.current.active) {
+        const th = thief.current;
+        th.t--; th.x += 1.7; th.y += 1.0;
+        drawBlackCat(ctx, th.x, th.y, Math.floor(tick / 6) % 2);
+        ctx.fillStyle = "#F4D6E6"; ctx.fillRect(Math.round(th.x + 30), Math.round(th.y + 12), 9, 6);
+        ctx.fillStyle = "#E8799F"; ctx.fillRect(Math.round(th.x + 30), Math.round(th.y + 12), 9, 1);
+        if (th.t <= 0) th.active = false;
+      }
+      // 나무 튕김 효과
+      if (bounce.current.t > 0) drawBounce(ctx, bounce.current.x, bounce.current.y, bounce.current.t);
+
       ctx.restore();
 
       // 벚꽃 잎 흩날리기 (화면 오버레이)
@@ -260,7 +339,7 @@ export default function TrailMap({
     };
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
-  }, [onStage, onGoal, onHeart, onCatTalk]);
+  }, [onStage, onGoal, onHeart, onCatTalk, onMarker]);
 
   useEffect(() => {
     const m: Record<string, string> = {

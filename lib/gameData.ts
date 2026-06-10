@@ -115,6 +115,36 @@ export const HEART_PIECES: { id: string; col: number; row: number }[] = [
   { id: "h7", col: 3, row: 38 },
 ];
 
+// ── 길가의 표지판 · 과거의 우리 · 벤치 (걸어가 닿으면 말을 건다) ──
+//   col,row 는 모두 길(PATH) 위의 칸이라 걷다가 자연히 밟게 됩니다.
+export type MarkerKind = "sign" | "ghost" | "bench";
+export interface Marker {
+  id: string; col: number; row: number; kind: MarkerKind;
+  speaker: string; lines: string[];
+  event?: "thiefcat"; // 특수 이벤트(도둑 검은 고양이)
+}
+export const MARKERS: Marker[] = [
+  { id: "s-guide", col: 6, row: 6, kind: "sign", speaker: "🪧 표지판",
+    lines: ["여기서부터 둘의 추억 길.", "위에서부터 차례대로 열어야 다음이 열린대!"] },
+  { id: "s-thief", col: 6, row: 8, kind: "sign", speaker: "🪧 낡은 표지판",
+    lines: ["쉿… 이 근처에 도둑고양이가 산대.", "노란 고양이가 준 티켓을 노린다던데…?"],
+    event: "thiefcat" },
+  { id: "s-joke1", col: 5, row: 9, kind: "sign", speaker: "🪧 표지판",
+    lines: ["주의: 너무 귀여운 커플 출몰 구역.", "심장 약하면 우회하세요 💗"] },
+  { id: "s-joke2", col: 4, row: 9, kind: "sign", speaker: "🪧 표지판",
+    lines: ["오늘의 운세: 옆 사람이 당신을 좋아함.", "(적중률 100%)"] },
+  { id: "g-first", col: 6, row: 4, kind: "ghost", speaker: "👻 과거의 우리",
+    lines: ["…처음 만난 날의 우리야.", "무슨 말 할지 몰라서 괜히 하늘만 봤었지 ㅎㅎ"] },
+  { id: "g-trip", col: 6, row: 22, kind: "ghost", speaker: "👻 과거의 우리",
+    lines: ["바다 보러 가던 날 기억나?", "가는 내내 신나서 떠들었잖아."] },
+  { id: "b-bench", col: 8, row: 31, kind: "bench", speaker: "🪑 벤치",
+    lines: ["여기 잠깐 앉았다 갈까?", "…역시 네 옆이 제일 편해."] },
+];
+
+// 도둑 검은 고양이 이벤트 대사
+export const THIEF_STEAL: string[] = ["앗! 검은 고양이다!! 🐈‍⬛", "노란 고양이가 준 티켓 하나를 물고 도망쳤다… 🎟💨"];
+export const THIEF_SAFE: string[] = ["…다행히 지금은 훔쳐갈 티켓이 없다.", "검은 고양이가 아쉬운 듯 사라졌다."];
+
 // 길가의 고양이 NPC — 가끔 ❗ 띄우고 다가와서 말을 건다 (스토리형 대화)
 export const CAT = { col: 7, row: 18 };
 

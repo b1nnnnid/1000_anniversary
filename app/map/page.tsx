@@ -10,8 +10,8 @@ import StageChallenge from "@/components/StageChallenge";
 import DialogBox from "@/components/DialogBox";
 import DateModal from "@/components/DateModal";
 import PixelIcon from "@/components/PixelIcon";
-import { Stage, STAGES, HEART_PIECES, CAT_INTRO, CAT_EVENTS, CAT_CONGRATS } from "@/lib/gameData";
-import { getProgress, addCollected, addHeart, addTickets, resetProgress } from "@/lib/progressClient";
+import { Stage, Marker, STAGES, HEART_PIECES, CAT_INTRO, CAT_EVENTS, CAT_CONGRATS, THIEF_STEAL, THIEF_SAFE } from "@/lib/gameData";
+import { getProgress, addCollected, addHeart, addTickets, spendTicket, resetProgress } from "@/lib/progressClient";
 import { playMeow, playCollect, playPop, playSuccess, playWrong, playWin } from "@/lib/sfx";
 
 export default function MapPage() {
@@ -22,11 +22,13 @@ export default function MapPage() {
   const [modal, setModal] = useState<Stage | null>(null);
   const [challenge, setChallenge] = useState<Stage | null>(null);
   const [celebrate, setCelebrate] = useState(false);
-  const [dialog, setDialog] = useState<{ lines: string[]; intro?: boolean; congrats?: boolean; eventIdx?: number } | null>(null);
+  const [dialog, setDialog] = useState<{ lines: string[]; speaker?: string; intro?: boolean; congrats?: boolean; eventIdx?: number; markerId?: string; thief?: boolean } | null>(null);
   const [dateScene, setDateScene] = useState<Stage | null>(null);
   const [confirmReset, setConfirmReset] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [thiefRun, setThiefRun] = useState(0);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const ticketsRef = useRef(0);
 
   useEffect(() => {
     getProgress().then((p) => {
@@ -35,6 +37,8 @@ export default function MapPage() {
       setPieces(p.heartPieces);
     });
   }, []);
+
+  useEffect(() => { ticketsRef.current = tickets; }, [tickets]);
 
   const showToast = useCallback((msg: string) => {
     setToast(msg);
@@ -132,8 +136,34 @@ export default function MapPage() {
     });
   }, []);
 
+  // 표지판·과거의우리·벤치에 닿았을 때
+  const onMarker = useCallback((m: Marker) => {
+    setCollected((c) => {
+      if (c.includes("mk:" + m.id)) return c; // 이미 읽음
+      if (m.event === "thiefcat") {
+        if (ticketsRef.current > 0) setDialog({ lines: [...m.lines, ...THIEF_STEAL], speaker: m.speaker, markerId: m.id, thief: true });
+        else setDialog({ lines: [...m.lines, ...THIEF_SAFE], speaker: m.speaker, markerId: m.id });
+      } else {
+        setDialog({ lines: m.lines, speaker: m.speaker, markerId: m.id });
+      }
+      return c;
+    });
+  }, []);
+
   const onDialogEnd = useCallback(() => {
     setDialog((d) => {
+      if (d?.markerId) {
+        const key = "mk:" + d.markerId;
+        setCollected((c) => (c.includes(key) ? c : [...c, key]));
+        saveSpot(key);
+      }
+      if (d?.thief) {
+        spendTicket(1).then((left) => setTickets(left));
+        saveSpot("cat-thief");
+        setCollected((c) => (c.includes("cat-thief") ? c : [...c, "cat-thief"]));
+        showToast("검은 고양이가 티켓을 물고 도망쳤다! 🎟💨");
+        setThiefRun((n) => n + 1);
+      }
       if (d?.intro) {
         setCollected((c) => (c.includes("cat-intro") ? c : [...c, "cat-intro"]));
         saveSpot("cat-intro");
@@ -201,7 +231,8 @@ export default function MapPage() {
       <TrailMap
         collected={collected} allCollected={allCollected} heartPieces={pieces}
         lockedIds={lockedIds} celebrated={celebrated} busy={busy} catActive={catActive}
-        onStage={onStage} onGoal={onGoal} onHeart={onHeart} onCatTalk={onCatTalk}
+        thiefRun={thiefRun}
+        onStage={onStage} onGoal={onGoal} onHeart={onHeart} onCatTalk={onCatTalk} onMarker={onMarker}
       />
 
       {toast && (
@@ -212,7 +243,7 @@ export default function MapPage() {
         }}>{toast}</div>
       )}
 
-      {dialog && <DialogBox speaker="🐱 길고양이" lines={dialog.lines} onEnd={onDialogEnd} />}
+      {dialog && <DialogBox speaker={dialog.speaker ?? "🐱 길고양이"} lines={dialog.lines} onEnd={onDialogEnd} />}
       {dateScene && (
         <DateModal stage={dateScene} onClose={() => setDateScene(null)}
           onMemory={() => { const s = dateScene; setDateScene(null); setModal(s); }} />

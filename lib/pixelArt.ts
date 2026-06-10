@@ -348,6 +348,103 @@ export function drawEmote(ctx: CanvasRenderingContext2D, px: number, py: number)
   r(ctx, px + 14, py - 5, 4, 2, "#E8556F");
 }
 
+// 그림자 헬퍼
+function shadow(ctx: CanvasRenderingContext2D, cx: number, cy: number, rx = 8, ry = 3) {
+  ctx.fillStyle = "rgba(124,90,150,0.14)";
+  ctx.beginPath(); ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2); ctx.fill();
+}
+
+// 나무 표지판
+export function drawSign(ctx: CanvasRenderingContext2D, col: number, row: number, bob = 0) {
+  const x = col * TILE, y = row * TILE - bob;
+  shadow(ctx, x + 16, y + 30);
+  r(ctx, x + 14, y + 15, 4, 15, C.post);           // 기둥
+  r(ctx, x + 5, y + 5, 22, 13, "#D9B68A");          // 판
+  r(ctx, x + 5, y + 5, 22, 2, "#C49A6E");
+  r(ctx, x + 5, y + 16, 22, 2, "#C49A6E");
+  r(ctx, x + 8, y + 9, 16, 1.5, "#8A6242");         // 글씨 느낌
+  r(ctx, x + 8, y + 12, 11, 1.5, "#8A6242");
+}
+
+// 벤치
+export function drawBench(ctx: CanvasRenderingContext2D, col: number, row: number) {
+  const x = col * TILE, y = row * TILE;
+  shadow(ctx, x + 16, y + 30, 12, 3);
+  r(ctx, x + 6, y + 18, 3, 11, "#A87C50");          // 다리
+  r(ctx, x + 23, y + 18, 3, 11, "#A87C50");
+  r(ctx, x + 3, y + 14, 26, 4, "#C49A6E");          // 좌판
+  r(ctx, x + 3, y + 14, 26, 1.5, "#D9B68A");
+  r(ctx, x + 5, y + 5, 22, 3, "#C49A6E");           // 등받이 살
+  r(ctx, x + 5, y + 9, 22, 3, "#C49A6E");
+  r(ctx, x + 6, y + 8, 2, 6, "#A87C50");
+  r(ctx, x + 24, y + 8, 2, 6, "#A87C50");
+}
+
+// 과거의 우리 (반투명 꼬마 커플)
+export function drawGhost(ctx: CanvasRenderingContext2D, col: number, row: number, bob = 0) {
+  const x = col * TILE, y = row * TILE - bob;
+  ctx.save();
+  ctx.globalAlpha = 0.5;
+  // 여자아이
+  r(ctx, x + 6, y + 7, 7, 4, "#E889AC");            // 머리
+  r(ctx, x + 6, y + 11, 7, 7, "#F4B8CC");           // 몸
+  r(ctx, x + 8, y + 9, 1.5, 1.5, "#4A3A2E");
+  // 남자아이
+  r(ctx, x + 18, y + 7, 7, 4, "#5A5564");
+  r(ctx, x + 18, y + 11, 7, 7, "#A8CFF0");
+  r(ctx, x + 21, y + 9, 1.5, 1.5, "#4A3A2E");
+  // 흐릿한 꼬리
+  ctx.globalAlpha = 0.3;
+  r(ctx, x + 8, y + 18, 16, 4, "#FFFFFF");
+  r(ctx, x + 11, y + 21, 10, 3, "#FFFFFF");
+  ctx.restore();
+}
+
+// 도둑 검은 고양이 (오른쪽으로 달리는 2프레임)
+export function drawBlackCat(ctx: CanvasRenderingContext2D, x: number, y: number, frame: number) {
+  ctx.fillStyle = "rgba(0,0,0,0.18)";
+  ctx.beginPath(); ctx.ellipse(x + 16, y + 28, 10, 3.5, 0, 0, Math.PI * 2); ctx.fill();
+  const body = "#33303A";
+  r(ctx, x + 3, y + 9, 4, 8, body);                 // 꼬리(세움)
+  r(ctx, x + 6, y + 14, 20, 8, body);               // 몸
+  r(ctx, x + 21, y + 9, 10, 9, body);               // 머리(오른쪽)
+  r(ctx, x + 21, y + 6, 3, 4, body); r(ctx, x + 27, y + 6, 3, 4, body); // 귀
+  r(ctx, x + 27, y + 12, 2, 2, "#F2C76B");          // 눈
+  if (frame === 0) { r(ctx, x + 8, y + 22, 3, 5, body); r(ctx, x + 20, y + 22, 3, 5, body); }
+  else { r(ctx, x + 12, y + 22, 3, 5, body); r(ctx, x + 24, y + 22, 3, 5, body); }
+}
+
+// 밟아서 핀 꽃 (기본보다 큼직 + 반짝)
+export function drawFlowerBloom(ctx: CanvasRenderingContext2D, col: number, row: number, tick = 0) {
+  const x = col * TILE, y = row * TILE;
+  const c = C.flower[(col * 3 + row) % C.flower.length];
+  r(ctx, x + 12, y + 12, 8, 8, "#F6E05E");
+  r(ctx, x + 6, y + 12, 6, 8, c); r(ctx, x + 20, y + 12, 6, 8, c);
+  r(ctx, x + 12, y + 6, 8, 6, c); r(ctx, x + 12, y + 20, 8, 6, c);
+  if (Math.floor(tick / 20) % 2 === 0) { r(ctx, x + 24, y + 5, 2, 2, "#FFFFFF"); r(ctx, x + 5, y + 23, 2, 2, "#FFFFFF"); }
+}
+
+// 지나온 발자국
+export function drawFootprint(ctx: CanvasRenderingContext2D, x: number, y: number, alpha: number) {
+  ctx.save(); ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
+  r(ctx, x + 14, y + 24, 3, 4, "#C9A77E");
+  r(ctx, x + 18, y + 26, 3, 4, "#C9A77E");
+  ctx.restore();
+}
+
+// 나무에 부딪힐 때 "띠용" 튕김 효과
+export function drawBounce(ctx: CanvasRenderingContext2D, x: number, y: number, t: number) {
+  const a = Math.max(0, t / 16);
+  ctx.save(); ctx.globalAlpha = a;
+  r(ctx, x + 15, y - 4, 2, 5, "#F2C76B");
+  r(ctx, x + 15, y + 30, 2, 5, "#F2C76B");
+  r(ctx, x - 4, y + 13, 5, 2, "#F2C76B");
+  r(ctx, x + 31, y + 13, 5, 2, "#F2C76B");
+  r(ctx, x + 4, y + 2, 3, 3, "#E8556F");
+  r(ctx, x + 25, y + 24, 3, 3, "#E8556F");
+  ctx.restore();
+}
+
 // 걷는 여자친구 (상봉 후 동행용) — 핑크 단발+리본+원피스, 4방향 2프레임
 export function drawGirlfriendWalk(
   ctx: CanvasRenderingContext2D, px: number, py: number,
