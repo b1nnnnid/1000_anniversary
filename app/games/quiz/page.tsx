@@ -11,6 +11,43 @@ import { playSuccess, playWrong, playWin } from "@/lib/sfx";
 const doneKey = (id: string) => `quizset-done:${id}`;
 const passCount = (set: QuizSet) => Math.ceil(set.questions.length / 2);
 
+function CountUp({ target, duration = 700 }: { target: number; duration?: number }) {
+  const [v, setV] = useState(0);
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) { setV(target); return; }
+    let raf = 0; const start = performance.now();
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / duration);
+      setV(Math.round(target * (1 - Math.pow(1 - t, 3))));
+      if (t < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [target, duration]);
+  return <>{v}</>;
+}
+
+function Burst() {
+  const parts = ["🎉", "🎟️", "💗", "✨", "⭐", "💕"];
+  return (
+    <div style={{ position: "fixed", inset: 0, zIndex: 90, pointerEvents: "none", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      {[...Array(14)].map((_, i) => {
+        const ang = (i / 14) * Math.PI * 2;
+        const dist = 90 + (i % 3) * 30;
+        return (
+          <span key={i} style={{
+            position: "absolute", fontSize: 20 + (i % 3) * 8,
+            ["--dx" as string]: `${Math.cos(ang) * dist}px`,
+            ["--dy" as string]: `${Math.sin(ang) * dist}px`,
+            ["--rot" as string]: `${(i % 2 ? 1 : -1) * 180}deg`,
+            animation: `qz-confetti 1s ${(i % 4) * 0.04}s ease-out forwards`,
+          }}>{parts[i % parts.length]}</span>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function QuizPage() {
   const [phase, setPhase] = useState<"select" | "play" | "done">("select");
   const [set, setSet] = useState<QuizSet | null>(null);
@@ -60,23 +97,36 @@ export default function QuizPage() {
     return (
       <main style={{ maxWidth: 480, margin: "0 auto", padding: "20px 16px 36px", minHeight: "100dvh" }}>
         <Link href="/map" style={{ color: "#B85C82", fontSize: 13, textDecoration: "none" }}>← 맵으로</Link>
-        <h1 style={{ fontSize: 20, color: "#B85C82", textAlign: "center", margin: "12px 0 2px" }}>커플 퀴즈 💭</h1>
-        <p style={{ fontSize: 11.5, color: "#8A7A85", textAlign: "center", margin: "0 0 6px", lineHeight: 1.6 }}>
+        <div style={{ position: "relative", textAlign: "center", margin: "12px 0 2px" }}>
+          <span style={{ position: "absolute", left: "20%", top: 0, fontSize: 11, color: "#CDB8E6", animation: "qz-twinkle 1.8s ease-in-out infinite" }}>✦</span>
+          <span style={{ position: "absolute", right: "22%", top: 4, fontSize: 13, color: "#E8799F", animation: "qz-twinkle 2.2s .4s ease-in-out infinite" }}>✧</span>
+          <h1 style={{ fontSize: 20, color: "#B85C82", margin: 0, display: "inline-block" }}>
+            커플 퀴즈 <span style={{ display: "inline-block", animation: "k-bob 2.6s ease-in-out infinite" }}>💭</span>
+          </h1>
+        </div>
+        <p style={{ fontSize: 11.5, color: "#8A7A85", textAlign: "center", margin: "0 0 12px", lineHeight: 1.6 }}>
           테마를 골라 풀어보세요. <b style={{ color: "#B85C82" }}>세트마다 처음 통과할 때 티켓</b>을 줘요.<br />
           절반 이상 🎟 1장 · 만점 🎟 2장
         </p>
-        <p style={{ fontSize: 11, color: "#A89AA3", textAlign: "center", margin: "0 0 16px" }}>완료 {claimedCount}/{QUIZ_SETS.length}</p>
+
+        {/* 완료 진행바 */}
+        <div style={{ display: "flex", alignItems: "center", gap: 8, margin: "0 0 16px" }}>
+          <div style={{ flex: 1, height: 7, background: "#EAD9E4", borderRadius: 4, overflow: "hidden" }}>
+            <div style={{ height: "100%", width: `${(claimedCount / QUIZ_SETS.length) * 100}%`, background: "linear-gradient(90deg, var(--rose), var(--lav))", borderRadius: 4, transition: "width .6s cubic-bezier(.22,.8,.24,1)" }} />
+          </div>
+          <span style={{ fontSize: 11, color: "#B85C82", whiteSpace: "nowrap" }}>완료 {claimedCount}/{QUIZ_SETS.length}</span>
+        </div>
 
         <div style={{ display: "grid", gap: 10 }}>
           {QUIZ_SETS.map((s, i) => {
             const done = claimed.includes(s.id);
             return (
-              <button key={s.id} onClick={() => start(s)} className="pixel-border k-pop" style={{
+              <button key={s.id} onClick={() => start(s)} className="pixel-border k-pop qz-set" style={{
                 textAlign: "left", borderRadius: 14, padding: "14px 16px", cursor: "pointer",
                 background: done ? "var(--cream)" : "#fff", display: "flex", alignItems: "center", gap: 12,
                 animationDelay: `${i * 0.07}s`,
               }}>
-                <span style={{ fontSize: 28 }}>{s.emoji}</span>
+                <span className="k-bob" style={{ fontSize: 28, animationDelay: `${i * 0.25}s` }}>{s.emoji}</span>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <p style={{ margin: 0, fontSize: 15, color: "#B85C82", fontWeight: 600 }}>{s.theme}</p>
                   <p style={{ margin: "2px 0 0", fontSize: 11.5, color: "#9A8A95" }}>{s.desc} · {s.questions.length}문제</p>
@@ -84,7 +134,7 @@ export default function QuizPage() {
                 {done ? (
                   <span style={{ flexShrink: 0, fontSize: 11, color: "#C98AA6", border: "1.5px solid #E3B8CC", borderRadius: 8, padding: "3px 9px" }}>완료 ✓</span>
                 ) : (
-                  <span className="chip" style={{ flexShrink: 0 }}>🎟 받기</span>
+                  <span className="chip qz-pulse" style={{ flexShrink: 0 }}>🎟 받기</span>
                 )}
               </button>
             );
@@ -121,10 +171,11 @@ export default function QuizPage() {
                   else if (i === picked) { bg = "#F4C7C7"; color = "#A33333"; }
                 }
                 return (
-                  <button key={i} onClick={() => choose(i)} style={{
+                  <button key={i} onClick={() => choose(i)} disabled={picked !== null} className="qz-opt" style={{
                     background: bg, color, border: "2px solid var(--lav)", borderRadius: 12,
                     padding: "12px 14px", fontSize: 14, textAlign: "left",
                     boxShadow: "0 3px 0 rgba(124,90,150,0.15)",
+                    cursor: picked !== null ? "default" : "pointer",
                   }}>{opt}</button>
                 );
               })}
@@ -135,13 +186,14 @@ export default function QuizPage() {
 
       {phase === "done" && (
         <div className="slideup" style={{ textAlign: "center", paddingTop: 30 }}>
+          {earned > 0 && <Burst />}
           <div className="floaty" style={{ fontSize: 58 }}>{earned > 0 ? "🎉" : wasClaimed ? "😊" : "🌧"}</div>
           <h1 style={{ fontSize: 20, color: "#B85C82", margin: "14px 0 6px" }}>
             {set.questions.length}문제 중 {score}개 정답!
           </h1>
           {earned > 0 ? (
             <p style={{ fontSize: 14, color: "#6A5A66", lineHeight: 1.7 }}>
-              룰렛 티켓 <b style={{ color: "#B85C82" }}>🎟 {earned}장</b>을 얻었어요!
+              룰렛 티켓 <b style={{ color: "#B85C82", fontSize: 17 }}>🎟 <CountUp target={earned} />장</b>을 얻었어요!
             </p>
           ) : wasClaimed ? (
             <p style={{ fontSize: 14, color: "#6A5A66", lineHeight: 1.7 }}>
