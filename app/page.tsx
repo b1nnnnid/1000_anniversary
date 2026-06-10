@@ -1,8 +1,13 @@
 "use client";
 
-import { useState, ReactNode } from "react";
+import { useState, useEffect, useMemo, ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import PixelIcon from "@/components/PixelIcon";
+
+// 픽셀 하트 도트 좌표 (7x6)
+const HEART_MAP = [[0, 1, 1, 0, 1, 1, 0], [1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1], [0, 1, 1, 1, 1, 1, 0], [0, 0, 1, 1, 1, 0, 0], [0, 0, 0, 1, 0, 0, 0]];
+const HEART_CELLS: { x: number; y: number }[] = [];
+HEART_MAP.forEach((row, rr) => row.forEach((v, cc) => { if (v) HEART_CELLS.push({ x: cc * 13, y: rr * 13 }); }));
 
 const COUPLE_SVG = (
   <svg width="220" height="156" viewBox="0 0 240 190" aria-hidden="true" shapeRendering="crispEdges">
@@ -128,6 +133,74 @@ const SLIDES: { title: string; body: string; preview: ReactNode }[] = [
   { title: "그리고 마지막엔...", body: "추억을 끝까지 모으면 특별한 순간이 기다려요.\n어떤 일일지는 직접 확인해봐요!", preview: PreviewTeaser },
 ];
 
+// 표지 연출: 타이핑 → 1000 카운트업 → 픽셀 하트 조립 → 제목·커플 등장
+function CoverIntro({ onStart }: { onStart: () => void }) {
+  const [phase, setPhase] = useState<"type" | "count" | "assemble" | "done">("type");
+  const [typed, setTyped] = useState("");
+  const [num, setNum] = useState(0);
+  const offs = useMemo(() => HEART_CELLS.map(() => ({ dx: Math.round((Math.random() - 0.5) * 200), dy: Math.round((Math.random() - 0.5) * 200) })), []);
+  const FULL = "2023.10.08 — 우리 이야기가 시작된 날";
+
+  useEffect(() => {
+    if (phase !== "type") return;
+    let i = 0;
+    const id = setInterval(() => { i++; setTyped(FULL.slice(0, i)); if (i >= FULL.length) { clearInterval(id); setTimeout(() => setPhase("count"), 450); } }, 45);
+    return () => clearInterval(id);
+  }, [phase]);
+
+  useEffect(() => {
+    if (phase !== "count") return;
+    let raf = 0; const t0 = performance.now();
+    const tick = (now: number) => {
+      const p = Math.min(1, (now - t0) / 1400);
+      setNum(Math.round(1000 * (1 - Math.pow(1 - p, 3))));
+      if (p < 1) raf = requestAnimationFrame(tick); else setTimeout(() => setPhase("assemble"), 250);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [phase]);
+
+  useEffect(() => {
+    if (phase !== "assemble") return;
+    const t = setTimeout(() => setPhase("done"), 900);
+    return () => clearTimeout(t);
+  }, [phase]);
+
+  const skip = () => { setTyped(FULL); setNum(1000); setPhase("done"); };
+  const showHeart = phase === "assemble" || phase === "done";
+
+  return (
+    <div className="slideup" onClick={phase === "done" ? undefined : skip}
+      style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 340 }}>
+      {phase === "type" && (
+        <p style={{ fontFamily: "var(--font-pixel)", fontSize: 13, color: "#B85C82", minHeight: 20, margin: 0 }}>{typed}<span className="cover-cur" /></p>
+      )}
+      {phase === "count" && (
+        <p style={{ fontSize: 52, color: "#E8556F", fontWeight: 700, margin: 0, lineHeight: 1, fontVariantNumeric: "tabular-nums" }}>{num.toLocaleString()}<span style={{ fontSize: 20 }}>일</span></p>
+      )}
+      {showHeart && (
+        <div style={{ position: "relative", width: 91, height: 78, margin: "0 auto 6px" }}>
+          {HEART_CELLS.map((cell, i) => (
+            <span key={i} className="cover-cell" style={{ left: cell.x, top: cell.y, ["--dx" as string]: `${offs[i].dx}px`, ["--dy" as string]: `${offs[i].dy}px`, animationDelay: `${i * 0.03}s` }} />
+          ))}
+        </div>
+      )}
+      {phase === "done" && (
+        <div className="pop" style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+          <div className="sparkle" style={{ fontSize: 13, color: "#B85C82", letterSpacing: 2 }}>OUR LITTLE WORLD</div>
+          <h1 style={{ fontSize: 26, color: "#B85C82", margin: "8px 0 4px", lineHeight: 1.4 }}>우리의 1000일 ♥</h1>
+          <p style={{ fontSize: 13, color: "#8A7A85", margin: "0 0 14px", lineHeight: 1.7 }}>함께 걸어온 길을 따라가는 작은 추억 여행</p>
+          <div className="floaty">{COUPLE_SVG}</div>
+          <button className="btn-rose" onClick={onStart} style={{ marginTop: 20 }}>여행 시작하기 →</button>
+        </div>
+      )}
+      {phase !== "done" && (
+        <p style={{ fontSize: 11, color: "#C5B7C0", marginTop: 18, margin: "18px 0 0" }}>탭하면 바로 시작 ›</p>
+      )}
+    </div>
+  );
+}
+
 export default function Intro() {
   const router = useRouter();
   const [step, setStep] = useState(0);
@@ -138,13 +211,7 @@ export default function Intro() {
   return (
     <main style={{ minHeight: "100dvh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "26px 22px", textAlign: "center", maxWidth: 460, margin: "0 auto" }}>
       {step === 0 ? (
-        <div key="cover" className="slideup" style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-          <div className="sparkle" style={{ fontSize: 13, color: "#B85C82", letterSpacing: 2 }}>OUR LITTLE WORLD</div>
-          <h1 style={{ fontSize: 26, color: "#B85C82", margin: "10px 0 4px", lineHeight: 1.4 }}>우리의 1000일 ♥</h1>
-          <p style={{ fontSize: 13, color: "#8A7A85", margin: "0 0 16px", lineHeight: 1.7 }}>함께 걸어온 길을 따라가는 작은 추억 여행</p>
-          <div className="floaty">{COUPLE_SVG}</div>
-          <button className="btn-rose" onClick={next} style={{ marginTop: 22 }}>여행 시작하기 →</button>
-        </div>
+        <CoverIntro key="cover" onStart={next} />
       ) : (
         <div key={step} className="slideup" style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "100%" }}>
           {SLIDES[step - 1].preview}

@@ -214,6 +214,13 @@ button { cursor: pointer; }
 .pola { transition: transform .2s ease; }
 .pola:hover { transform: rotate(0deg) translateY(-5px) !important; }
 
+/* onboarding 표지: 타이핑 + 카운트업 + 픽셀 하트 조립 */
+@keyframes cover-assemble { from { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(.2); } to { opacity: 1; transform: none; } }
+@keyframes cover-blink { 50% { opacity: 0; } }
+.cover-cell { position: absolute; width: 13px; height: 13px; background: var(--rose); border-radius: 2px; animation: cover-assemble .6s both; }
+.cover-cur { display: inline-block; width: 7px; height: 14px; background: var(--rose); margin-left: 2px; vertical-align: -2px; animation: cover-blink 1s steps(1) infinite; }
+@media (prefers-reduced-motion: reduce) { .cover-cell { animation-duration: .001s; } .cover-cur { animation: none; } }
+
 /* quiz: 커플 퀴즈 */
 @keyframes qz-pulse { 0%,100% { transform: scale(1);} 50% { transform: scale(1.06);} }
 @keyframes qz-twinkle { 0%,100% { opacity:.25; transform: scale(.7);} 50% { opacity:1; transform: scale(1.1);} }
