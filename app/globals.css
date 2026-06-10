@@ -122,3 +122,87 @@ button { cursor: pointer; }
 .gw-fling { animation: gwFling 1.4s ease-out infinite; }
 .gw-fling2 { animation: gwFling2 1.4s ease-out infinite; }
 @media (prefers-reduced-motion: reduce) { .gw-typeL,.gw-typeR,.gw-drip,.gw-screen,.gw-fling,.gw-fling2 { animation: none; } }
+
+/* ===== 페이지별 애니메이션 (인라인 <style> 대신 전역 정의: SSR 하이드레이션 안전) ===== */
+
+/* together: 함께한 시간 */
+@keyframes tick-pop { 0% { transform: scale(1.35); opacity: .45; } 100% { transform: scale(1); opacity: 1; } }
+@keyframes bar-shine { 0% { transform: translateX(-120%); } 100% { transform: translateX(260%); } }
+@keyframes count-glow { 0%,100% { text-shadow: 0 0 0 rgba(232,85,111,0); } 50% { text-shadow: 0 0 14px rgba(232,85,111,.45); } }
+
+/* wishes: 소원권 보관함 */
+@keyframes ticket-in { from { opacity:0; transform: translateY(18px) rotate(-1.5deg) scale(.96);} to { opacity:1; transform:none; } }
+@keyframes stamp-in { 0% { transform: scale(2.4) rotate(-18deg); opacity:0; } 60% { transform: scale(.9) rotate(-12deg); opacity:1; } 100% { transform: scale(1) rotate(-12deg); opacity:1; } }
+@keyframes shine-sweep { 0% { transform: translateX(-130%) skewX(-18deg);} 100% { transform: translateX(360%) skewX(-18deg);} }
+@keyframes confetti-fly { 0% { transform: translate(0,0) scale(.4); opacity:0; } 15% { opacity:1; } 100% { transform: translate(var(--dx), var(--dy)) scale(1.1) rotate(var(--rot)); opacity:0; } }
+@keyframes gift-bob { 0%,100% { transform: translateY(0) rotate(-3deg);} 50% { transform: translateY(-10px) rotate(3deg);} }
+
+/* fortune: 오늘의 운세 */
+@keyframes ft-rise { from { opacity:0; transform: translateY(20px) scale(.97);} to { opacity:1; transform:none;} }
+@keyframes ft-starpop { 0% { opacity:0; transform: scale(0) rotate(-30deg);} 70% { transform: scale(1.3) rotate(8deg);} 100% { opacity:1; transform: scale(1) rotate(0);} }
+@keyframes ft-twinkle { 0%,100% { opacity:.25; transform: scale(.7);} 50% { opacity:1; transform: scale(1.1);} }
+@keyframes ft-moon { 0%,100% { transform: translateY(0) rotate(-4deg);} 50% { transform: translateY(-7px) rotate(4deg);} }
+.ft-card { animation: ft-rise .55s ease-out both; }
+.ft-star { animation: ft-starpop .45s ease-out both; }
+
+/* saju: 커플 사주·궁합 */
+@keyframes sj-rise { from { opacity:0; transform: translateY(20px) scale(.97);} to { opacity:1; transform:none;} }
+@keyframes sj-bob { 0%,100% { transform: translateY(0) rotate(-3deg);} 50% { transform: translateY(-6px) rotate(3deg);} }
+@keyframes sj-pulse { 0%,100% { transform: scale(1);} 50% { transform: scale(1.06);} }
+@keyframes sj-twinkle { 0%,100%{opacity:.25; transform:scale(.7);} 50%{opacity:1; transform:scale(1.1);} }
+@keyframes sj-orbit { from { transform: rotate(0);} to { transform: rotate(360deg);} }
+.sj-card { animation: sj-rise .55s ease-out both; }
+
+/* letters: 숨겨둔 편지함 */
+@keyframes lt-rise { from { opacity:0; transform: translateY(18px) scale(.97);} to { opacity:1; transform:none;} }
+@keyframes lt-sealbob { 0%,100% { transform: rotate(-4deg) scale(1);} 50% { transform: rotate(4deg) scale(1.06);} }
+@keyframes lt-shine { 0% { transform: translateX(-130%) skewX(-18deg);} 100% { transform: translateX(420%) skewX(-18deg);} }
+@keyframes lt-unfold { 0% { opacity:0; transform: perspective(700px) rotateX(-72deg) translateY(-12px); } 100% { opacity:1; transform: perspective(700px) rotateX(0) translateY(0);} }
+@keyframes lt-heart { 0% { opacity:0; transform: translateY(0) scale(.6);} 20%{opacity:1;} 100% { opacity:0; transform: translateY(-46px) scale(1.1);} }
+@keyframes lt-seal-stamp { 0% { transform: scale(2) rotate(-18deg); opacity:0;} 60% { transform: scale(.92) rotate(-8deg); opacity:1;} 100% { transform: scale(1) rotate(-8deg); opacity:1;} }
+@keyframes lt-confetti { 0% { transform: translate(0,0) scale(.4); opacity:0;} 15%{opacity:1;} 100% { transform: translate(var(--dx),var(--dy)) rotate(var(--rot)) scale(1.1); opacity:0;} }
+@keyframes lt-twinkle { 0%,100%{opacity:.25; transform:scale(.7);} 50%{opacity:1; transform:scale(1.1);} }
+.lt-card { animation: lt-rise .5s ease-out both; transition: transform .18s ease, box-shadow .18s ease; }
+.lt-card:hover { transform: translateY(-3px) rotate(-.4deg); }
+.lt-card:active { transform: translateY(0) scale(.99); }
+
+/* kakao: 대화 분석 */
+@keyframes k-bubble-in { from { opacity:0; transform: translateY(8px) scale(.9);} to { opacity:1; transform:none;} }
+@keyframes k-typing { 0%,80%,100% { opacity:.25; transform: translateY(0);} 40% { opacity:1; transform: translateY(-3px);} }
+@keyframes k-fade { 0% { opacity:0; transform: translateY(6px);} 100% { opacity:1; transform:none;} }
+@keyframes k-bar { from { width:0;} to { width:100%;} }
+@keyframes k-pop { from { opacity:0; transform: scale(.8);} 70% { transform: scale(1.05);} 100% { opacity:1; transform: scale(1);} }
+@keyframes k-rise { from { opacity:0; transform: translateY(16px) scale(.98);} to { opacity:1; transform:none;} }
+@keyframes k-bob { 0%,100% { transform: translateY(0);} 50% { transform: translateY(-4px);} }
+.k-pop { animation: k-pop .45s ease-out both; }
+.k-bob { animation: k-bob 2.6s ease-in-out infinite; }
+.k-dash > * { animation: k-rise .55s both; }
+.k-dash > *:nth-child(2){ animation-delay:.06s; }
+.k-dash > *:nth-child(3){ animation-delay:.12s; }
+.k-dash > *:nth-child(4){ animation-delay:.18s; }
+.k-dash > *:nth-child(5){ animation-delay:.24s; }
+.k-dash > *:nth-child(6){ animation-delay:.30s; }
+.k-dash > *:nth-child(7){ animation-delay:.36s; }
+.k-dash > *:nth-child(8){ animation-delay:.42s; }
+.k-dash > *:nth-child(9){ animation-delay:.48s; }
+.k-dash > *:nth-child(10){ animation-delay:.54s; }
+.k-dash > *:nth-child(11){ animation-delay:.60s; }
+.k-dash > *:nth-child(12){ animation-delay:.66s; }
+
+/* TicketGate: 티켓 사용 로딩 연출 */
+@keyframes rv-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+@keyframes rv-glow { 0%,100% { opacity:.25; transform: scale(.85);} 50% { opacity:.7; transform: scale(1.15);} }
+@keyframes rv-orbit { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes rv-twinkle { 0%,100% { opacity:.2; transform: scale(.6);} 50% { opacity:1; transform: scale(1.1);} }
+@keyframes rv-fade { 0% { opacity:0; transform: translateY(6px);} 12%,88% { opacity:1; transform:none;} 100% { opacity:0; transform: translateY(-6px);} }
+@keyframes rv-dot { 0%,80%,100% { opacity:.2; } 40% { opacity:1; } }
+@keyframes rv-bar { from { width: 0; } to { width: 100%; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .ticket-in, .shine-el,
+  .ft-card, .ft-star,
+  .sj-card,
+  .lt-card,
+  .k-pop, .k-bob, .slideup, .k-dash > *,
+  .rv-anim { animation: none !important; }
+}

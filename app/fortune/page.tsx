@@ -73,16 +73,6 @@ export default function FortunePage() {
       revealMessages={["별님에게 물어보고 있어요", "오늘의 기운을 모으는 중", "두 사람의 운세를 펼치고 있어요"]}
     >
     <main style={{ maxWidth: 460, margin: "0 auto", padding: "20px 16px 36px", minHeight: "100dvh" }}>
-      <style>{`
-        @keyframes ft-rise { from { opacity:0; transform: translateY(20px) scale(.97);} to { opacity:1; transform:none;} }
-        @keyframes ft-starpop { 0% { opacity:0; transform: scale(0) rotate(-30deg);} 70% { transform: scale(1.3) rotate(8deg);} 100% { opacity:1; transform: scale(1) rotate(0);} }
-        @keyframes ft-twinkle { 0%,100% { opacity:.25; transform: scale(.7);} 50% { opacity:1; transform: scale(1.1);} }
-        @keyframes ft-moon { 0%,100% { transform: translateY(0) rotate(-4deg);} 50% { transform: translateY(-7px) rotate(4deg);} }
-        .ft-card { animation: ft-rise .55s ease-out both; }
-        .ft-star { animation: ft-starpop .45s ease-out both; }
-        @media (prefers-reduced-motion: reduce){ .ft-card,.ft-star { animation: none !important; opacity:1 !important; transform:none !important; } }
-      `}</style>
-
       <Link href="/us" style={{ color: "#B85C82", fontSize: 13, textDecoration: "none" }}>← 우리의 공간</Link>
 
       <div style={{ position: "relative", textAlign: "center", margin: "12px 0 2px" }}>

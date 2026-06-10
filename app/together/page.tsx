@@ -83,20 +83,6 @@ export default function TogetherPage() {
 
   return (
     <main style={{ maxWidth: 460, margin: "0 auto", padding: "20px 18px 40px", minHeight: "100dvh", textAlign: "center" }}>
-      <style>{`
-        @keyframes tick-pop {
-          0% { transform: scale(1.35); opacity: .45; }
-          100% { transform: scale(1); opacity: 1; }
-        }
-        @keyframes bar-shine {
-          0% { transform: translateX(-120%); }
-          100% { transform: translateX(260%); }
-        }
-        @keyframes count-glow {
-          0%,100% { text-shadow: 0 0 0 rgba(232,85,111,0); }
-          50% { text-shadow: 0 0 14px rgba(232,85,111,.45); }
-        }
-      `}</style>
       <Link href="/us" style={{ color: "#B85C82", fontSize: 13, textDecoration: "none", display: "block", textAlign: "left" }}>← 우리의 공간</Link>
       <p className="sparkle" style={{ fontSize: 12, color: "#B85C82", letterSpacing: 2, marginTop: 16 }}>SINCE 2023.10.08</p>
       <h1 className="slideup" style={{ fontSize: 22, color: "#B85C82", margin: "6px 0 2px" }}>우리가 함께한 시간 💗</h1>

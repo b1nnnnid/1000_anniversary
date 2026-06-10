@@ -42,21 +42,6 @@ export default function LettersPage() {
 
   return (
     <main style={{ maxWidth: 460, margin: "0 auto", padding: "20px 16px 36px", minHeight: "100dvh" }}>
-      <style>{`
-        @keyframes lt-rise { from { opacity:0; transform: translateY(18px) scale(.97);} to { opacity:1; transform:none;} }
-        @keyframes lt-sealbob { 0%,100% { transform: rotate(-4deg) scale(1);} 50% { transform: rotate(4deg) scale(1.06);} }
-        @keyframes lt-shine { 0% { transform: translateX(-130%) skewX(-18deg);} 100% { transform: translateX(420%) skewX(-18deg);} }
-        @keyframes lt-unfold { 0% { opacity:0; transform: perspective(700px) rotateX(-72deg) translateY(-12px); } 100% { opacity:1; transform: perspective(700px) rotateX(0) translateY(0);} }
-        @keyframes lt-heart { 0% { opacity:0; transform: translateY(0) scale(.6);} 20%{opacity:1;} 100% { opacity:0; transform: translateY(-46px) scale(1.1);} }
-        @keyframes lt-seal-stamp { 0% { transform: scale(2) rotate(-18deg); opacity:0;} 60% { transform: scale(.92) rotate(-8deg); opacity:1;} 100% { transform: scale(1) rotate(-8deg); opacity:1;} }
-        @keyframes lt-confetti { 0% { transform: translate(0,0) scale(.4); opacity:0;} 15%{opacity:1;} 100% { transform: translate(var(--dx),var(--dy)) rotate(var(--rot)) scale(1.1); opacity:0;} }
-        @keyframes lt-twinkle { 0%,100%{opacity:.25; transform:scale(.7);} 50%{opacity:1; transform:scale(1.1);} }
-        .lt-card { animation: lt-rise .5s ease-out both; transition: transform .18s ease, box-shadow .18s ease; }
-        .lt-card:hover { transform: translateY(-3px) rotate(-.4deg); }
-        .lt-card:active { transform: translateY(0) scale(.99); }
-        @media (prefers-reduced-motion: reduce){ .lt-card{ animation:none !important; } }
-      `}</style>
-
       <Link href="/us" style={{ color: "#B85C82", fontSize: 13, textDecoration: "none" }}>← 우리의 공간</Link>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "12px 0 4px" }}>
         <h1 style={{ fontSize: 20, color: "#B85C82" }}>

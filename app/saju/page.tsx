@@ -46,16 +46,6 @@ function SajuContent() {
 
   return (
     <main style={{ maxWidth: 460, margin: "0 auto", padding: "20px 16px 36px", minHeight: "100dvh" }}>
-      <style>{`
-        @keyframes sj-rise { from { opacity:0; transform: translateY(20px) scale(.97);} to { opacity:1; transform:none;} }
-        @keyframes sj-bob { 0%,100% { transform: translateY(0) rotate(-3deg);} 50% { transform: translateY(-6px) rotate(3deg);} }
-        @keyframes sj-pulse { 0%,100% { transform: scale(1);} 50% { transform: scale(1.06);} }
-        @keyframes sj-twinkle { 0%,100%{opacity:.25; transform:scale(.7);} 50%{opacity:1; transform:scale(1.1);} }
-        @keyframes sj-orbit { from { transform: rotate(0);} to { transform: rotate(360deg);} }
-        .sj-card { animation: sj-rise .55s ease-out both; }
-        @media (prefers-reduced-motion: reduce){ .sj-card{ animation:none !important; } }
-      `}</style>
-
       <Link href="/us" style={{ color: "#B85C82", fontSize: 13, textDecoration: "none" }}>← 우리의 공간</Link>
 
       <div style={{ position: "relative", textAlign: "center", margin: "12px 0 2px" }}>

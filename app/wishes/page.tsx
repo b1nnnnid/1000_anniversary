@@ -32,22 +32,6 @@ export default function WishesPage() {
 
   return (
     <main style={{ maxWidth: 460, margin: "0 auto", padding: "20px 16px 36px", minHeight: "100dvh" }}>
-      <style>{`
-        @keyframes notch-none { from{} to{} }
-        @keyframes ticket-in { from { opacity:0; transform: translateY(18px) rotate(-1.5deg) scale(.96);} to { opacity:1; transform:none; } }
-        @keyframes stamp-in { 0% { transform: scale(2.4) rotate(-18deg); opacity:0; } 60% { transform: scale(.9) rotate(-12deg); opacity:1; } 100% { transform: scale(1) rotate(-12deg); opacity:1; } }
-        @keyframes shine-sweep { 0% { transform: translateX(-130%) skewX(-18deg);} 100% { transform: translateX(360%) skewX(-18deg);} }
-        @keyframes confetti-fly {
-          0% { transform: translate(0,0) scale(.4); opacity:0; }
-          15% { opacity:1; }
-          100% { transform: translate(var(--dx), var(--dy)) scale(1.1) rotate(var(--rot)); opacity:0; }
-        }
-        @keyframes gift-bob { 0%,100% { transform: translateY(0) rotate(-3deg);} 50% { transform: translateY(-10px) rotate(3deg);} }
-        @media (prefers-reduced-motion: reduce) {
-          .ticket-in, .shine-el { animation: none !important; }
-        }
-      `}</style>
-
       <Link href="/us" style={{ color: "#B85C82", fontSize: 13, textDecoration: "none" }}>← 우리의 공간</Link>
       <h1 style={{ fontSize: 20, color: "#B85C82", textAlign: "center", margin: "12px 0 4px" }}>소원권 보관함 🎟</h1>
       <p style={{ fontSize: 12, color: "#8A7A85", textAlign: "center", margin: "0 0 16px" }}>룰렛에서 뽑은 소원권을 모아둬요</p>

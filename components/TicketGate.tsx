@@ -29,16 +29,6 @@ function RevealScreen({ iconName, messages, durationMs }: { iconName: string; me
 
   return (
     <main style={{ maxWidth: 460, margin: "0 auto", padding: "20px 16px", minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
-      <style>{`
-        @keyframes rv-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
-        @keyframes rv-glow { 0%,100% { opacity:.25; transform: scale(.85);} 50% { opacity:.7; transform: scale(1.15);} }
-        @keyframes rv-orbit { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @keyframes rv-twinkle { 0%,100% { opacity:.2; transform: scale(.6);} 50% { opacity:1; transform: scale(1.1);} }
-        @keyframes rv-fade { 0% { opacity:0; transform: translateY(6px);} 12%,88% { opacity:1; transform:none;} 100% { opacity:0; transform: translateY(-6px);} }
-        @keyframes rv-dot { 0%,80%,100% { opacity:.2; } 40% { opacity:1; } }
-        @keyframes rv-bar { from { width: 0; } to { width: 100%; } }
-        @media (prefers-reduced-motion: reduce){ .rv-anim { animation-duration: .001s !important; } }
-      `}</style>
       <Link href="/us" style={{ color: "#B85C82", fontSize: 13, textDecoration: "none" }}>← 우리의 공간</Link>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center" }}>
         {/* 배경 반짝이 */}

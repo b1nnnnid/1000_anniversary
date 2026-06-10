@@ -271,31 +271,6 @@ export default function KakaoPage() {
 
   return (
     <main style={{ maxWidth: 480, margin: "0 auto", padding: "20px 16px 36px", minHeight: "100dvh" }}>
-      <style>{`
-        @keyframes k-bubble-in { from { opacity:0; transform: translateY(8px) scale(.9);} to { opacity:1; transform:none;} }
-        @keyframes k-typing { 0%,80%,100% { opacity:.25; transform: translateY(0);} 40% { opacity:1; transform: translateY(-3px);} }
-        @keyframes k-fade { 0% { opacity:0; transform: translateY(6px);} 100% { opacity:1; transform:none;} }
-        @keyframes k-bar { from { width:0;} to { width:100%;} }
-        @keyframes k-pop { from { opacity:0; transform: scale(.8);} 70% { transform: scale(1.05);} 100% { opacity:1; transform: scale(1);} }
-        @keyframes k-rise { from { opacity:0; transform: translateY(16px) scale(.98);} to { opacity:1; transform:none;} }
-        @keyframes k-bob { 0%,100% { transform: translateY(0);} 50% { transform: translateY(-4px);} }
-        .k-pop { animation: k-pop .45s ease-out both; }
-        .k-dash > * { animation: k-rise .55s both; }
-        .k-dash > *:nth-child(2){ animation-delay:.06s; }
-        .k-dash > *:nth-child(3){ animation-delay:.12s; }
-        .k-dash > *:nth-child(4){ animation-delay:.18s; }
-        .k-dash > *:nth-child(5){ animation-delay:.24s; }
-        .k-dash > *:nth-child(6){ animation-delay:.30s; }
-        .k-dash > *:nth-child(7){ animation-delay:.36s; }
-        .k-dash > *:nth-child(8){ animation-delay:.42s; }
-        .k-dash > *:nth-child(9){ animation-delay:.48s; }
-        .k-dash > *:nth-child(10){ animation-delay:.54s; }
-        .k-dash > *:nth-child(11){ animation-delay:.60s; }
-        .k-dash > *:nth-child(12){ animation-delay:.66s; }
-        .k-bob { animation: k-bob 2.6s ease-in-out infinite; }
-        @media (prefers-reduced-motion: reduce){ .k-pop, .slideup, .k-dash > * { animation: none !important; } }
-      `}</style>
-
       <Link href="/us" style={{ color: "#B85C82", fontSize: 13, textDecoration: "none" }}>← 우리의 공간</Link>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "12px 0 4px" }}>
         <h1 style={{ fontSize: 20, color: "#B85C82" }}>카톡 대화 분석 💬</h1>
