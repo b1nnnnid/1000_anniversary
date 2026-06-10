@@ -53,9 +53,11 @@ export default function TogetherPage() {
   const startDday = useRef(e.dday).current;
   const { val: countDay, done: countDone } = useCountUp(startDday);
   const [boot, setBoot] = useState(false);
+  const [mounted, setMounted] = useState(false); // 실시간 시계는 마운트 후에만 (SSR 불일치 방지)
 
   useEffect(() => {
     markFlag("together");
+    setMounted(true);
     const iv = setInterval(() => setE(elapsed()), 100);
     const t = setTimeout(() => setBoot(true), 250); // 진행바가 0에서 쭈욱 차오르도록
     return () => { clearInterval(iv); clearTimeout(t); };
@@ -104,24 +106,24 @@ export default function TogetherPage() {
         <p style={{ fontSize: 40, color: "#E8556F", margin: "2px 0", lineHeight: 1.1, animation: countDone ? "none" : "count-glow 1.5s ease-in-out" }}>
           {(countDone ? e.dday : countDay).toLocaleString()}<span style={{ fontSize: 20 }}>일째</span>
         </p>
-        {/* 실시간 시계 — 초가 눈에 띄게 */}
-        <div style={{ display: "flex", alignItems: "baseline", justifyContent: "center", gap: 4, marginTop: 10, fontVariantNumeric: "tabular-nums" }}>
-          <span style={{ fontSize: 16, color: "#6A5A66" }}>{e.days}일</span>
+        {/* 실시간 시계 — 초가 눈에 띄게 (마운트 후 렌더) */}
+        <div suppressHydrationWarning style={{ display: "flex", alignItems: "baseline", justifyContent: "center", gap: 4, marginTop: 10, fontVariantNumeric: "tabular-nums" }}>
+          <span style={{ fontSize: 16, color: "#6A5A66" }}>{mounted ? e.days : "—"}일</span>
           <span style={{ fontSize: 20, color: "#6A5A66", marginLeft: 4 }}>
-            {String(e.h).padStart(2, "0")}:{String(e.m).padStart(2, "0")}:
+            {mounted ? `${String(e.h).padStart(2, "0")}:${String(e.m).padStart(2, "0")}:` : "--:--:"}
           </span>
           <span
-            key={e.s}
+            key={mounted ? e.s : "x"}
             style={{
               display: "inline-block",
               minWidth: 38,
               fontSize: 30,
               fontWeight: 800,
               color: "#E8556F",
-              animation: "tick-pop .4s ease-out",
+              animation: mounted ? "tick-pop .4s ease-out" : "none",
             }}
           >
-            {String(e.s).padStart(2, "0")}
+            {mounted ? String(e.s).padStart(2, "0") : "--"}
           </span>
           <span style={{ fontSize: 12, color: "#B85C82", alignSelf: "flex-end", marginBottom: 4 }}>초</span>
         </div>
