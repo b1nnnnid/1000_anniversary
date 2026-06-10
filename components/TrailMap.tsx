@@ -13,7 +13,7 @@ type Dir = "down" | "up" | "left" | "right";
 const VW = WORLD_COLS * TILE;
 const VH = 560;
 const WORLD_H = WORLD_ROWS * TILE;
-const SPEED = 2.2;
+const SPEED = 1.5;
 
 type CatState = "idle" | "notice" | "approach" | "talk" | "return";
 
@@ -400,7 +400,7 @@ export default function TrailMap({
 
         {/* 맵 위에 떠 있는 조이스틱 — 끌어서 이동 (이동하며 화면을 볼 수 있어요) */}
         <div ref={joyBase} onPointerDown={startJoy} style={{
-          position: "absolute", left: 16, bottom: 16, width: 118, height: 118, borderRadius: "50%",
+          position: "absolute", right: 16, bottom: 16, width: 118, height: 118, borderRadius: "50%",
           background: "rgba(255,255,255,0.40)", border: "2px solid rgba(184,92,130,0.45)",
           boxShadow: "0 2px 0 rgba(124,90,150,0.18)", touchAction: "none", userSelect: "none",
           display: "flex", alignItems: "center", justifyContent: "center", zIndex: 5,

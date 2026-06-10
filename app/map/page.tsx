@@ -35,6 +35,10 @@ export default function MapPage() {
       setCollected(p.collectedSpots);
       setTickets(p.tickets);
       setPieces(p.heartPieces);
+      // 노란 고양이 첫인사 — 맵 들어오자마자 바로
+      if (!p.collectedSpots.includes("cat-intro")) {
+        setTimeout(() => setDialog({ lines: CAT_INTRO, intro: true }), 450);
+      }
     });
   }, []);
 

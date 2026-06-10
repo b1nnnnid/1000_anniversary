@@ -35,6 +35,7 @@ export interface Stage {
   photo?: string;         // /photos/xxx
   text: string;           // 수집할 때 사진 밑에 뜨는 짧은 설명
   story?: string;         // 추억 앨범에서 보는 긴 글 (없으면 text 를 그대로 보여줌)
+  past?: string;          // 추억 모달 사진 옆에 둥둥 뜨는 '과거의 우리' 한마디
   challenge?: Challenge;  // 스테이지 미션 (없으면 바로 추억 열림)
   place?: Place;          // 상봉 후 변신할 데이트 장소
 }
@@ -47,6 +48,7 @@ export const STAGES: Stage[] = [
     photo: "/photos/sample1.svg",
     text: "어색하게 인사했던 그날. 여기에 그날의 사진과 이야기를 넣어주세요.",
     story: "어색하게 인사하고, 무슨 말을 해야 할지 몰라 괜히 하늘만 봤던 날.\n그런데 헤어질 때쯤엔 벌써 다음에 또 보고 싶어졌어.\n돌아보면 그게 우리 이야기의 첫 페이지였어. 여기에 그날의 사진과 긴 이야기를 적어보세요.",
+    past: "그땐 무슨 말 할지 몰라 하늘만 봤었지 ㅎㅎ",
     challenge: { type: "quiz2", question: "처음 만난 날, 먼저 말을 건 사람은?", options: ["나", "오빠"], answer: 1 },
     place: { kind: "park", name: "처음 만난 공원", desc: "그날처럼 벤치에 나란히 앉았다. 아이스크림은 역시 두 개." } },
 
@@ -79,6 +81,7 @@ export const STAGES: Stage[] = [
     photo: "/photos/sample3.svg",
     text: "바다를 보러 갔던 1박 2일.",
     story: "처음으로 멀리 떠났던 1박 2일.\n바다 앞에서 한참을 그냥 앉아 있었어. 별다른 걸 안 했는데도 제일 기억에 남는 여행이야.\n파도 소리랑 모래 위 발자국 두 줄, 그거면 충분했어.",
+    past: "바다 가는 내내 신나서 떠들었잖아 🌊",
     challenge: { type: "simon" },
     place: { kind: "beach", name: "그 바닷가", desc: "파도 소리, 모래 위 발자국 두 줄. 또 오자." } },
 
@@ -95,6 +98,7 @@ export const STAGES: Stage[] = [
     photo: "/photos/sample1.svg",
     text: "여기까지 함께 걸어와줘서 고마워.",
     story: "여기까지 함께 걸어와줘서 고마워.\n특별할 것 없는 하루하루가 모여서 어느새 우리가 됐어.\n앞으로의 날들도 지금처럼 천천히, 같이 걷자. 다음 1000일도 잘 부탁해.",
+    past: "여기까지 올 줄, 그땐 몰랐지? 💗",
     challenge: { type: "finddiff" },
     place: { kind: "park", name: "야경 공원", desc: "1000일의 마무리는 천천히 걷기. 다음 1000일도 잘 부탁해." } },
 ];
@@ -123,22 +127,19 @@ export interface Marker {
   speaker: string; lines: string[];
   event?: "thiefcat"; // 특수 이벤트(도둑 검은 고양이)
 }
+//   길을 따라 멀찍멀찍 떨어뜨려 둠. 도둑고양이 표지판은 중반 이후(여행 구간) 배치.
 export const MARKERS: Marker[] = [
   { id: "s-guide", col: 6, row: 6, kind: "sign", speaker: "🪧 표지판",
     lines: ["여기서부터 둘의 추억 길.", "위에서부터 차례대로 열어야 다음이 열린대!"] },
-  { id: "s-thief", col: 6, row: 8, kind: "sign", speaker: "🪧 낡은 표지판",
-    lines: ["쉿… 이 근처에 도둑고양이가 산대.", "노란 고양이가 준 티켓을 노린다던데…?"],
-    event: "thiefcat" },
-  { id: "s-joke1", col: 5, row: 9, kind: "sign", speaker: "🪧 표지판",
+  { id: "s-joke1", col: 3, row: 12, kind: "sign", speaker: "🪧 표지판",
     lines: ["주의: 너무 귀여운 커플 출몰 구역.", "심장 약하면 우회하세요 💗"] },
-  { id: "s-joke2", col: 4, row: 9, kind: "sign", speaker: "🪧 표지판",
-    lines: ["오늘의 운세: 옆 사람이 당신을 좋아함.", "(적중률 100%)"] },
-  { id: "g-first", col: 6, row: 4, kind: "ghost", speaker: "👻 과거의 우리",
-    lines: ["…처음 만난 날의 우리야.", "무슨 말 할지 몰라서 괜히 하늘만 봤었지 ㅎㅎ"] },
-  { id: "g-trip", col: 6, row: 22, kind: "ghost", speaker: "👻 과거의 우리",
-    lines: ["바다 보러 가던 날 기억나?", "가는 내내 신나서 떠들었잖아."] },
   { id: "b-bench", col: 8, row: 31, kind: "bench", speaker: "🪑 벤치",
     lines: ["여기 잠깐 앉았다 갈까?", "…역시 네 옆이 제일 편해."] },
+  { id: "s-thief", col: 5, row: 26, kind: "sign", speaker: "🪧 낡은 표지판",
+    lines: ["쉿… 이 근처에 도둑고양이가 산대.", "노란 고양이가 준 티켓을 노린다던데…?"],
+    event: "thiefcat" },
+  { id: "s-joke2", col: 4, row: 39, kind: "sign", speaker: "🪧 표지판",
+    lines: ["오늘의 운세: 옆 사람이 당신을 좋아함.", "(적중률 100%)"] },
 ];
 
 // 도둑 검은 고양이 이벤트 대사
