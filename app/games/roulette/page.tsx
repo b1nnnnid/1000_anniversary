@@ -6,6 +6,7 @@ import { WISHES } from "@/lib/gameData";
 import GameIntro from "@/components/GameIntro";
 import CharacterReaction from "@/components/CharacterReaction";
 import { getProgress, spendTicket } from "@/lib/progressClient";
+import { addCoupon, listCoupons } from "@/lib/couponsClient";
 import { markFlag } from "@/lib/flags";
 import { playSpin, playWin, playWrong } from "@/lib/sfx";
 
@@ -39,9 +40,7 @@ export default function RoulettePage() {
   useEffect(() => { getProgress().then((p) => setTickets(p.tickets)); }, []);
 
   const loadRecent = useCallback(() => {
-    fetch("/api/coupons").then((r) => r.json())
-      .then((d) => { if (Array.isArray(d)) setRecent(d.slice(0, 3)); })
-      .catch(() => {});
+    setRecent(listCoupons().slice(0, 3));
   }, []);
   useEffect(loadRecent, [loadRecent]);
 
@@ -92,10 +91,8 @@ export default function RoulettePage() {
       setResult(i);
       if (WISHES[i].kind === "miss") playWrong(); else playWin();
       if (WISHES[i].kind !== "miss") {
-        fetch("/api/coupons", {
-          method: "POST", headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ title: WISHES[i].title, emoji: WISHES[i].emoji }),
-        }).then(loadRecent).catch(() => {});
+        addCoupon(WISHES[i].title, WISHES[i].emoji); // 브라우저에 저장 + DB best-effort
+        loadRecent();
       }
     }, SPIN_MS + 300);
   };

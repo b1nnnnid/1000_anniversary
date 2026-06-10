@@ -97,5 +97,6 @@ export async function resetProgress(): Promise<void> {
     localStorage.removeItem("our1000days-unlocks");
     localStorage.removeItem("our1000days-flags");
     localStorage.removeItem("our1000days-ach-seen");
+    localStorage.removeItem("our1000days-coupons");
   } catch {}
 }

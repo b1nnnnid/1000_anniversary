@@ -3,8 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { markFlag } from "@/lib/flags";
-
-interface Coupon { id: number; title: string; emoji: string; used: boolean; earnedAt: string; }
+import { Coupon, listCoupons, setCouponUsed } from "@/lib/couponsClient";
 
 const PAGE_BG = "#F3E7EF";
 
@@ -13,18 +12,15 @@ export default function WishesPage() {
   const [loading, setLoading] = useState(true);
   const [burst, setBurst] = useState<{ emoji: string } | null>(null);
 
-  const load = () => fetch("/api/coupons").then((r) => r.json())
-    .then((d) => setCoupons(Array.isArray(d) ? d : [])).catch(() => {}).finally(() => setLoading(false));
-  useEffect(() => { markFlag("wishes"); load(); }, []);
+  useEffect(() => { markFlag("wishes"); setCoupons(listCoupons()); setLoading(false); }, []);
 
   const toggle = (c: Coupon) => {
     const nowUsing = !c.used;
-    setCoupons((cs) => cs.map((x) => (x.id === c.id ? { ...x, used: nowUsing } : x)));
+    setCoupons(setCouponUsed(c.id, nowUsing));
     if (nowUsing) {
       setBurst({ emoji: c.emoji });
       setTimeout(() => setBurst(null), 1100);
     }
-    fetch("/api/coupons", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: c.id, used: nowUsing }) }).catch(() => {});
   };
 
   const active = coupons.filter((c) => !c.used);
