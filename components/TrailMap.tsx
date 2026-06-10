@@ -273,14 +273,37 @@ export default function TrailMap({
     return () => { window.removeEventListener("keydown", dn); window.removeEventListener("keyup", up); };
   }, []);
 
-  const press = useCallback((d: string, v: boolean) => { keys.current[d] = v; }, []);
-  const pad = (label: string, d: string) => (
-    <button className="dpad" aria-label={d}
-      onTouchStart={(e) => { e.preventDefault(); press(d, true); }}
-      onTouchEnd={(e) => { e.preventDefault(); press(d, false); }}
-      onMouseDown={() => press(d, true)} onMouseUp={() => press(d, false)} onMouseLeave={() => press(d, false)}
-    >{label}</button>
-  );
+  // ── 모바일 조이스틱 ──
+  const joyBase = useRef<HTMLDivElement>(null);
+  const [knob, setKnob] = useState({ x: 0, y: 0 });
+
+  const startJoy = useCallback((e: { clientX: number; clientY: number; preventDefault: () => void }) => {
+    e.preventDefault();
+    const base = joyBase.current; if (!base) return;
+    const rect = base.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2, cy = rect.top + rect.height / 2;
+    const R = 38, T = 9; // 최대 반경 / 데드존
+    const apply = (clientX: number, clientY: number) => {
+      let vx = clientX - cx, vy = clientY - cy;
+      const mag = Math.hypot(vx, vy);
+      if (mag > R) { vx = (vx / mag) * R; vy = (vy / mag) * R; }
+      setKnob({ x: vx, y: vy });
+      const k = keys.current;
+      k.right = vx > T; k.left = vx < -T; k.down = vy > T; k.up = vy < -T; // 8방향
+    };
+    apply(e.clientX, e.clientY);
+    const mv = (ev: PointerEvent) => { ev.preventDefault(); apply(ev.clientX, ev.clientY); };
+    const end = () => {
+      setKnob({ x: 0, y: 0 });
+      const k = keys.current; k.up = k.down = k.left = k.right = false;
+      window.removeEventListener("pointermove", mv);
+      window.removeEventListener("pointerup", end);
+      window.removeEventListener("pointercancel", end);
+    };
+    window.addEventListener("pointermove", mv, { passive: false });
+    window.addEventListener("pointerup", end);
+    window.addEventListener("pointercancel", end);
+  }, []);
 
   return (
     <div style={{ width: "100%" }}>
@@ -295,21 +318,29 @@ export default function TrailMap({
             fontSize: 12, whiteSpace: "nowrap", boxShadow: "0 2px 0 rgba(124,90,150,0.2)",
           }}>{near}</div>
         )}
-      </div>
 
-      <div style={{ display: "flex", justifyContent: "center", marginTop: 14, userSelect: "none" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3,52px)", gridTemplateRows: "repeat(3,52px)", gap: 5 }}>
-          <span />{pad("▲", "up")}<span />
-          {pad("◀", "left")}<span />{pad("▶", "right")}
-          <span />{pad("▼", "down")}<span />
+        {/* 맵 위에 떠 있는 조이스틱 — 끌어서 이동 (이동하며 화면을 볼 수 있어요) */}
+        <div ref={joyBase} onPointerDown={startJoy} style={{
+          position: "absolute", left: 16, bottom: 16, width: 118, height: 118, borderRadius: "50%",
+          background: "rgba(255,255,255,0.40)", border: "2px solid rgba(184,92,130,0.45)",
+          boxShadow: "0 2px 0 rgba(124,90,150,0.18)", touchAction: "none", userSelect: "none",
+          display: "flex", alignItems: "center", justifyContent: "center", zIndex: 5,
+        }}>
+          <span style={{ position: "absolute", top: 4, color: "#B85C82", fontSize: 11, opacity: 0.7 }}>▲</span>
+          <span style={{ position: "absolute", bottom: 4, color: "#B85C82", fontSize: 11, opacity: 0.7 }}>▼</span>
+          <span style={{ position: "absolute", left: 6, color: "#B85C82", fontSize: 11, opacity: 0.7 }}>◀</span>
+          <span style={{ position: "absolute", right: 6, color: "#B85C82", fontSize: 11, opacity: 0.7 }}>▶</span>
+          <div style={{
+            width: 54, height: 54, borderRadius: "50%", background: "var(--rose)", border: "3px solid #fff",
+            boxShadow: "0 3px 0 rgba(124,90,150,0.3)", pointerEvents: "none",
+            transform: `translate(${knob.x}px, ${knob.y}px)`,
+          }} />
         </div>
       </div>
 
-      <style>{`
-        .dpad{background:#fff;border:2px solid var(--lav);border-radius:12px;font-size:18px;
-          color:var(--rose);box-shadow:0 3px 0 rgba(124,90,150,0.2);display:flex;align-items:center;justify-content:center}
-        .dpad:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(124,90,150,0.2)}
-      `}</style>
+      <p style={{ textAlign: "center", fontSize: 11, color: "#A89AA3", marginTop: 10 }}>
+        가운데 동그라미를 끌어 이동해요 · PC는 방향키 / WASD
+      </p>
     </div>
   );
 }
