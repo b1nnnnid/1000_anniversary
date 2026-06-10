@@ -56,28 +56,34 @@ export default function AlbumPage() {
 
       {tab === "journey" && (
         <>
-          <p style={{ fontSize: 12, color: "#8A7A85", textAlign: "center", margin: "0 0 14px" }}>
+          <p style={{ fontSize: 12, color: "#8A7A85", textAlign: "center", margin: "0 0 16px" }}>
             탐방으로 모은 {gotCount}/{STAGES.length}개의 추억
           </p>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-            {list.map((s) => {
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 12, justifyContent: "center" }}>
+            {list.map((s, i) => {
               const got = collected.includes(s.id);
+              const rot = [-3, 2, -1.5, 2.5, -2, 1.5][i % 6];
               return (
                 <button key={s.id} onClick={() => got && setOpen(s)}
-                  style={{ padding: 0, border: "none", background: "none", textAlign: "left", cursor: got ? "pointer" : "default" }}>
-                  <div className="pixel-border" style={{ borderRadius: 12, overflow: "hidden", background: "#fff" }}>
-                    <div style={{ position: "relative", aspectRatio: "4/3", background: "#F1EFE8" }}>
+                  className="pola-wrap" style={{
+                    padding: 0, border: "none", background: "none", textAlign: "left",
+                    cursor: got ? "pointer" : "default", width: "calc(50% - 6px)",
+                    animationDelay: `${i * 0.07}s`,
+                  }}>
+                  <div className="pola pixel-border" style={{
+                    background: "#fff", borderRadius: 8, padding: "8px 8px 10px",
+                    transform: `rotate(${rot}deg)`, opacity: got ? 1 : 0.55,
+                  }}>
+                    <div style={{ position: "relative", aspectRatio: "4/3", background: "#F1EFE8", borderRadius: 4, overflow: "hidden" }}>
                       {got ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={s.photo} alt={s.title} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
                       ) : (
-                        <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 30, filter: "grayscale(1)", opacity: 0.4 }}>🔒</div>
+                        <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, filter: "grayscale(1)", opacity: 0.5 }}>🔒</div>
                       )}
                     </div>
-                    <div style={{ padding: "6px 8px" }}>
-                      <p style={{ margin: 0, fontSize: 12, color: got ? "#B85C82" : "#B8AEB4" }}>{got ? s.title : "아직 안 열린 추억"}</p>
-                      {got && s.date && <p style={{ margin: "2px 0 0", fontSize: 10, color: "#A89AA3" }}>{s.date}</p>}
-                    </div>
+                    <p style={{ margin: "8px 2px 0", fontSize: 12.5, color: got ? "#B85C82" : "#B8AEB4", fontWeight: 600 }}>{got ? s.title : "아직 안 열린 추억"}</p>
+                    {got && s.date && <p style={{ margin: "2px 2px 0", fontSize: 10, color: "#A89AA3" }}>{s.date}</p>}
                   </div>
                 </button>
               );
@@ -170,7 +176,7 @@ export default function AlbumPage() {
             </div>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={open.photo} alt={open.title} style={{ width: "100%", display: "block", aspectRatio: "4/3", objectFit: "cover" }} />
-            <p style={{ padding: "12px 16px", fontSize: 13, lineHeight: 1.7, color: "#6A5A66", margin: 0 }}>{open.text}</p>
+            <p style={{ padding: "14px 16px", fontSize: 13, lineHeight: 1.85, color: "#6A5A66", margin: 0, whiteSpace: "pre-line" }}>{open.story ?? open.text}</p>
             <div style={{ padding: "0 16px 16px", textAlign: "center" }}>
               <button className="btn-rose" onClick={() => setOpen(null)} style={{ fontSize: 14, padding: "10px 24px" }}>닫기 ♥</button>
             </div>

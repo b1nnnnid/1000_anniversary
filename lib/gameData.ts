@@ -33,7 +33,8 @@ export interface Stage {
   title: string;          // 추억 모달 제목
   date?: string;
   photo?: string;         // /photos/xxx
-  text: string;
+  text: string;           // 수집할 때 사진 밑에 뜨는 짧은 설명
+  story?: string;         // 추억 앨범에서 보는 긴 글 (없으면 text 를 그대로 보여줌)
   challenge?: Challenge;  // 스테이지 미션 (없으면 바로 추억 열림)
   place?: Place;          // 상봉 후 변신할 데이트 장소
 }
@@ -45,6 +46,7 @@ export const STAGES: Stage[] = [
     label: "처음 만난 날", title: "처음 만난 날", date: "2023.09.18",
     photo: "/photos/sample1.svg",
     text: "어색하게 인사했던 그날. 여기에 그날의 사진과 이야기를 넣어주세요.",
+    story: "어색하게 인사하고, 무슨 말을 해야 할지 몰라 괜히 하늘만 봤던 날.\n그런데 헤어질 때쯤엔 벌써 다음에 또 보고 싶어졌어.\n돌아보면 그게 우리 이야기의 첫 페이지였어. 여기에 그날의 사진과 긴 이야기를 적어보세요.",
     challenge: { type: "quiz2", question: "처음 만난 날, 먼저 말을 건 사람은?", options: ["나", "오빠"], answer: 1 },
     place: { kind: "park", name: "처음 만난 공원", desc: "그날처럼 벤치에 나란히 앉았다. 아이스크림은 역시 두 개." } },
 
@@ -52,6 +54,7 @@ export const STAGES: Stage[] = [
     label: "첫 데이트", title: "첫 데이트", date: "2023.09.20",
     photo: "/photos/sample2.svg",
     text: "둘이 처음 영화를 봤던 날. 가장 좋아하는 사진을 넣어보세요.",
+    story: "둘이 처음 영화를 봤던 날.\n팝콘은 반반, 손을 잡을까 말까 고민만 하다 영화가 끝나버렸지.\n그래도 집에 오는 길이 하나도 안 멀게 느껴졌어. 가장 좋아하는 사진과 함께 그날의 기분을 길게 남겨보세요.",
     challenge: { type: "cookie" },
     place: { kind: "cinema", name: "첫 데이트 영화관", desc: "팝콘은 반반. 이번엔 손잡는 데 3분도 안 걸렸다." } },
 
@@ -60,12 +63,14 @@ export const STAGES: Stage[] = [
     label: "단골 카페", title: "우리 단골 카페", date: "2023.11.02",
     photo: "/photos/sample1.svg",
     text: "자주 가던 그 카페. 왼쪽 길의 추억이에요.",
+    story: "자주 가던 그 카페. 늘 앉던 창가 자리에서 시답잖은 얘기로 몇 시간을 보냈어.\n사장님이 우리 얼굴을 다 외울 정도였지.\n별것 아닌 그 시간들이 사실은 제일 행복했던 것 같아.",
     challenge: { type: "catch" },
     place: { kind: "cafe", name: "우리 단골 카페", desc: "늘 앉던 그 자리. 사장님이 서비스 쿠키를 주셨다." } },
   { id: "movie-night", order: 3, branch: "B", col: 9, row: 15,
     label: "영화의 밤", title: "같이 본 영화", date: "2023.12.24",
     photo: "/photos/sample2.svg",
     text: "밤새 영화 보던 날. 오른쪽 길의 추억이에요.",
+    story: "밤새 영화를 몰아보던 날.\n무서운 장면에선 서로 더 무서운 척하면서 꼭 붙어 있었어.\n새벽에 시켜 먹은 야식이 그날의 하이라이트였지.",
     challenge: { type: "timing" },
     place: { kind: "restaurant", name: "심야 맛집", desc: "영화 보고 나면 역시 야식. 오늘도 둘이 한 그릇 더." } },
 
@@ -73,6 +78,7 @@ export const STAGES: Stage[] = [
     label: "첫 여행", title: "우리의 첫 여행", date: "2024.05.03",
     photo: "/photos/sample3.svg",
     text: "바다를 보러 갔던 1박 2일.",
+    story: "처음으로 멀리 떠났던 1박 2일.\n바다 앞에서 한참을 그냥 앉아 있었어. 별다른 걸 안 했는데도 제일 기억에 남는 여행이야.\n파도 소리랑 모래 위 발자국 두 줄, 그거면 충분했어.",
     challenge: { type: "simon" },
     place: { kind: "beach", name: "그 바닷가", desc: "파도 소리, 모래 위 발자국 두 줄. 또 오자." } },
 
@@ -80,6 +86,7 @@ export const STAGES: Stage[] = [
     label: "100일", title: "100일 기념", date: "2023.12.19",
     photo: "/photos/sample3.svg",
     text: "벌써 100일이라니. 케이크 불었던 날.",
+    story: "벌써 100일이라니, 믿기지 않았던 날.\n작은 케이크에 초를 꽂고 둘 다 같은 소원을 빌었던 것 같아.\n숫자가 늘어가는 게 이렇게 설레는 일인 줄 몰랐어.",
     challenge: { type: "puzzle" },
     place: { kind: "amusement", name: "놀이동산", desc: "관람차 맨 꼭대기에서 보는 노을. 소원도 빌었다." } },
 
@@ -87,6 +94,7 @@ export const STAGES: Stage[] = [
     label: "그리고 지금", title: "그리고 지금", date: "2026.06",
     photo: "/photos/sample1.svg",
     text: "여기까지 함께 걸어와줘서 고마워.",
+    story: "여기까지 함께 걸어와줘서 고마워.\n특별할 것 없는 하루하루가 모여서 어느새 우리가 됐어.\n앞으로의 날들도 지금처럼 천천히, 같이 걷자. 다음 1000일도 잘 부탁해.",
     challenge: { type: "finddiff" },
     place: { kind: "park", name: "야경 공원", desc: "1000일의 마무리는 천천히 걷기. 다음 1000일도 잘 부탁해." } },
 ];

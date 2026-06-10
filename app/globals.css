@@ -208,6 +208,12 @@ button { cursor: pointer; }
 .tl-mile-node { animation: tl-pulse 2s ease-in-out infinite; }
 .tab-btn { transition: color .2s ease, background .2s ease; }
 
+/* album: 폴라로이드 스크랩북 (추억 길 탭) */
+@keyframes pola-rise { from { opacity:0; transform: translateY(16px);} to { opacity:1; transform:none;} }
+.pola-wrap { animation: pola-rise .5s both; }
+.pola { transition: transform .2s ease; }
+.pola:hover { transform: rotate(0deg) translateY(-5px) !important; }
+
 @media (prefers-reduced-motion: reduce) {
   .ticket-in, .shine-el,
   .ft-card, .ft-star,
@@ -215,5 +221,6 @@ button { cursor: pointer; }
   .lt-card,
   .k-pop, .k-bob, .slideup, .k-dash > *,
   .tl-line-fill, .tl-node, .tl-mile-node, .tl-bob,
+  .pola-wrap,
   .rv-anim { animation: none !important; }
 }
