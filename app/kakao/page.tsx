@@ -71,11 +71,20 @@ function HourChart({ byHour, peak }: { byHour: number[]; peak: number }) {
 }
 
 function Dashboard({ a: raw }: { a: Analysis }) {
-  // 예전에 저장된 분석엔 새 필드가 없으므로 기본값으로 보정
+  // 예전에 저장된 분석엔 새 필드가 없으므로 기본값으로 보정 (raw 를 먼저 펼친 뒤 누락분만 채움)
   const a: Analysis = {
-    laughs: 0, loveWords: 0, hearts: 0, mediaCount: 0, peakHour: 0, longestStreak: 0,
-    byHour: new Array(24).fill(0), topWeekday: null, longestMsg: null, firstDate: null, lastDate: null,
     ...raw,
+    laughs: raw.laughs ?? 0,
+    loveWords: raw.loveWords ?? 0,
+    hearts: raw.hearts ?? 0,
+    mediaCount: raw.mediaCount ?? 0,
+    peakHour: raw.peakHour ?? 0,
+    longestStreak: raw.longestStreak ?? 0,
+    byHour: raw.byHour ?? new Array(24).fill(0),
+    topWeekday: raw.topWeekday ?? null,
+    longestMsg: raw.longestMsg ?? null,
+    firstDate: raw.firstDate ?? null,
+    lastDate: raw.lastDate ?? null,
   };
   // 새 지표(byHour 등)가 있는 분석만 재미 카드 노출 — 예전 분석은 데이터가 없어 숨김
   const hasFun = Array.isArray(raw.byHour) && raw.byHour.length === 24;
