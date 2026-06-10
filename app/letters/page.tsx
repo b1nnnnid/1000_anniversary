@@ -54,7 +54,7 @@ export default function LettersPage() {
         .lt-card { animation: lt-rise .5s ease-out both; transition: transform .18s ease, box-shadow .18s ease; }
         .lt-card:hover { transform: translateY(-3px) rotate(-.4deg); }
         .lt-card:active { transform: translateY(0) scale(.99); }
-        @media (prefers-reduced-motion: reduce){ .lt-card,[class^="lt-"]{ animation:none !important; } }
+        @media (prefers-reduced-motion: reduce){ .lt-card,[class^='lt-']{ animation:none !important; } }
       `}</style>
 
       <Link href="/us" style={{ color: "#B85C82", fontSize: 13, textDecoration: "none" }}>← 우리의 공간</Link>
