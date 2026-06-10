@@ -72,7 +72,7 @@ public/photos/          ★ 커플 사진 (sample 교체)
 - **추억 스테이지**: `lib/gameData.ts`의 `STAGES` 배열 (순서 order, 위치 col/row, 사진, 글).
   같은 `order`에 노드를 2개 두면 길이 두 갈래로 갈라졌다 합쳐집니다(분기).
 - **사진**: `public/photos/`에 넣고 `photo` 경로 맞추기.
-- **퀴즈 / 소원권**: 같은 파일의 `QUIZ` / `WISHES`.
+- **퀴즈 / 소원권**: 같은 파일의 `QUIZ_SETS`(테마별 세트, 세트당 최초 통과 시 1회 티켓) / `WISHES`.
 - **도착지**: `GOAL`. 모든 추억을 모으면 열리고 폭죽이 터집니다.
 
 ## 진행 규칙 (스토리)

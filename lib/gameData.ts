@@ -136,13 +136,55 @@ export const CAT_EVENTS: string[][] = [
   ["둘이 같이 걸으면 길이 분홍빛이 된다는 전설이 있다냥.", "...진짠지 확인해보라냥."],
 ];
 
-// 커플 퀴즈
+// 커플 퀴즈 — 테마별 세트. 세트를 통과하면 세트당 딱 한 번만 티켓을 줍니다.
+//  (절반 이상 = 🎟 1장 / 만점 = 🎟 2장, 보상은 최초 통과 시 1회)
+//  answer 는 0부터 시작! (첫 번째 보기 = 0). 정답은 둘만 아는 내용으로 자유롭게 고치세요.
 export interface QuizQuestion { q: string; options: string[]; answer: number; }
-// answer 는 0부터 시작! (첫 번째 보기 = 0)
-export const QUIZ: QuizQuestion[] = [
-  { q: "우리가 처음 같이 먹은 음식은?", options: ["떡볶이", "파스타", "초밥", "치킨"], answer: 3 },
-  { q: "우리의 1일은 며칠일까?", options: ["10월 8일", "10월 7일", "10월 3일", "10월 11일"], answer: 0 },
-  { q: "내가 제일 좋아하는 오빠의 모습은?", options: ["웃을 때", "잘 때", "운동할 때", "먹을 때"], answer: 1 },
+export interface QuizSet {
+  id: string;
+  theme: string;     // 세트 제목
+  emoji: string;
+  desc?: string;     // 세트 한 줄 소개
+  questions: QuizQuestion[];
+}
+
+export const QUIZ_SETS: QuizSet[] = [
+  {
+    id: "begin", theme: "처음의 우리", emoji: "🌱", desc: "시작하던 그 시절 이야기",
+    questions: [
+      { q: "우리가 처음 만난 곳은?", options: ["학교", "소개팅", "동아리", "회사"], answer: 1 },
+      { q: "우리의 1일은 며칠일까?", options: ["10월 8일", "10월 7일", "10월 3일", "10월 11일"], answer: 0 },
+      { q: "우리가 처음 같이 먹은 음식은?", options: ["떡볶이", "파스타", "초밥", "치킨"], answer: 3 },
+      { q: "첫 데이트 때 같이 한 것은?", options: ["영화", "전시", "공연", "야구"], answer: 0 },
+    ],
+  },
+  {
+    id: "taste", theme: "취향 맞히기", emoji: "🎯", desc: "서로의 취향, 얼마나 알까?",
+    questions: [
+      { q: "내가 제일 좋아하는 오빠의 모습은?", options: ["웃을 때", "잘 때", "운동할 때", "먹을 때"], answer: 1 },
+      { q: "오빠가 제일 좋아하는 음식은?", options: ["고기", "회", "떡볶이", "라면"], answer: 0 },
+      { q: "내가 가장 좋아하는 계절은?", options: ["봄", "여름", "가을", "겨울"], answer: 2 },
+      { q: "둘이 제일 자주 가는 데이트 코스는?", options: ["카페", "영화관", "공원", "쇼핑"], answer: 0 },
+    ],
+  },
+  {
+    id: "days", theme: "기념일과 숫자", emoji: "🔢", desc: "날짜와 숫자에 대한 기억",
+    questions: [
+      { q: "우리 1주년은 몇 월일까?", options: ["10월", "9월", "11월", "12월"], answer: 0 },
+      { q: "100일은 몇 월이었지?", options: ["1월", "12월", "2월", "11월"], answer: 0 },
+      { q: "함께한 첫 여행지는?", options: ["바다", "산", "온천", "섬"], answer: 0 },
+      { q: "둘 중 생일이 빠른 사람은?", options: ["나", "오빠", "같은 달", "비밀"], answer: 1 },
+    ],
+  },
+  {
+    id: "detail", theme: "우리만 아는 디테일", emoji: "💬", desc: "사소하지만 우리만 아는 것들",
+    questions: [
+      { q: "내가 화났을 때 푸는 방법은?", options: ["맛있는 거", "잠", "산책", "수다"], answer: 0 },
+      { q: "오빠 휴대폰 배경화면은?", options: ["우리 사진", "풍경", "캐릭터", "기본"], answer: 0 },
+      { q: "우리가 자주 쓰는 애칭은?", options: ["자기", "애기", "여보", "이름"], answer: 1 },
+      { q: "헤어지기 전 항상 하는 것은?", options: ["포옹", "사진", "간식", "산책"], answer: 0 },
+    ],
+  },
 ];
 
 // 소원권 룰렛: weight = 칸 크기. 좁은 칸(1)엔 좋은 보상, 넓은 칸(3~4)엔 웃긴 벌칙!
