@@ -27,6 +27,7 @@ export default function MapPage() {
   const [confirmReset, setConfirmReset] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [thiefRun, setThiefRun] = useState(0);
+  const [catIntro, setCatIntro] = useState(0);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const ticketsRef = useRef(0);
 
@@ -35,9 +36,9 @@ export default function MapPage() {
       setCollected(p.collectedSpots);
       setTickets(p.tickets);
       setPieces(p.heartPieces);
-      // 노란 고양이 첫인사 — 맵 들어오자마자 바로
+      // 노란 고양이가 시작 지점으로 다가와 인사하도록 신호 (느낌표 → 접근 → 인사 → 복귀)
       if (!p.collectedSpots.includes("cat-intro")) {
-        setTimeout(() => setDialog({ lines: CAT_INTRO, intro: true }), 450);
+        setTimeout(() => setCatIntro((n) => n + 1), 600);
       }
     });
   }, []);
@@ -235,7 +236,7 @@ export default function MapPage() {
       <TrailMap
         collected={collected} allCollected={allCollected} heartPieces={pieces}
         lockedIds={lockedIds} celebrated={celebrated} busy={busy} catActive={catActive}
-        thiefRun={thiefRun}
+        thiefRun={thiefRun} catIntro={catIntro}
         onStage={onStage} onGoal={onGoal} onHeart={onHeart} onCatTalk={onCatTalk} onMarker={onMarker}
       />
 

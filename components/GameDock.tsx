@@ -42,7 +42,7 @@ export default function GameDock({ onHome, gamesLocked = false, onLockedTry, onS
   type DockItem = { icon: string; label: string; locked: boolean; act: () => void; onLocked?: () => void };
   const items: DockItem[] = [
     { icon: "home", label: "처음으로", locked: false, act: () => (onHome ? onHome() : router.push("/")) },
-    { icon: "heart", label: "우리집", locked: gamesLocked, act: () => router.push("/us"), onLocked: onLockedTry },
+    { icon: "heart", label: "우리집", locked: false, act: () => router.push("/us"), onLocked: onLockedTry },
     { icon: "star", label: "전체보기", locked: !allAchDone, act: () => router.push("/showcase"), onLocked: onShowcaseLockedTry },
     { icon: "help", label: "조작법", locked: false, act: () => setShowHelp(true) },
     { icon: bgmOn ? "sound" : "mute", label: bgmOn ? "음악 ON" : "음악 OFF", locked: false, act: () => setBgmOn(toggleBgm()) },

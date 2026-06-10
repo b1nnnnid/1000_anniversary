@@ -26,6 +26,7 @@ interface Props {
   busy: boolean;             // 모달/대화 등 UI가 떠 있으면 이동·고양이 정지
   catActive: boolean;        // false면 고양이가 더 이상 다가오지 않음
   thiefRun: number;          // 값이 바뀌면 도둑 검은 고양이 달리기 연출 시작
+  catIntro: number;          // 값이 바뀌면 노란 고양이가 시작 지점으로 다가와 인사
   onStage: (s: Stage) => void;
   onGoal: () => void;
   onHeart: (id: string) => void;
@@ -34,7 +35,7 @@ interface Props {
 }
 
 export default function TrailMap({
-  collected, allCollected, heartPieces, lockedIds, celebrated, busy, catActive, thiefRun,
+  collected, allCollected, heartPieces, lockedIds, celebrated, busy, catActive, thiefRun, catIntro,
   onStage, onGoal, onHeart, onCatTalk, onMarker,
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -79,6 +80,16 @@ export default function TrailMap({
     const sx = (m ? m.col : 6) * TILE, sy = (m ? m.row : 8) * TILE;
     thief.current = { active: true, x: sx, y: sy - 10, t: 150 };
   }, [thiefRun]);
+
+  // 노란 고양이 인사: 시작 캐릭터 근처에 나타나 ❗ 띄우고 다가와 인사 → 제자리로
+  const catIntroInit = useRef(true);
+  useEffect(() => {
+    if (catIntroInit.current) { catIntroInit.current = false; return; }
+    const c = cat.current;
+    c.x = Math.min((WORLD_COLS - 2) * TILE, pos.current.x + 2.4 * TILE);
+    c.y = pos.current.y + 1.3 * TILE;
+    c.state = "notice"; c.timer = 48; c.seenBusy = false;
+  }, [catIntro]);
 
   const canMove = (nx: number, ny: number) => {
     const pts = [[nx + 8, ny + 18], [nx + 23, ny + 18], [nx + 8, ny + 30], [nx + 23, ny + 30]];
