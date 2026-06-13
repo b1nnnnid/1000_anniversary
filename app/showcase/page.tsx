@@ -564,6 +564,20 @@ export default function Showcase() {
           <p className="stagger" style={{ fontSize: 13, color: "#B85C82", margin: "8px 0 2px", fontWeight: 700 }}>여기까지가 우리의 1000일.</p>
           <p className="stagger" style={{ fontSize: 11, color: "#A89AA3", margin: 0 }}>그리고 앞으로의 날들도, 계속 ♥</p>
         </section>
+
+        {/* 숨은 깜짝선물 — 끝까지 온 사람에게만 */}
+        <section className="reveal" style={{ textAlign: "center", marginTop: 14, padding: "4px 0 8px" }}>
+          <a href="https://soft-gingersnap-4e722e.netlify.app/" target="_blank" rel="noopener noreferrer"
+            style={{
+              display: "inline-flex", alignItems: "center", gap: 7,
+              padding: "9px 16px", borderRadius: 14,
+              background: "var(--cream)", border: "1px dashed #E7D7E4",
+              color: "#B85C82", fontSize: 12, fontWeight: 600, textDecoration: "none",
+            }}>
+            <span style={{ fontSize: 16 }}>🎁</span>
+            <span>이건 그냥 내 깜짝선물!</span>
+          </a>
+        </section>
       </div>
     </main>
   );
