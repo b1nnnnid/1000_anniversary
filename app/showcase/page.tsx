@@ -358,15 +358,6 @@ export default function Showcase() {
   const [totalAch, setTotalAch] = useState(0);
   const [progress, setProgress] = useState(0);
   const [cine, setCine] = useState(false);
-  const [giftMsg, setGiftMsg] = useState(false);
-  const openGift = () => { try { window.open("https://soft-gingersnap-4e722e.netlify.app/", "_blank", "noopener,noreferrer"); } catch {} };
-  const onGiftClick = () => {
-    let seen = false;
-    try { seen = !!localStorage.getItem("gift-seen"); } catch {}
-    if (seen) { openGift(); return; }
-    try { localStorage.setItem("gift-seen", "1"); } catch {}
-    setGiftMsg(true);
-  };
   const rootRef = useRef<HTMLDivElement>(null);
 
   // 잠금 판정: 모든 업적 달성 여부
@@ -574,23 +565,18 @@ export default function Showcase() {
           <p className="stagger" style={{ fontSize: 11, color: "#A89AA3", margin: 0 }}>그리고 앞으로의 날들도, 계속 ♥</p>
         </section>
 
-        {/* 숨은 깜짝선물 — 끝까지 온 사람에게만 (살짝 숨긴 🎁 → 첫 클릭 시 메시지 1회) */}
-        <section className="reveal" style={{ textAlign: "center", marginTop: 16, padding: "4px 0 8px" }}>
-          {!giftMsg ? (
-            <button onClick={onGiftClick} aria-label="깜짝선물"
-              style={{ background: "none", border: "none", cursor: "pointer", fontSize: 22, opacity: 0.85, padding: 6, lineHeight: 1 }}>
-              🎁
-            </button>
-          ) : (
-            <div className="reveal">
-              <p style={{ fontSize: 12.5, color: "#B85C82", fontWeight: 700, margin: "0 0 10px" }}>이건 그냥 내 깜짝선물! 🎁</p>
-              <button onClick={() => { setGiftMsg(false); openGift(); }}
-                style={{ padding: "8px 18px", borderRadius: 12, cursor: "pointer",
-                  background: "var(--cream)", border: "1px dashed #E7D7E4", color: "#B85C82", fontSize: 12, fontWeight: 700 }}>
-                열어보기 →
-              </button>
-            </div>
-          )}
+        {/* 숨은 깜짝선물 — 끝까지 온 사람에게만 */}
+        <section className="reveal" style={{ textAlign: "center", marginTop: 14, padding: "4px 0 8px" }}>
+          <a href="https://soft-gingersnap-4e722e.netlify.app/" target="_blank" rel="noopener noreferrer"
+            style={{
+              display: "inline-flex", alignItems: "center", gap: 7,
+              padding: "9px 16px", borderRadius: 14,
+              background: "var(--cream)", border: "1px dashed #E7D7E4",
+              color: "#B85C82", fontSize: 12, fontWeight: 600, textDecoration: "none",
+            }}>
+            <span style={{ fontSize: 16 }}>🎁</span>
+            <span>이건 그냥 내 깜짝선물!</span>
+          </a>
         </section>
       </div>
     </main>

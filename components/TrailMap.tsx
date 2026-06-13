@@ -13,7 +13,7 @@ type Dir = "down" | "up" | "left" | "right";
 const VW = WORLD_COLS * TILE;
 const VH = 560;
 const WORLD_H = WORLD_ROWS * TILE;
-const SPEED = 0.75;
+const SPEED = 0.85;
 
 type CatState = "idle" | "notice" | "approach" | "talk" | "return";
 
