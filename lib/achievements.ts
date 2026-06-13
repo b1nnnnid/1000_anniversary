@@ -46,7 +46,6 @@ export const ACHIEVEMENTS: Achievement[] = [
 
   // ── 탐방 (단독) ──
   { id: "cat", emoji: "🐱", title: "고양이 집사", desc: "길고양이와 친구가 됐어요", done: (x) => x.collected.includes("cat-intro") },
-  { id: "mission", emoji: "🎮", title: "미션 마스터", desc: "모든 스테이지 미션을 깼어요", done: (x) => STAGES.every((s) => !s.challenge || x.collected.includes("ch:" + s.id)) },
   { id: "reunion", emoji: "🌸", title: "재회", desc: "도착지에서 둘이 만났어요", done: (x) => x.collected.includes("reunion") },
   { id: "dateAll", emoji: "💑", title: "데이트 요정", desc: "모든 데이트 장소를 다녀왔어요", done: (x) => STAGES.every((s) => !s.place || x.collected.includes("date:" + s.id)) },
 
