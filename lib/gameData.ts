@@ -234,11 +234,11 @@ export const WISHES: Wish[] = [
   { title: "소원 하나 들어주기", emoji: "⭐", weight: 1, kind: "rare" },
   { title: "엉덩이로 이름 쓰기", emoji: "🍑", weight: 3, kind: "fun" },
   { title: "데이트 메뉴 선정권", emoji: "🍽️", weight: 1, kind: "rare" },
-  { title: "고양이 소리로 노래 부르기", emoji: "🐰", weight: 3, kind: "fun" },
+  { title: "고양이 소리로 노래 부르기", emoji: "🐱", weight: 3, kind: "fun" },
   { title: "맛있는 거 사주기", emoji: "🍰", weight: 1, kind: "rare" },
   { title: "꽝! 다음 기회에", emoji: "🤡", weight: 4, kind: "miss" },
-  { title: "시키는 거 성대모사", emoji: "💆", weight: 2, kind: "mid" },
-  { title: "리버스 벌칙(오빠가 하기)", emoji: "🧽", weight: 3, kind: "fun" },
+  { title: "시키는 거 성대모사", emoji: "💬", weight: 2, kind: "mid" },
+  { title: "리버스 벌칙(오빠가 하기)", emoji: "🫨", weight: 3, kind: "fun" },
 ];
 
 // 상봉 직후 고양이의 축하 + 게임 안내
@@ -246,7 +246,7 @@ export const CAT_CONGRATS: string[] = [
   "냐옹!! 해냈구나. 둘 다 축하한다냥!! 🎉",
   "이제 이 세계 전체가 둘의 데이트 코스가 됐다냥.",
   "큼직해진 건물에 들어가면 데이트를 즐길 수 있다냥.",
-  "그리고... 잠겨있던 ❓퀴즈와 🎁룰렛도 열렸다냥!",
-  "여행하면서 모은 티켓 🎟 으로 룰렛을 돌려보라냥.",
+  "그리고... 아직 즐길거리가 많다냥! <우리집>에 가보면❓퀴즈와 🎁룰렛도 있다냥!",
+  "여행하면서 모은 티켓 🎟 으로 마음껏 즐겨보라냥.",
   "그럼 다음 1000일도 잘 부탁한다냥~ 🌸",
 ];
