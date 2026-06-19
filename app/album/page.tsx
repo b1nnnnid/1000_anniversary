@@ -219,8 +219,10 @@ export default function AlbumPage() {
               <strong style={{ color: "#B85C82", fontSize: 15 }}>{open.title}</strong>
               {open.date && <span style={{ fontSize: 11, color: "#B85C82" }}>{open.date}</span>}
             </div>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={open.photo} alt={open.title} style={{ width: "100%", display: "block", aspectRatio: "4/3", objectFit: "cover" }} />
+            <div style={{ display: "flex", justifyContent: "center", background: "#F4ECF0", maxHeight: "56vh", overflow: "hidden" }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={open.photo} alt={open.title} style={{ width: "100%", maxHeight: "56vh", objectFit: "contain", display: "block" }} />
+            </div>
             <p style={{ padding: "14px 16px", fontSize: 13, lineHeight: 1.85, color: "#6A5A66", margin: 0, whiteSpace: "pre-line" }}>{open.story ?? open.text}</p>
             <div style={{ padding: "0 16px 16px", textAlign: "center" }}>
               <button className="btn-rose" onClick={() => setOpen(null)} style={{ fontSize: 14, padding: "10px 24px" }}>닫기 ♥</button>

@@ -15,21 +15,20 @@ export default function MemoryModal({ spot, onClose }: { spot: Stage; onClose: (
           {spot.date && <span style={{ fontSize: 11, color: "#B85C82" }}>{spot.date}</span>}
         </div>
         {spot.photo && (
-          <div style={{ position: "relative" }}>
+          <div style={{ display: "flex", justifyContent: "center", background: "#F4ECF0", maxHeight: "56vh", overflow: "hidden" }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={spot.photo} alt={spot.title} style={{ width: "100%", display: "block", aspectRatio: "4/3", objectFit: "cover" }} />
-            {spot.past && (
-              <div className="floaty" style={{ position: "absolute", top: 8, right: 8, display: "flex", alignItems: "flex-start", gap: 5, maxWidth: 168 }}>
-                <span style={{ fontSize: 22, opacity: 0.85, filter: "saturate(0.85)" }}>👫</span>
-                <div style={{
-                  background: "rgba(255,255,255,0.93)", border: "1.5px solid #E2B2CB", borderRadius: 10,
-                  padding: "6px 9px", fontSize: 11, color: "#7A5A6C", lineHeight: 1.5,
-                  boxShadow: "0 2px 0 rgba(124,90,150,0.15)",
-                }}>
-                  <b style={{ color: "#B85C82" }}>과거의 우리</b><br />{spot.past}
-                </div>
-              </div>
-            )}
+            <img src={spot.photo} alt={spot.title} style={{ width: "100%", maxHeight: "56vh", objectFit: "contain", display: "block" }} />
+          </div>
+        )}
+        {spot.past && (
+          <div className="floaty" style={{ display: "flex", alignItems: "flex-start", gap: 6, margin: "10px 14px 0" }}>
+            <span style={{ fontSize: 22, opacity: 0.9 }}>👫</span>
+            <div style={{
+              background: "#FFF0F6", border: "1.5px solid #E2B2CB", borderRadius: 10,
+              padding: "6px 9px", fontSize: 11.5, color: "#7A5A6C", lineHeight: 1.5, flex: 1,
+            }}>
+              <b style={{ color: "#B85C82" }}>과거의 우리</b><br />{spot.past}
+            </div>
           </div>
         )}
         <p style={{ padding: "12px 16px", fontSize: 13, lineHeight: 1.7, color: "#6A5A66", margin: 0 }}>{spot.text}</p>
