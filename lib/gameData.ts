@@ -138,7 +138,7 @@ export const MARKERS: Marker[] = [
   { id: "s-joke1", col: 3, row: 12, kind: "sign", speaker: "🪧 표지판",
     lines: ["주의: 너무 귀여운 커플 출몰 구역.", "심장 약하면 우회하세요 💗"] },
   { id: "b-bench", col: 8, row: 31, kind: "bench", speaker: "🪑 벤치",
-    lines: ["여기 잠깐 앉았다 갈까?", "…역시 네 옆이 제일 편해."] },
+    lines: ["여기 잠깐 앉았다 갈까?", "…역시 오빠 옆이 제일 편해!"] },
   { id: "s-thief", col: 5, row: 26, kind: "sign", speaker: "🪧 낡은 표지판",
     lines: ["쉿… 이 근처에 도둑고양이가 산대.", "노란 고양이가 준 티켓을 노린다던데…?"],
     event: "thiefcat" },

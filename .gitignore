@@ -5,6 +5,3 @@ node_modules
 dev.db
 prisma/dev.db
 
-*.jpg
-*.png
-*.jpeg
