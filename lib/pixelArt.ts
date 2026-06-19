@@ -555,5 +555,34 @@ export function drawPlace(ctx: CanvasRenderingContext2D, col: number, row: numbe
       const colors = ["#F2C76B", "#9FC7E8", "#F2A3C0", "#A8E0C8", "#C9A7F0"];
       r(ctx, cx + dx2 - 3 + (bob > 1 ? 1 : 0), cy + dy2 - 3, 6, 6, colors[i]);
     });
+  } else if (kind === "izakaya") {
+    r(ctx, x + 2, y + 8, 28, 22, "#5A3E36");
+    r(ctx, x, y + 4, 32, 7, "#C23A33");
+    r(ctx, x + 5, y + 14, 8, 10, "#F2C76B");
+    r(ctx, x + 19, y + 14, 8, 16, "#3A2A26");
+    r(ctx, x + 13, y - 6 - bob, 6, 8, "#D8443C"); // 붉은 등
+    r(ctx, x + 14, y - 7 - bob, 4, 1, "#7A2A2A");
+  } else if (kind === "christmas") {
+    r(ctx, x + 2, y + 8, 28, 22, "#F2E3D8");
+    r(ctx, x, y + 4, 32, 7, "#C23A33");
+    r(ctx, x, y + 4, 32, 2, "#FFFFFF"); // 지붕 눈
+    r(ctx, x + 13, y + 25, 4, 5, "#7A4A2A");
+    r(ctx, x + 8, y + 19, 14, 6, "#2E7D4F"); r(ctx, x + 10, y + 14, 10, 6, "#34924F"); r(ctx, x + 12, y + 10, 6, 5, "#3CA85A");
+    r(ctx, x + 13, y - 5 - bob, 4, 4, "#FBD86B"); // 별
+  } else if (kind === "hotel") {
+    r(ctx, x + 4, y + 2, 24, 28, "#3A3E60");
+    for (let wy = y + 6; wy < y + 28; wy += 6) { r(ctx, x + 7, wy, 4, 3, "#F2D88A"); r(ctx, x + 14, wy, 4, 3, "#F2D88A"); r(ctx, x + 21, wy, 4, 3, "#F2D88A"); }
+    r(ctx, x + 24, y - 5 - bob, 5, 5, "#FBEFC4"); // 달
+  } else if (kind === "travel") {
+    r(ctx, x + 6, y + 12, 4, 18, "#D8443C"); r(ctx, x + 22, y + 12, 4, 18, "#D8443C");
+    r(ctx, x + 2, y + 8, 28, 4, "#C23A33"); r(ctx, x + 5, y + 13, 22, 3, "#D8443C");
+    r(ctx, x + 8, y - 6 - bob, 14, 4, "#EDEDF2"); r(ctx, x + 6, y - 5 - bob, 3, 2, "#C9C9D2"); r(ctx, x + 12, y - 9 - bob, 4, 3, "#C9C9D2"); // 비행기
+  } else if (kind === "hangang") {
+    r(ctx, x, y + 18, 32, 12, "#7FA6C8");
+    r(ctx, x, y + 16, 32, 3, "#6E8DAE");
+    r(ctx, x + 6, y + 12, 3, 6, "#6E8DAE"); r(ctx, x + 16, y + 12, 3, 6, "#6E8DAE"); r(ctx, x + 26, y + 12, 3, 6, "#6E8DAE");
+    r(ctx, x + 4, y + 24, 24, 6, "#BFE0A8");
+    r(ctx, x + 10, y + 24, 12, 4, "#F4ECD8");
+    r(ctx, x + 12, y - 5 - bob, 7, 6, "#E8B04C"); // 치킨박스
   }
 }

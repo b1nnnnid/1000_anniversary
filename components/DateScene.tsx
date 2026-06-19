@@ -3,7 +3,8 @@
 import { useEffect, useRef } from "react";
 
 // 데이트 장소별 픽셀 애니메이션 (캐릭터가 직접 논다). 탭하면 하트가 퐁퐁.
-type Kind = "park" | "cinema" | "cafe" | "restaurant" | "beach" | "amusement";
+type Kind = "park" | "cinema" | "cafe" | "restaurant" | "beach" | "amusement"
+  | "izakaya" | "christmas" | "hotel" | "travel" | "hangang";
 
 const SKIN = "#FBE0CC", HAIRG = "#E889AC", HAIRB = "#3F3B45";
 const DRESS = "#FFFFFF", DRESS_SH = "#ECE4F2", SUIT = "#3A3F4C", TIARA = "#F2C76B";
@@ -123,6 +124,81 @@ export default function DateScene({ kind }: { kind: Kind }) {
         bride(118, 96); groom(160, 96);
         px(112, 112, 6, 6, "#F2A3C0"); // 모래 위 조개
         if ((t % 80) < 30) heart(150, 40, 2, "#E8799F");
+      } else if (kind === "izakaya") {
+        // 소개팅 술집 — 따뜻한 목조 + 붉은 등 + 소주 건배
+        px(0, 0, W, H, "#3A2A2A"); px(0, H - 30, W, 30, "#5A3E36");
+        const lampX = 42 + Math.sin(t * 0.05) * 3;
+        px(lampX + 6, 0, 2, 14, "#7A2A2A");
+        px(lampX, 14, 16, 18, "#D8443C"); px(lampX, 18, 16, 2, "#A82E2E"); px(lampX, 26, 16, 2, "#A82E2E");
+        px(lampX + 2, 31, 12, 3, "#F2C76B");
+        px(104, 100, 92, 8, "#7A4A2E"); px(118, 108, 8, 36, "#5E371F"); px(176, 108, 8, 36, "#5E371F");
+        bride(92, 92); groom(180, 92);
+        px(146, 84, 6, 16, "#3C7A3C"); px(147, 80, 4, 4, "#2C5A2C"); // 소주병
+        const c = Math.sin(t * 0.12);
+        const lift = c > 0.6 ? -4 : 0;
+        px(130 + (c > 0.6 ? 5 : 0), 92 + lift, 5, 7, "#DDEFE0");
+        px(165 - (c > 0.6 ? 5 : 0), 92 + lift, 5, 7, "#DDEFE0");
+        if (c > 0.62 && c < 0.72) heart(148, 68, 2, "#E8799F");
+      } else if (kind === "christmas") {
+        // 첫 크리스마스 — 밤하늘 + 눈 + 트리 + 목도리 커플
+        px(0, 0, W, H, "#1E2A48"); px(0, H - 26, W, 26, "#E8EEF5");
+        for (let i = 0; i < 14; i++) {
+          const sx = (i * 47 + t * 0.4 + i * 9) % W;
+          const sy = (t * (0.6 + (i % 3) * 0.2) + i * 37) % (H - 26);
+          px(Math.round(sx), Math.round(sy), 2, 2, "#FFFFFF");
+        }
+        const tx = 150;
+        px(tx - 2, 120, 4, 14, "#7A4A2A");
+        px(tx - 22, 104, 44, 18, "#2E7D4F"); px(tx - 16, 86, 32, 20, "#34924F"); px(tx - 10, 70, 20, 18, "#3CA85A");
+        if (t % 40 < 24) { px(tx - 2, 62, 4, 4, "#FBD86B"); px(tx - 4, 64, 8, 2, "#FBD86B"); px(tx - 1, 60, 2, 8, "#FBD86B"); }
+        const oc = ["#E8556F", "#F2C76B", "#9FC7E8", "#F2A3C0"];
+        ([[tx - 12, 96], [tx + 8, 100], [tx - 4, 86], [tx + 10, 82], [tx - 14, 110]] as const).forEach(([ox, oy], i) => { if ((t + i * 12) % 36 < 24) px(ox, oy, 3, 3, oc[i % oc.length]); });
+        bride(92, 96); groom(180, 96);
+        px(94, 95, 12, 3, "#E8556F"); px(182, 95, 12, 3, "#9FC7E8"); // 목도리
+        if (t % 60 < 30) heart(118, 58, 2, "#E8799F");
+      } else if (kind === "hotel") {
+        // 함께 잠든 밤 — 창밖 도시 야경 + 달 + 소파 커플
+        px(0, 0, W, H, "#15182E");
+        px(20, 30, W - 40, 78, "#0E1022");
+        ([[30, 70], [58, 46], [92, 84], [120, 40], [150, 64], [186, 50], [214, 78], [240, 44]] as const).forEach(([bx, by], i) => {
+          px(bx, by, 22, 100 - by, "#23284A");
+          for (let wy = by + 4; wy < 100; wy += 8) for (let wx = bx + 3; wx < bx + 19; wx += 7) if ((wx + wy + i) % 3 !== 0) px(wx, wy, 3, 3, "#F2D88A");
+        });
+        px(238, 18, 12, 12, "#FBEFC4"); px(235, 20, 4, 8, "#15182E");
+        for (let i = 0; i < 8; i++) { const stx = (i * 39 + 14) % (W - 40) + 20, sty = (i * 13) % 24 + 8; if ((t + i * 7) % 50 < 28) px(stx, sty, 2, 2, "#FFFFFF"); }
+        px(18, 28, W - 36, 3, "#3A3E60"); px(18, 106, W - 36, 4, "#3A3E60"); px(W / 2 - 1, 30, 2, 78, "#3A3E60");
+        px(0, H - 30, W, 30, "#2A2440");
+        px(96, 124, 108, 18, "#5A3E5E"); // 소파
+        bride(112, 116); groom(160, 116);
+        if (t % 64 < 32) heart(150, 96, 2, "#F2A3C0");
+      } else if (kind === "travel") {
+        // 오사카 여행 — 하늘 + 비행기 + 도리이 + 라멘
+        px(0, 0, W, H, "#CFEAF7"); px(0, H - 40, W, 40, "#CFE6D0");
+        px(40, 24, 28, 8, "#FFFFFF"); px(48, 18, 16, 8, "#FFFFFF");
+        px(210, 40, 30, 8, "#FFFFFF"); px(218, 34, 16, 8, "#FFFFFF");
+        const ax = (t * 1.4) % (W + 60) - 60;
+        px(ax, 16, 22, 6, "#EDEDF2"); px(ax + 20, 17, 8, 4, "#D6D6DE");
+        px(ax + 6, 12, 8, 4, "#C9C9D2"); px(ax + 6, 22, 8, 4, "#C9C9D2");
+        px(ax - 2, 14, 3, 8, "#E8556F");
+        px(96, 70, 6, 54, "#D8443C"); px(150, 70, 6, 54, "#D8443C");
+        px(86, 64, 78, 7, "#C23A33"); px(90, 74, 70, 5, "#D8443C"); px(110, 58, 32, 6, "#E2554C");
+        px(206, 110, 26, 12, "#E8556F"); px(206, 108, 26, 3, "#FBE6A8");
+        px(214, 100 - (t % 16), 2, 4, "#E0D5C8");
+        bride(108, 112); groom(140, 112);
+        if (t % 70 < 30) heart(124, 50, 2, "#E8799F");
+      } else if (kind === "hangang") {
+        // 한강 야경 — 노을 + 강 + 다리 + 돗자리 치맥
+        px(0, 0, W, H, "#FBD9C4"); px(0, 40, W, 18, "#F6C2C0"); px(0, 58, W, 26, "#7FA6C8");
+        ([[10, 46], [34, 38], [60, 48], [86, 34], [120, 44], [150, 40], [180, 48], [210, 36], [240, 46], [270, 42]] as const).forEach(([bx, by]) => px(bx, by, 18, 58 - by, "#9A7FB0"));
+        px(0, 60, W, 4, "#6E8DAE"); for (let i = 0; i < 7; i++) px(i * 44 + 16, 56, 3, 8, "#6E8DAE");
+        for (let i = 0; i < 6; i++) { const wx = (i * 52 + t * 0.5) % W; if ((t + i * 9) % 40 < 20) px(Math.round(wx), 70 + (i % 3) * 4, 4, 2, "#CDE4F2"); }
+        px(0, 110, W, H - 110, "#BFE0A8");
+        for (let gx = 96; gx < 200; gx += 12) for (let gy = 128; gy < 150; gy += 8) px(gx, gy, 6, 4, (gx + gy) % 8 < 4 ? "#E8D8B0" : "#F4ECD8");
+        px(96, 126, 108, 3, "#D8C8A0");
+        px(108, 116, 14, 10, "#E8B04C"); px(108, 114, 14, 3, "#C8893A"); // 치킨박스
+        px(184, 114, 7, 12, "#F2C24C"); px(184, 112, 7, 3, "#FBE6A8"); // 맥주
+        bride(124, 116); groom(158, 116);
+        if (t % 66 < 32) heart(150, 96, 2, "#E8799F");
       }
 
       // 탭 하트

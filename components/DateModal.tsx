@@ -6,6 +6,8 @@ import { Stage } from "@/lib/gameData";
 const THEME: Record<string, string[]> = {
   park: ["🌳", "🌸", "🍦"], cinema: ["🎬", "🍿", "🥤"], cafe: ["☕", "🍪", "🧁"],
   restaurant: ["🍝", "🥟", "🍻"], beach: ["🌊", "⛱️", "🐚"], amusement: ["🎡", "🎠", "🎈"],
+  izakaya: ["🍶", "🏮", "🍢"], christmas: ["🎄", "⛄", "🧣"], hotel: ["🌃", "✨", "🌙"],
+  travel: ["✈️", "⛩️", "🍜"], hangang: ["🌉", "🍗", "🍺"],
 };
 const TIP: Record<string, string> = {
   park: "그네를 타는 둘 — 화면을 톡 누르면 하트가 퐁퐁!",
@@ -14,6 +16,11 @@ const TIP: Record<string, string> = {
   restaurant: "건배하는 둘 — 화면을 누르면 하트가 퐁퐁!",
   beach: "파라솔 아래 둘 — 화면을 누르면 하트가 퐁퐁!",
   amusement: "관람차 타는 둘 — 화면을 누르면 하트가 퐁퐁!",
+  izakaya: "소주 건배하는 둘 — 화면을 누르면 하트가 퐁퐁!",
+  christmas: "트리 앞 목도리 커플 — 화면을 누르면 하트가 퐁퐁!",
+  hotel: "야경 보는 둘 — 화면을 누르면 하트가 퐁퐁!",
+  travel: "여행 온 둘 — 화면을 누르면 하트가 퐁퐁!",
+  hangang: "한강 돗자리 위 둘 — 화면을 누르면 하트가 퐁퐁!",
 };
 
 interface Props { stage: Stage; onClose: () => void; onMemory: () => void; }

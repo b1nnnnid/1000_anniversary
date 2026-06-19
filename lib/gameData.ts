@@ -20,7 +20,8 @@ export interface Challenge {
 }
 
 // 상봉 후 스테이지가 변신하는 데이트 장소
-export type PlaceKind = "park" | "cinema" | "cafe" | "restaurant" | "beach" | "amusement";
+export type PlaceKind = "park" | "cinema" | "cafe" | "restaurant" | "beach" | "amusement"
+  | "izakaya" | "christmas" | "hotel" | "travel" | "hangang";
 export interface Place { kind: PlaceKind; name: string; desc: string; }
 
 export interface Stage {
@@ -44,13 +45,13 @@ export interface Stage {
 // order 3 은 두 갈래(분기)로 갈라졌다 다시 합쳐집니다.
 export const STAGES: Stage[] = [
   { id: "first-meet", order: 1, col: 6, row: 3,
-    label: "두근두근 시작!", title: "두근두근 시작!", date: "2023.09.30",
+    label: "우리의 처음", title: "우리의 처음", date: "2023.09.30",
     photo: "/photos/stage-01-firstmeet.jpg",
     text: "오빠가 그려준 첫 우리 그림! 이때는 지금처럼 납작하진 않았는데.",
     story: "이때 술 마시면서 무슨 얘기 했었는지 기억 나? 난 이때두 너무 설렜는뎅 ㅎㅎ 옵빠가 막 나 예쁘다 하고 ~~ 남자친구 되면 어떨 거 같냐고 하구 ~~~ 이이잉 부끄렁!!",
     past: "우리 같은 마음 맞지?",
     challenge: { type: "quiz2", question: "오빠도 부끄러웠던 거 맞지?", options: ["당연하지", "그냥 귀여웠지"], answer: 0 },
-    place: { kind: "restaurant", name: "골뱅이상회", desc: "너무 뚝딱거려서 사실 일어나서 이불킥 했었어 ㅎㅎ" } },
+    place: { kind: "izakaya", name: "골뱅이상회", desc: "너무 뚝딱거려서 사실 일어나서 이불킥 했었어 ㅎㅎ" } },
 
   { id: "first-date", order: 2, col: 3, row: 9,
     label: "첫 나들이", title: "첫 나들이", date: "2023.10.27",
@@ -69,7 +70,7 @@ export const STAGES: Stage[] = [
     story: "예뻐보이겠다고 원피스에 코트 걸치고 나갔어도 추운 줄도 몰랐는데 ㅎㅎㅎ 이때 밥 먹고 일어나서 목도리 두르던 오빠가 엄청 잘생겨 보여써 이잉... 이제 커플 목도리가 됐지!",
     past: "춥지도 않은가봐..",
     challenge: { type: "catch" },
-    place: { kind: "cafe", name: "설레이던 첫 겨울", desc: "사장님이 막 뽀뽀시킨 거 지금 보니 나쁘지 않을지두." } },
+    place: { kind: "christmas", name: "설레이던 첫 겨울", desc: "사장님이 막 뽀뽀시킨 거 지금 보니 나쁘지 않을지두." } },
   { id: "movie-night", order: 3, branch: "B", col: 9, row: 15,
     label: "친해졌다!", title: "친해졌다!", date: "2024.01.24",
     photo: "/photos/stage-03b-ugly.jpg",
@@ -77,7 +78,7 @@ export const STAGES: Stage[] = [
     story: "나 원래 사진 찍는 거 엄청엄청 부끄러워 하는데, 오빠가 맨날 카메라 들이미니까 쪼끔 익숙해졌나봐 ㅋㅋㅋ 이제는 엽사만 한가득인 우리... 풋풋했네",
     past: "조금 편해진 것 같아!",
     challenge: { type: "timing" },
-    place: { kind: "restaurant", name: "함께 잠든 밤", desc: "우리가 점점 더 가까워지는 시간이야~" } },
+    place: { kind: "hotel", name: "함께 잠든 밤", desc: "우리가 점점 더 가까워지는 시간이야~" } },
 
   { id: "trip", order: 4, col: 5, row: 22,
     label: "첫 여행", title: "첫 여행", date: "2024.03.09",
@@ -86,7 +87,7 @@ export const STAGES: Stage[] = [
     story: "조금 힘들었지만 그만큼 기억에 남는 것도, 재밌는 것도 많았어! 오빠랑 며칠 동안 붙어있어서 더더 좋았어 ㅎㅎ 다음엔 다른 나라도 오빠랑 가보구 시퍼잉",
     past: "4박 5일이라니!",
     challenge: { type: "simon" },
-    place: { kind: "beach", name: "오사카로 여행", desc: "첫 해외여행을 함께 와서 행복해~!" } },
+    place: { kind: "travel", name: "오사카로 여행", desc: "첫 해외여행을 함께 와서 행복해~!" } },
 
   { id: "hundred", order: 5, col: 8, row: 29,
     label: "200일", title: "200일", date: "2024.04.24",
@@ -104,7 +105,7 @@ export const STAGES: Stage[] = [
     story: "이렇게 긴 시간 오빠와 함께하게 될 줄 몰랐는데, 너무 놀랍고 기뻐 ㅎㅎ 우리 지금까지 서로 많이 아껴왔듯이 앞으로도 서로 배려하고 사랑하자! 내 소중한 옵빵이... 앞으로도 잘 부탁해 !!",
     past: "우리가 1000일이라고?",
     challenge: { type: "finddiff" },
-    place: { kind: "park", name: "날 좋을 땐 공원", desc: "매년 따뜻해지고 시원해질 때마다 또 같이 오자!" } },
+    place: { kind: "hangang", name: "날 좋을 땐 한강", desc: "매년 따뜻해지고 시원해질 때마다 또 같이 오자!" } },
 ];
 
 // 마지막 도착지 (모든 추억을 모으면 열림 → 폭죽 연출)
