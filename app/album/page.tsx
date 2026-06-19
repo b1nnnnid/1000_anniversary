@@ -5,6 +5,7 @@ import Link from "next/link";
 import { STAGES, Stage } from "@/lib/gameData";
 import { sortedTimeline, timelineYear, TimelineItem } from "@/lib/album";
 import { getProgress } from "@/lib/progressClient";
+import { getPhotoCards, PhotoCardData } from "@/lib/photocardsClient";
 import { markFlag } from "@/lib/flags";
 import PixelIcon from "@/components/PixelIcon";
 
@@ -17,10 +18,19 @@ export default function AlbumPage() {
   const [open, setOpen] = useState<Stage | null>(null);
   const [photo, setPhoto] = useState<TimelineItem | null>(null);
   const [tab, setTab] = useState<Tab>("journey");
+  const [cards, setCards] = useState<PhotoCardData[]>([]);
 
-  useEffect(() => { markFlag("album"); getProgress().then((p) => setCollected(p.collectedSpots)); }, []);
+  useEffect(() => {
+    markFlag("album");
+    getProgress().then((p) => setCollected(p.collectedSpots));
+    getPhotoCards().then(setCards);
+    // 포토부스에서 ?tab=timeline 으로 넘어오면 타임라인 탭을 바로 연다
+    if (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("tab") === "timeline") {
+      setTab("timeline");
+    }
+  }, []);
 
-  // 타임라인 스크롤 등장 애니메이션
+  // 타임라인 스크롤 등장 애니메이션 (추억카드가 늦게 도착해도 다시 관찰)
   useEffect(() => {
     if (tab !== "timeline") return;
     const els = Array.from(document.querySelectorAll<HTMLElement>(".reveal:not(.in)"));
@@ -29,7 +39,7 @@ export default function AlbumPage() {
     }, { threshold: 0.15, rootMargin: "0px 0px -6% 0px" });
     els.forEach((el) => io.observe(el));
     return () => io.disconnect();
-  }, [tab]);
+  }, [tab, cards.length]);
 
   const list = [...STAGES].sort((a, b) => a.order - b.order);
   const gotCount = collected.filter((id) => STAGES.some((s) => s.id === id)).length;
@@ -96,7 +106,7 @@ export default function AlbumPage() {
       {tab === "timeline" && (
         <>
           <p style={{ fontSize: 12, color: "#8A7A85", textAlign: "center", margin: "0 0 18px" }}>
-            우리의 시간을 날짜순으로 ({timeline.length})
+            우리의 시간을 날짜순으로 ({timeline.length + cards.length})
           </p>
           <div style={{ position: "relative", paddingLeft: 34 }}>
             {/* 세로 라인 */}
@@ -160,9 +170,43 @@ export default function AlbumPage() {
                 </Fragment>
               );
             })}
+
+            {/* 포토부스에서 즉석으로 남긴 1000일 추억카드 — 맨 끝에 금빛으로 */}
+            {cards.map((c) => {
+              const item: TimelineItem = { id: c.id, date: c.date, kind: "photo", title: c.title, text: c.message, photo: c.image };
+              return (
+                <div key={c.id} className="reveal" style={{ position: "relative", marginBottom: 16 }}>
+                  <span className="tl-node gold-ring" style={{
+                    position: "absolute", left: -34, top: 2, width: 26, height: 26, borderRadius: "50%",
+                    background: "#E0A94A", border: "2px solid #F2C76B", display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 13, zIndex: 1,
+                  }}>💝</span>
+                  <button onClick={() => setPhoto(item)} style={{ display: "block", width: "100%", textAlign: "left", padding: 0, border: "none", background: "none", cursor: "pointer" }}>
+                    <div className="pixel-border" style={{
+                      borderRadius: 12, overflow: "hidden",
+                      background: "linear-gradient(135deg, #FFF7E6, #FBF3F8 60%, #FFF7E6)",
+                      borderColor: "#FBE6A8", boxShadow: "0 0 0 3px #F2C76B, 0 0 20px rgba(224,169,74,.45), 4px 6px 0 rgba(124,90,150,.22)",
+                    }}>
+                      <div style={{ background: "#E0A94A", color: "#fff", fontSize: 11, fontWeight: 700, padding: "4px 10px", textAlign: "center", letterSpacing: 1 }}>
+                        🎉 1000일 추억카드
+                      </div>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={c.image} alt={c.title} style={{ width: "100%", display: "block", aspectRatio: "1/1", objectFit: "cover" }} />
+                      <div style={{ padding: "8px 10px" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8 }}>
+                          <p style={{ margin: 0, fontSize: 13, color: "#9C7A2E", fontWeight: 700 }}>{c.title}</p>
+                          <span style={{ fontSize: 10, color: "#B7A6B1", whiteSpace: "nowrap" }}>{c.date}</span>
+                        </div>
+                        {c.message && <p style={{ margin: "3px 0 0", fontSize: 12, color: "#6A5A66", lineHeight: 1.5 }}>{c.message}</p>}
+                      </div>
+                    </div>
+                  </button>
+                </div>
+              );
+            })}
           </div>
           <p style={{ textAlign: "center", fontSize: 10.5, color: "#B8AEB4", marginTop: 14 }}>
-            ※ 사진·메모는 lib/album.ts 에 자유롭게 더 넣을 수 있어요
+            ※ 포토부스에서 찍은 사진이 여기 맨 끝에 추가돼요
           </p>
         </>
       )}

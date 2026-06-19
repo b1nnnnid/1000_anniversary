@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { markFlag } from "@/lib/flags";
+import { elapsed } from "@/lib/config";
+import { addPhotoCard } from "@/lib/photocardsClient";
 
 type Frame = "hearts" | "flowers" | "anniv" | "dots";
 const FRAMES: { id: Frame; label: string }[] = [
@@ -14,6 +16,9 @@ export default function PhotoBooth() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [img, setImg] = useState<HTMLImageElement | null>(null);
   const [frame, setFrame] = useState<Frame>("hearts");
+  const [message, setMessage] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
 
   const onFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0]; if (!f) return;
@@ -77,6 +82,29 @@ export default function PhotoBooth() {
     markFlag("photo");
   };
 
+  // 즉석 사진을 추억 타임라인 맨 끝에 "1000일 추억카드"로 추가
+  const saveMemory = async () => {
+    const cv = canvasRef.current;
+    if (!cv || !img || saving) return;
+    setSaving(true);
+    try {
+      const now = new Date();
+      const date = `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, "0")}.${String(now.getDate()).padStart(2, "0")}`;
+      const { dday } = elapsed(now);
+      await addPhotoCard({
+        title: dday === 1000 ? "우리의 1000일 💝" : `${dday.toLocaleString()}일의 우리 💝`,
+        message: message.trim(),
+        date,
+        dday,
+        image: cv.toDataURL("image/png"),
+      });
+      markFlag("photo");
+      setSaved(true);
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <main style={{ maxWidth: 460, margin: "0 auto", padding: "20px 16px 36px", minHeight: "100dvh", textAlign: "center" }}>
       <Link href="/us" style={{ color: "#B85C82", fontSize: 13, textDecoration: "none", display: "block", textAlign: "left" }}>← 우리의 공간</Link>
@@ -95,9 +123,43 @@ export default function PhotoBooth() {
       <div style={{ display: "flex", justifyContent: "center", gap: 8 }}>
         <label className="chip" style={{ cursor: "pointer", border: "2px solid var(--lav)", padding: "10px 16px" }}>
           📂 사진 올리기
-          <input type="file" accept="image/*" onChange={onFile} style={{ display: "none" }} />
+          <input type="file" accept="image/*" onChange={(e) => { setSaved(false); onFile(e); }} style={{ display: "none" }} />
         </label>
         <button className="btn-rose" onClick={download} disabled={!img} style={{ fontSize: 13, padding: "10px 18px", opacity: img ? 1 : 0.5 }}>📥 저장</button>
+      </div>
+
+      {/* 1000일 추억카드로 남기기 */}
+      <div className="pixel-border" style={{ background: "linear-gradient(135deg, #FFF7E6, #FBF3F8 60%, #FFF7E6)", borderColor: "#FBE6A8", borderRadius: 16, padding: "16px 14px", marginTop: 20, textAlign: "center" }}>
+        <p style={{ margin: "0 0 4px", fontSize: 14, color: "#9C7A2E", fontWeight: 700 }}>💝 추억 타임라인에 남기기</p>
+        <p style={{ margin: "0 0 10px", fontSize: 11.5, color: "#A89AA3" }}>지금 이 사진이 추억 앨범 맨 끝에 1000일 카드로 추가돼요</p>
+        <input
+          value={message}
+          onChange={(e) => { setMessage(e.target.value); setSaved(false); }}
+          maxLength={60}
+          placeholder="한 줄 메시지 (예: 천 일째의 우리 ♥)"
+          style={{
+            width: "100%", border: "2px solid #F2C76B", borderRadius: 10, padding: "10px 12px",
+            fontSize: 13, fontFamily: "inherit", color: "#6A5A66", background: "#fff", outline: "none",
+          }}
+        />
+        {saved ? (
+          <div style={{ marginTop: 12 }}>
+            <p style={{ margin: "0 0 8px", fontSize: 13, color: "#9C7A2E", fontWeight: 700 }}>추억 앨범에 추가했어요! 🎉</p>
+            <Link href="/album?tab=timeline" className="btn-rose" style={{ display: "inline-block", textDecoration: "none", fontSize: 13, padding: "10px 20px", background: "#E0A94A", boxShadow: "0 4px 0 rgba(156,122,46,.4)" }}>
+              추억 앨범에서 보기 →
+            </Link>
+          </div>
+        ) : (
+          <button
+            onClick={saveMemory}
+            disabled={!img || saving}
+            className="btn-rose"
+            style={{ marginTop: 12, fontSize: 14, padding: "11px 22px", background: "#E0A94A", boxShadow: "0 4px 0 rgba(156,122,46,.4)", opacity: img && !saving ? 1 : 0.5 }}
+          >
+            {saving ? "남기는 중…" : "💝 1000일 추억으로 남기기"}
+          </button>
+        )}
+        {!img && <p style={{ margin: "8px 0 0", fontSize: 11, color: "#B8AEB4" }}>먼저 사진을 올려주세요</p>}
       </div>
     </main>
   );

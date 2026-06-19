@@ -25,3 +25,14 @@ model Coupon {
   earnedAt DateTime @default(now())
   used     Boolean  @default(false)
 }
+
+// 포토부스에서 즉석으로 찍어 올린 1000일 추억카드
+model PhotoCard {
+  id        Int      @id @default(autoincrement())
+  title     String   @default("우리의 1000일")
+  message   String   @default("")  // 한 줄 메시지
+  date      String                  // "YYYY.MM.DD"
+  dday      Int      @default(1000) // 며칠째에 남겼는지
+  image     String                  // dataURL (base64 PNG)
+  createdAt DateTime @default(now())
+}
