@@ -5,6 +5,7 @@ import Link from "next/link";
 import { elapsed } from "@/lib/config";
 import { markFlag } from "@/lib/flags";
 import PixelIcon from "@/components/PixelIcon";
+import MilestoneCelebration from "@/components/MilestoneCelebration";
 
 // 기념일: 100·200일 + 1주년 단위 + 1000일 단위
 const MILESTONES: { day: number; label: string }[] = [
@@ -56,21 +57,55 @@ export default function TogetherPage() {
   const [boot, setBoot] = useState(false);
   const [mounted, setMounted] = useState(false); // 실시간 시계는 마운트 후에만 (SSR 불일치 방지)
 
+  // 미리보기: ?preview / ?day=1000 으로 그날의 화면을 지금 확인 가능
+  const [previewDay, setPreviewDay] = useState<number | null>(null);
+  // 자정에 기념일로 넘어가는 순간 터지는 축하 연출
+  const [celebrate, setCelebrate] = useState<{ day: number; label: string } | null>(null);
+  const prevDdayRef = useRef<number | null>(null);
+
   useEffect(() => {
     markFlag("together");
     setMounted(true);
+    // URL 미리보기 파라미터 해석
+    const q = new URLSearchParams(window.location.search);
+    const dayParam = q.get("day");
+    const wantsPreview = q.has("preview") || q.has("celebrate");
+    const pd = dayParam ? Number(dayParam) : wantsPreview ? 1000 : null;
+    if (pd && Number.isFinite(pd)) {
+      setPreviewDay(pd);
+      const m = MILESTONES.find((mm) => mm.day === pd) ?? { day: pd, label: `${pd.toLocaleString()}일` };
+      // 미리보기 진입 시 축하 연출도 함께 보여줌
+      setTimeout(() => setCelebrate(m), 600);
+    }
     const iv = setInterval(() => setE(elapsed()), 100);
     const t = setTimeout(() => setBoot(true), 250); // 진행바가 0에서 쭈욱 차오르도록
     return () => { clearInterval(iv); clearTimeout(t); };
   }, []);
 
-  const next = MILESTONES.find((m) => m.day > e.dday) ?? {
-    day: Math.ceil(e.dday / 1000) * 1000,
-    label: `${Math.ceil(e.dday / 1000) * 1000}일`,
+  // 화면에 쓰는 D-day (미리보기면 강제값)
+  const dday = previewDay ?? e.dday;
+
+  // 실시간으로 기념일을 넘어가면(자정 통과) 축하 연출 자동 발동
+  useEffect(() => {
+    if (previewDay !== null) return; // 미리보기 중엔 자동 감지 끔
+    const prev = prevDdayRef.current;
+    if (prev !== null && e.dday > prev) {
+      const m = MILESTONES.find((mm) => mm.day > prev && mm.day <= e.dday);
+      if (m) setCelebrate(m);
+    }
+    prevDdayRef.current = e.dday;
+  }, [e.dday, previewDay]);
+
+  const reached1000 = dday >= 1000;          // 1000일 시대 — 금빛 강조
+  const isMilestoneToday = MILESTONES.some((m) => m.day === dday); // 오늘이 바로 그날
+
+  const next = MILESTONES.find((m) => m.day > dday) ?? {
+    day: Math.ceil(dday / 1000) * 1000,
+    label: `${Math.ceil(dday / 1000) * 1000}일`,
   };
-  const prev = [...MILESTONES].reverse().find((m) => m.day <= e.dday) ?? { day: 1, label: "시작" };
+  const prev = [...MILESTONES].reverse().find((m) => m.day <= dday) ?? { day: 1, label: "시작" };
   const span = next.day - prev.day;
-  const progress = Math.min(100, Math.round(((e.dday - prev.day) / span) * 100));
+  const progress = Math.min(100, Math.round(((dday - prev.day) / span) * 100));
 
   // 재미있는 환산
   const fun = [
@@ -88,10 +123,23 @@ export default function TogetherPage() {
       <p className="sparkle" style={{ fontSize: 12, color: "#B85C82", letterSpacing: 2, marginTop: 16 }}>SINCE 2023.10.08</p>
       <h1 className="slideup" style={{ fontSize: 22, color: "#B85C82", margin: "6px 0 2px" }}>우리가 함께한 시간 <PixelIcon name="heart" size={18} /></h1>
 
-      <div className="pixel-border" style={{ background: "var(--cream)", borderRadius: 18, padding: "22px 16px", margin: "18px 0", animation: "slideup .5s .05s both" }}>
+      <div className={`pixel-border${reached1000 ? " gold-card" : ""}`} style={{ background: "var(--cream)", borderRadius: 18, padding: "22px 16px", margin: "18px 0", animation: "slideup .5s .05s both" }}>
+        {isMilestoneToday && (
+          <p className="gold-ring" style={{
+            display: "inline-block", margin: "0 0 8px", padding: "4px 14px", borderRadius: 999,
+            background: reached1000 ? "#E0A94A" : "var(--rose)", color: "#fff", fontSize: 12.5, fontWeight: 700,
+          }}>
+            <span className="crown-bob">{reached1000 ? "👑" : "🎉"}</span> 오늘은 우리 {prev.label}이에요!
+          </p>
+        )}
         <p style={{ fontSize: 13, color: "#8A7A85", margin: 0 }}>오늘로</p>
-        <p style={{ fontSize: 40, color: "#E8556F", margin: "2px 0", lineHeight: 1.1, animation: countDone ? "none" : "count-glow 1.5s ease-in-out" }}>
-          {(countDone ? e.dday : countDay).toLocaleString()}<span style={{ fontSize: 20 }}>일째</span>
+        <p style={{
+          fontSize: 40, margin: "2px 0", lineHeight: 1.1,
+          color: reached1000 ? "#E0A94A" : "#E8556F",
+          fontWeight: reached1000 ? 800 : undefined,
+          animation: reached1000 ? "gold-glow 2.2s ease-in-out infinite" : countDone ? "none" : "count-glow 1.5s ease-in-out",
+        }}>
+          {(previewDay ?? (countDone ? e.dday : countDay)).toLocaleString()}<span style={{ fontSize: 20 }}>일째</span>
         </p>
         {/* 실시간 시계 — 초가 눈에 띄게 (마운트 후 렌더) */}
         <div suppressHydrationWarning style={{ display: "flex", alignItems: "baseline", justifyContent: "center", gap: 4, marginTop: 10, fontVariantNumeric: "tabular-nums" }}>
@@ -120,13 +168,13 @@ export default function TogetherPage() {
       <div style={{ background: "#fff", borderRadius: 14, padding: "14px 16px", boxShadow: "0 3px 0 rgba(124,90,150,0.12)", marginBottom: 16, animation: "slideup .5s .12s both" }}>
         <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "#8A7A85", marginBottom: 8 }}>
           <span>{prev.label}</span>
-          <span style={{ color: "#E8556F" }}>다음 {next.label}까지 D-{next.day - e.dday}</span>
+          <span style={{ color: "#E8556F" }}>다음 {next.label}까지 D-{next.day - dday}</span>
         </div>
         <div style={{ position: "relative", background: "#F1EFE8", borderRadius: 8, height: 14, overflow: "hidden" }}>
           <div style={{
             width: boot ? `${progress}%` : "0%",
             height: "100%",
-            background: "var(--rose)",
+            background: reached1000 ? "linear-gradient(90deg, #E0A94A, #F2C76B)" : "var(--rose)",
             borderRadius: 8,
             transition: "width 1.4s cubic-bezier(.22,.8,.24,1)",
           }} />
@@ -162,22 +210,28 @@ export default function TogetherPage() {
       <p style={{ fontSize: 13, color: "#B85C82", textAlign: "left", margin: "0 0 10px" }}>🗓️ 기념일 여정</p>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
         {MILESTONES.map((m, i) => {
-          const passed = e.dday >= m.day;
+          const passed = dday >= m.day;
           const isNext = m.day === next.day;
+          const isThousand = m.day === 1000; // 1000일은 금빛으로 특별 표시
+          const goldOn = isThousand && passed;
           return (
-            <div key={m.day} className={isNext ? "unlock-glow" : undefined} style={{
+            <div key={m.day} className={isNext ? "unlock-glow" : goldOn ? "gold-ring" : undefined} style={{
               display: "flex", alignItems: "center", gap: 8, padding: "8px 11px", borderRadius: 10,
-              background: passed ? "var(--blush)" : "#fff",
-              boxShadow: isNext ? "0 0 0 2px var(--rose)" : "0 2px 0 rgba(124,90,150,0.08)",
+              background: goldOn ? "linear-gradient(135deg, #FFF3D6, #FBE6A8)" : passed ? "var(--blush)" : "#fff",
+              boxShadow: isNext ? "0 0 0 2px var(--rose)" : goldOn ? "0 0 0 2px #E0A94A" : "0 2px 0 rgba(124,90,150,0.08)",
               animation: `slideup .45s ${0.3 + i * 0.05}s both`,
             }}>
-              <span style={{ fontSize: 14, display: "inline-block", animation: passed ? "tick-pop .5s ease-out" : "none" }}>{passed ? "💗" : "🤍"}</span>
-              <span style={{ flex: 1, textAlign: "left", fontSize: 13, fontWeight: 600, color: passed ? "#B85C82" : "#9A8A95" }}>{m.label}</span>
-              <span style={{ fontSize: 10, color: passed ? "#C98AA6" : "#E8556F" }}>{passed ? "✓" : `D-${m.day - e.dday}`}</span>
+              <span style={{ fontSize: 14, display: "inline-block", animation: passed ? "tick-pop .5s ease-out" : "none" }}>{goldOn ? "👑" : passed ? "💗" : "🤍"}</span>
+              <span style={{ flex: 1, textAlign: "left", fontSize: 13, fontWeight: goldOn ? 800 : 600, color: goldOn ? "#9C7A2E" : passed ? "#B85C82" : "#9A8A95" }}>{m.label}</span>
+              <span style={{ fontSize: 10, color: goldOn ? "#9C7A2E" : passed ? "#C98AA6" : "#E8556F" }}>{passed ? "✓" : `D-${m.day - dday}`}</span>
             </div>
           );
         })}
       </div>
+
+      {celebrate && (
+        <MilestoneCelebration day={celebrate.day} label={celebrate.label} onClose={() => setCelebrate(null)} />
+      )}
     </main>
   );
 }

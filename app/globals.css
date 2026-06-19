@@ -130,6 +130,32 @@ button { cursor: pointer; }
 @keyframes bar-shine { 0% { transform: translateX(-120%); } 100% { transform: translateX(260%); } }
 @keyframes count-glow { 0%,100% { text-shadow: 0 0 0 rgba(232,85,111,0); } 50% { text-shadow: 0 0 14px rgba(232,85,111,.45); } }
 
+/* together: 1000일 달성 — 금빛 강조 + 풀스크린 축하 */
+@keyframes gold-glow {
+  0%,100% { text-shadow: 0 0 10px rgba(224,169,74,.35), 0 0 0 rgba(232,85,111,0); }
+  50% { text-shadow: 0 0 22px rgba(224,169,74,.85), 0 0 34px rgba(232,85,111,.4); }
+}
+.gold-card {
+  background: linear-gradient(135deg, #FFF7E6, #FBF3F8 55%, #FFF7E6) !important;
+  box-shadow: 0 0 0 3px #F2C76B, 0 0 26px rgba(224,169,74,.5), 4px 6px 0 rgba(124,90,150,.22) !important;
+  border-color: #FBE6A8 !important;
+}
+@keyframes gold-ring { 0%,100% { box-shadow: 0 0 0 0 rgba(224,169,74,.55);} 50% { box-shadow: 0 0 0 9px rgba(224,169,74,0);} }
+.gold-ring { animation: gold-ring 2s ease-in-out infinite; }
+@keyframes crown-bob { 0%,100% { transform: translateY(0) rotate(-4deg);} 50% { transform: translateY(-3px) rotate(4deg);} }
+.crown-bob { display:inline-block; animation: crown-bob 1.8s ease-in-out infinite; }
+@keyframes celebrate-fall {
+  0% { transform: translateY(-14vh) rotate(0deg); opacity: 0; }
+  10% { opacity: 1; }
+  100% { transform: translateY(112vh) rotate(540deg); opacity: 0; }
+}
+@keyframes celebrate-pop { 0% { transform: scale(.5); opacity: 0; } 60% { transform: scale(1.08); } 100% { transform: scale(1); opacity: 1; } }
+@keyframes day-pulse { 0%,100% { transform: scale(1);} 50% { transform: scale(1.06);} }
+.day-pulse { animation: day-pulse 1.6s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .gold-ring, .crown-bob, .day-pulse { animation: none; }
+}
+
 /* wishes: 소원권 보관함 */
 @keyframes ticket-in { from { opacity:0; transform: translateY(18px) rotate(-1.5deg) scale(.96);} to { opacity:1; transform:none; } }
 @keyframes stamp-in { 0% { transform: scale(2.4) rotate(-18deg); opacity:0; } 60% { transform: scale(.9) rotate(-12deg); opacity:1; } 100% { transform: scale(1) rotate(-12deg); opacity:1; } }
