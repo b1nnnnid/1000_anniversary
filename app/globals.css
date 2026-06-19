@@ -26,6 +26,8 @@ html, body {
 }
 * { box-sizing: border-box; }
 canvas, img { image-rendering: pixelated; }
+/* 실제 사진은 픽셀화 제외 (픽셀아트 아이콘만 pixelated 유지) */
+img[src*="/photos/"] { image-rendering: auto; }
 h1, h2, h3 { font-weight: 700; margin: 0; }
 button, a { font-family: inherit; }
 button { cursor: pointer; }
