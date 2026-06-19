@@ -4,3 +4,7 @@ node_modules
 *.db
 dev.db
 prisma/dev.db
+
+*.jpg
+*.png
+*.jpeg
