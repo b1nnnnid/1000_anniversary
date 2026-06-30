@@ -11,7 +11,10 @@ export const WORLD_ROWS = 46;   // 세로 (위=처음 → 아래=1000일, 길게
 //  quiz2    = 2지선다 기억력 문제
 //  finddiff = 사진 두 장 중 오른쪽에 몰래 숨겨진 하트 3개 찾기
 //  puzzle   = 사진 3x3 조각 퍼즐 (두 조각씩 눌러 교체)
-export type ChallengeType = "quiz2" | "finddiff" | "puzzle" | "cookie" | "timing" | "catch" | "simon";
+//  runner   = 쿠키런식 점프 러너 (탭으로 장애물 넘어 끝까지 달리기, 10~20초)
+//  snowman  = 눈사람 만들기 (스윙하는 눈덩이를 3단으로 쌓기)
+//  rockbreak= 바위 깨기 (광클로 픽셀 바위를 깎아 추억 사진 드러내기)
+export type ChallengeType = "quiz2" | "finddiff" | "puzzle" | "cookie" | "timing" | "catch" | "simon" | "runner" | "snowman" | "rockbreak";
 export interface Challenge {
   type: ChallengeType;
   question?: string;          // quiz2 전용
@@ -50,7 +53,7 @@ export const STAGES: Stage[] = [
     text: "오빠가 그려준 첫 우리 그림! 이때는 지금처럼 납작하진 않았는데.",
     story: "이때 술 마시면서 무슨 얘기 했었는지 기억 나? 난 이때두 너무 설렜는뎅 ㅎㅎ 옵빠가 막 나 예쁘다 하고 ~~ 남자친구 되면 어떨 거 같냐고 하구 ~~~ 이이잉 부끄렁!!",
     past: "우리 같은 마음 맞지?",
-    challenge: { type: "quiz2", question: "오빠도 부끄러웠던 거 맞지?", options: ["당연하지", "그냥 귀여웠지"], answer: 0 },
+    challenge: { type: "runner" },
     place: { kind: "izakaya", name: "골뱅이상회", desc: "너무 뚝딱거려서 사실 일어나서 이불킥 했었어 ㅎㅎ" } },
 
   { id: "first-date", order: 2, col: 3, row: 9,
@@ -69,7 +72,7 @@ export const STAGES: Stage[] = [
     text: "우리 함께 보낸 첫 겨울, 첫 크리스마스!",
     story: "예뻐보이겠다고 원피스에 코트 걸치고 나갔어도 추운 줄도 몰랐는데 ㅎㅎㅎ 이때 밥 먹고 일어나서 목도리 두르던 오빠가 엄청 잘생겨 보여써 이잉... 이제 커플 목도리가 됐지!",
     past: "춥지도 않은가봐..",
-    challenge: { type: "catch" },
+    challenge: { type: "snowman" },
     place: { kind: "christmas", name: "설레이던 첫 겨울", desc: "사장님이 막 뽀뽀시킨 거 지금 보니 나쁘지 않을지두." } },
   { id: "movie-night", order: 3, branch: "B", col: 9, row: 15,
     label: "친해졌다!", title: "친해졌다!", date: "2024.01.24",
@@ -104,7 +107,7 @@ export const STAGES: Stage[] = [
     text: "여기까지 나와 함께 해줘서 고마워, 사랑해!",
     story: "이렇게 긴 시간 오빠와 함께하게 될 줄 몰랐는데, 너무 놀랍고 기뻐 ㅎㅎ 우리 지금까지 서로 많이 아껴왔듯이 앞으로도 서로 배려하고 사랑하자! 내 소중한 옵빵이... 앞으로도 잘 부탁해 !!",
     past: "우리가 1000일이라고?",
-    challenge: { type: "finddiff" },
+    challenge: { type: "rockbreak" },
     place: { kind: "hangang", name: "날 좋을 땐 한강", desc: "매년 따뜻해지고 시원해질 때마다 또 같이 오자!" } },
 ];
 
