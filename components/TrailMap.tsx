@@ -104,7 +104,11 @@ export default function TrailMap({
 
     const loop = () => {
       tick++;
-      const frozen = busyRef.current;
+      // 인트로(고양이 첫 인사) 미완료 동안 + 고양이가 ❗/접근/대화로 다가올 동안 이동 잠금
+      const catState = cat.current.state;
+      const catEngaging = catState === "notice" || catState === "approach" || catState === "talk";
+      const introActive = !collectedRef.current.includes("cat-intro");
+      const frozen = busyRef.current || catEngaging || introActive;
       const k = keys.current;
       let dx = 0, dy = 0;
       if (!frozen) {
@@ -317,7 +321,11 @@ export default function TrailMap({
       } else {
         drawGirlfriend(ctx, (GOAL.col + 1) * TILE + 6, GOAL.row * TILE, Math.floor(tick / 22) % 2);
       }
+      // 인트로 동안엔 리스폰처럼 깜빡임
+      const introBlink = introActive && Math.floor(tick / 6) % 2 === 0;
+      if (introBlink) ctx.globalAlpha = 0.3;
       drawCharacter(ctx, pos.current.x, pos.current.y, dir.current, frame, pink);
+      if (introBlink) ctx.globalAlpha = 1;
 
       // 도둑 검은 고양이 달리기 (티켓 물고 도망)
       if (thief.current.active) {
