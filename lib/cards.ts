@@ -61,8 +61,8 @@ export interface SyncRound { theme: string; emoji: string; questions: SyncQuesti
 
 export const SYNC_ROUNDS: SyncRound[] = [
   { theme: "황당 싱크", emoji: "🤪", questions: [
-    { q: "평생 둘 중 하나라면?", options: ["모든 음료가 슬러시", "모든 음료가 미지근"] },
-    { q: "이건 좀 고민되는데, 굳이?", options: ["모든 음식이 민트맛", "모든 음료가 미지근"] },
+    { q: "평생 둘 중 하나라면?", options: ["손이 발 크기", "발이 손 크기"] },
+    { q: "이건 좀 고민되는데, 굳이?", options: ["모든 음료가 슬러시", "모든 음료가 미지근"] },
     { q: "남들 앞에서 더 견딜 만한 건?", options: ["방귀 뀔 때마다 트럼펫 소리", "재채기할 때마다 비명 소리"] },
     { q: "차라리 이게 낫다면?", options: ["한겨울에 반팔", "한여름에 패딩"] },
     { q: "평생 이렇게만 말해야 한다면?", options: ["평생 반말만", "평생 노래로만 말하기"] },
