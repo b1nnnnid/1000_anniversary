@@ -215,7 +215,7 @@ export default function UsHub() {
           <CloudLabel cx={48} cy={312} hw={34} label="추억 앨범" fs={9} delay={0.3} />
           <CloudLabel cx={213} cy={305} hw={27} label="포토부스" fs={8.5} delay={1.2} />
           <CloudLabel cx={276} cy={322} hw={17} label="사주" fs={8.5} delay={0.6} />
-          <CloudLabel cx={314} cy={305} hw={17} label="유형" fs={8.5} delay={1.7} />
+          <CloudLabel cx={314} cy={305} hw={20} label="싱크로" fs={8.5} delay={1.7} />
           <CloudLabel cx={349} cy={322} hw={17} label="카톡" fs={8.5} delay={0.2} />
           <CloudLabel cx={57} cy={642} hw={20} label="룰렛" fs={10} delay={0.9} />
           <CloudLabel cx={323} cy={642} hw={20} label="퀴즈" fs={10} delay={1.4} />
