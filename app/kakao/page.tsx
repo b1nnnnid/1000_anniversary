@@ -7,6 +7,7 @@ import { parseKakao, analyze, Analysis } from "@/lib/kakao";
 import { loadAnalyses, saveAnalysis, deleteAnalysis, SavedAnalysis } from "@/lib/kakaoStore";
 import { getProgress, spendTicket } from "@/lib/progressClient";
 import { markFlag } from "@/lib/flags";
+import Toast, { ToastMsg } from "@/components/Toast";
 
 const COST = 1; // 새 분석 1회당 티켓
 const WD = ["일", "월", "화", "수", "목", "금", "토"];
@@ -234,6 +235,8 @@ export default function KakaoPage() {
   const [adding, setAdding] = useState(false);
   const [tickets, setTickets] = useState<number | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
+  const [confirmDel, setConfirmDel] = useState<SavedAnalysis | null>(null);
+  const [toast, setToast] = useState<ToastMsg | null>(null);
 
   // 저장된 분석 불러오기 (가장 최근 자동 표시) + 티켓 수
   useEffect(() => {
@@ -274,6 +277,9 @@ export default function KakaoPage() {
     const next = deleteAnalysis(id);
     setList(next);
     if (current?.id === id) setCurrent(next[0] ?? null);
+    setConfirmDel(null);
+    setToast({ msg: "분석을 삭제했어요", ok: true });
+    setTimeout(() => setToast(null), 2400);
   };
 
   const fmt = (ts: number) => new Date(ts).toLocaleString("ko-KR", { year: "2-digit", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" });
@@ -328,7 +334,7 @@ export default function KakaoPage() {
                         <p style={{ margin: 0, fontSize: 12.5, color: "#5A4A55", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{it.fileName}</p>
                         <p style={{ margin: "1px 0 0", fontSize: 10.5, color: "#9A8A95" }}>{fmt(it.savedAt)} · 메시지 {it.analysis.total.toLocaleString()}개</p>
                       </button>
-                      <button onClick={() => remove(it.id)} aria-label="삭제" style={{ flexShrink: 0, background: "none", border: "none", color: "#C9A7B4", fontSize: 16, cursor: "pointer" }}>✕</button>
+                      <button onClick={() => setConfirmDel(it)} aria-label="삭제" style={{ flexShrink: 0, background: "none", border: "none", color: "#C9A7B4", fontSize: 16, cursor: "pointer" }}>✕</button>
                     </div>
                   );
                 })}
@@ -340,6 +346,24 @@ export default function KakaoPage() {
           )}
         </>
       )}
+
+      {confirmDel && (
+        <div onClick={() => setConfirmDel(null)} style={{ position: "fixed", inset: 0, zIndex: 90, background: "rgba(90,74,85,0.5)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+          <div onClick={(e) => e.stopPropagation()} className="pop pixel-border" style={{ background: "var(--cream)", borderRadius: 16, padding: "22px 20px", textAlign: "center", maxWidth: 300 }}>
+            <p style={{ fontSize: 34, margin: "0 0 6px" }}>🗑️</p>
+            <h2 style={{ fontSize: 16, color: "#B85C82", margin: "0 0 8px" }}>이 분석을 삭제할까요?</h2>
+            <p style={{ fontSize: 12.5, color: "#6A5A66", lineHeight: 1.7, margin: "0 0 16px" }}>
+              <b style={{ color: "#5A4A55" }}>{confirmDel.fileName}</b><br />한 번 지우면 되돌릴 수 없어요.
+            </p>
+            <div style={{ display: "flex", gap: 8, justifyContent: "center" }}>
+              <button onClick={() => setConfirmDel(null)} style={{ background: "#fff", color: "#6A5A66", border: "2px solid var(--lav)", borderRadius: 12, padding: "10px 18px", fontSize: 13 }}>취소</button>
+              <button onClick={() => remove(confirmDel.id)} style={{ background: "#E26B6B", color: "#fff", border: "none", borderRadius: 12, padding: "10px 18px", fontSize: 13 }}>삭제할게요</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <Toast toast={toast} />
     </main>
   );
 }
