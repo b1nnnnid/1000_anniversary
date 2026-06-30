@@ -10,6 +10,7 @@ import { getProgress, spendTicket } from "@/lib/progressClient";
 import { addCoupon, listCoupons } from "@/lib/couponsClient";
 import { markFlag } from "@/lib/flags";
 import { playSpin, playWin, playWrong } from "@/lib/sfx";
+import Toast, { ToastMsg } from "@/components/Toast";
 
 const TOTAL = WISHES.reduce((s, w) => s + w.weight, 0);
 // 각 칸의 시작 각도/크기 (꼭대기 0°, 시계방향)
@@ -35,6 +36,13 @@ export default function RoulettePage() {
   const [spinning, setSpinning] = useState(false);
   const [result, setResult] = useState<number | null>(null);
   const [recent, setRecent] = useState<RecentCoupon[]>([]);
+  const [toast, setToast] = useState<ToastMsg | null>(null);
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const showToast = (msg: string, ok = true) => {
+    setToast({ msg, ok });
+    if (toastTimer.current) clearTimeout(toastTimer.current);
+    toastTimer.current = setTimeout(() => setToast(null), 2600);
+  };
   const wheelRef = useRef<HTMLCanvasElement>(null);
   const couponCanvas = useRef<HTMLCanvasElement>(null);
 
@@ -100,6 +108,7 @@ export default function RoulettePage() {
 
   const download = () => {
     if (result === null) return;
+    try {
     const c = couponCanvas.current!;
     const ctx = c.getContext("2d")!;
     const W = 640, H = 360;
@@ -120,6 +129,10 @@ export default function RoulettePage() {
     link.download = `소원권_${WISHES[result].title}.png`;
     link.href = c.toDataURL("image/png");
     link.click();
+      showToast("소원권을 저장했어요! 📥 사진/다운로드 폴더를 확인해줘요");
+    } catch {
+      showToast("저장에 실패했어요 ㅠ 다시 한 번 눌러줄래요?", false);
+    }
   };
 
   const noTicket = tickets !== null && tickets < 1;
@@ -266,6 +279,7 @@ export default function RoulettePage() {
       )}
 
       <canvas ref={couponCanvas} style={{ display: "none" }} />
+      <Toast toast={toast} />
     </main>
   );
 }

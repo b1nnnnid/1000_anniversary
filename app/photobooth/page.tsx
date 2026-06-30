@@ -5,6 +5,7 @@ import Link from "next/link";
 import { markFlag } from "@/lib/flags";
 import { elapsed } from "@/lib/config";
 import { addPhotoCard } from "@/lib/photocardsClient";
+import Toast, { ToastMsg } from "@/components/Toast";
 
 type Frame = "hearts" | "flowers" | "anniv" | "dots";
 const FRAMES: { id: Frame; label: string }[] = [
@@ -19,6 +20,13 @@ export default function PhotoBooth() {
   const [message, setMessage] = useState("");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [toast, setToast] = useState<ToastMsg | null>(null);
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const showToast = (msg: string, ok = true) => {
+    setToast({ msg, ok });
+    if (toastTimer.current) clearTimeout(toastTimer.current);
+    toastTimer.current = setTimeout(() => setToast(null), 2600);
+  };
 
   const onFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0]; if (!f) return;
@@ -74,12 +82,17 @@ export default function PhotoBooth() {
   }, [img, frame]);
 
   const download = () => {
-    const cv = canvasRef.current!;
-    const a = document.createElement("a");
-    a.download = "우리의1000일_포토부스.png";
-    a.href = cv.toDataURL("image/png");
-    a.click();
-    markFlag("photo");
+    try {
+      const cv = canvasRef.current!;
+      const a = document.createElement("a");
+      a.download = "우리의1000일_포토부스.png";
+      a.href = cv.toDataURL("image/png");
+      a.click();
+      markFlag("photo");
+      showToast("사진을 저장했어요! 📥 사진/다운로드 폴더를 확인해줘요");
+    } catch {
+      showToast("저장에 실패했어요 ㅠ 다시 한 번 눌러줄래요?", false);
+    }
   };
 
   // 즉석 사진을 추억 타임라인 맨 끝에 "1000일 추억카드"로 추가
@@ -100,6 +113,9 @@ export default function PhotoBooth() {
       });
       markFlag("photo");
       setSaved(true);
+      showToast("추억 앨범에 담았어요! 🎉");
+    } catch {
+      showToast("저장에 실패했어요 ㅠ 잠시 후 다시 해줘요", false);
     } finally {
       setSaving(false);
     }
@@ -161,6 +177,8 @@ export default function PhotoBooth() {
         )}
         {!img && <p style={{ margin: "8px 0 0", fontSize: 11, color: "#B8AEB4" }}>먼저 사진을 올려주세요</p>}
       </div>
+
+      <Toast toast={toast} />
     </main>
   );
 }
