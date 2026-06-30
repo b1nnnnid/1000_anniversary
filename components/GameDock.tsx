@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import PixelIcon from "@/components/PixelIcon";
 import HelpModal from "@/components/HelpModal";
-import { toggleBgm, isPlaying } from "@/lib/bgm";
+import { toggleBgm, isPlaying, startBgm, bgmPref, resumeBgm } from "@/lib/bgm";
 import { playClick, playLocked } from "@/lib/sfx";
 import { getProgress } from "@/lib/progressClient";
 import { getUnlocks } from "@/lib/unlocks";
@@ -24,7 +24,26 @@ export default function GameDock({ onHome, gamesLocked = false, onLockedTry, onS
   const [bgmOn, setBgmOn] = useState(false);
   const [allAchDone, setAllAchDone] = useState(false);
 
-  useEffect(() => { setBgmOn(isPlaying()); }, []);
+  // 사운드 기본 ON: 설정이 off가 아니면 자동 재생 (자동재생 차단 시 첫 입력에서 재개)
+  useEffect(() => {
+    const ensure = () => {
+      if (bgmPref() && !isPlaying()) startBgm();
+      resumeBgm();
+      setBgmOn(isPlaying());
+    };
+    ensure();
+    const kick = () => {
+      ensure();
+      window.removeEventListener("pointerdown", kick);
+      window.removeEventListener("keydown", kick);
+    };
+    window.addEventListener("pointerdown", kick);
+    window.addEventListener("keydown", kick);
+    return () => {
+      window.removeEventListener("pointerdown", kick);
+      window.removeEventListener("keydown", kick);
+    };
+  }, []);
 
   // 모든 업적 달성 여부 → 쇼케이스 잠금 해제 판정 (업적 변동 시 재확인)
   useEffect(() => {

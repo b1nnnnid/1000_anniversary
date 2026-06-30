@@ -134,7 +134,7 @@ type ScreenDef = { n: string; route: string; icon: string; title: string; blurb:
 const SCREENS: ScreenDef[] = [
   {
     n: "01", route: "/", icon: "heart", title: "인트로 — 우리의 1000일",
-    blurb: "표지에서 시작하는 작은 추억 여행. 함께 떠나봐요.",
+    blurb: "표지에서 시작하는 작은 추억 여행. 함께 떠나봐요!",
     mock: (
       <Mini bg="#F3DCE7">
         <div style={{ textAlign: "center", padding: "6px 0" }}>

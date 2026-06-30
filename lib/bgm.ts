@@ -9,7 +9,8 @@ let nextTime = 0;
 const KEY = "our1000days-bgm";
 export function bgmPref(): boolean {
   if (typeof window === "undefined") return false;
-  return localStorage.getItem(KEY) === "on";
+  // 기본값 ON: 사용자가 명시적으로 끈 경우("off")에만 꺼짐
+  return localStorage.getItem(KEY) !== "off";
 }
 function setPref(on: boolean) { try { localStorage.setItem(KEY, on ? "on" : "off"); } catch {} }
 
@@ -82,6 +83,7 @@ export function startBgm() {
   if (ctx) return;
   const AC = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
   ctx = new AC();
+  if (ctx.state === "suspended") ctx.resume().catch(() => {});
   master = ctx.createGain();
   master.gain.value = 0.0001;
   master.connect(ctx.destination);
@@ -116,4 +118,9 @@ export function stopBgm() {
 export function toggleBgm(): boolean {
   if (ctx) { stopBgm(); return false; }
   startBgm(); return true;
+}
+
+// 자동재생이 브라우저 정책으로 suspended 된 경우, 제스처에서 재개
+export function resumeBgm() {
+  if (ctx && ctx.state === "suspended") ctx.resume().catch(() => {});
 }
