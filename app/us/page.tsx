@@ -13,6 +13,33 @@ const LINES = [
 ];
 const MOODS: Mood[] = ["happy", "excited"];
 
+// 둥실둥실 떠 있는 구름 모양 이름표 (시안 A 톤 + 구름 실루엣 + bob 애니메이션)
+function CloudLabel({ cx, cy, hw, label, fs = 9.5, delay = 0 }: {
+  cx: number; cy: number; hw: number; label: string; fs?: number; delay?: number;
+}) {
+  const ry = 8;
+  const puffs = (dr: number) => (
+    <>
+      <ellipse cx={cx} cy={cy} rx={hw + dr} ry={ry + dr} />
+      <circle cx={cx - hw * 0.52} cy={cy} r={ry * 0.8 + dr} />
+      <circle cx={cx + hw * 0.52} cy={cy} r={ry * 0.8 + dr} />
+      <circle cx={cx - hw * 0.26} cy={cy - ry * 0.7} r={ry * 0.95 + dr} />
+      <circle cx={cx + hw * 0.26} cy={cy - ry * 0.6} r={ry * 0.8 + dr} />
+    </>
+  );
+  return (
+    <g style={{ pointerEvents: "none" }}>
+      {/* 바닥 그림자 (떠 있는 느낌) — bob 하지 않고 고정 */}
+      <ellipse cx={cx} cy={cy + ry + 4} rx={hw * 0.82} ry={3} fill="rgba(110,80,110,0.13)" />
+      <g className="cloud-lbl" style={{ animationDelay: `${delay}s` }}>
+        <g fill="#E2B2CB">{puffs(2)}</g>
+        <g fill="#FFFDF8">{puffs(0)}</g>
+        <text x={cx} y={cy + fs * 0.35} textAnchor="middle" fontSize={fs} fill="#B85C82" fontWeight={700}>{label}</text>
+      </g>
+    </g>
+  );
+}
+
 export default function UsHub() {
   const router = useRouter();
   const go = (href: string) => () => router.push(href);
@@ -36,6 +63,8 @@ export default function UsHub() {
             .hot:hover .obj{opacity:.85}
             .ring{fill:none;stroke:#F2C76B;stroke-width:2;stroke-dasharray:5 6;stroke-linecap:round;animation:ring 1.5s linear infinite}
             @keyframes ring{0%{stroke-dashoffset:0;opacity:.4}50%{opacity:1}100%{stroke-dashoffset:-22;opacity:.4}}
+            .cloud-lbl{animation:us-bob 3s ease-in-out infinite}
+            @keyframes us-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
           `}</style>
 
           {/* 방 구조 */}
@@ -177,21 +206,19 @@ export default function UsHub() {
             <rect className="ring" x="296" y="542" width="54" height="86" rx="8" />
           </g>
 
-          {/* 가구 이름표 (어떤 항목인지 작게 표시) */}
-          <g style={{ pointerEvents: "none" }} textAnchor="middle" fill="#5A4A55" stroke="#fff" strokeWidth="3.5" paintOrder="stroke" fontWeight={700}>
-            <text x="48" y="102" fontSize="9.5">운세</text>
-            <text x="120" y="102" fontSize="9.5">함께한 시간</text>
-            <text x="182" y="102" fontSize="9.5">업적</text>
-            <text x="240" y="102" fontSize="9.5">편지함</text>
-            <text x="318" y="102" fontSize="9.5">소원권</text>
-            <text x="48" y="313" fontSize="9.5">추억 앨범</text>
-            <text x="213" y="313" fontSize="8">포토부스</text>
-            <text x="276" y="313" fontSize="8">사주</text>
-            <text x="314" y="313" fontSize="8">유형</text>
-            <text x="349" y="313" fontSize="8">카톡</text>
-            <text x="57" y="642" fontSize="11">룰렛</text>
-            <text x="323" y="642" fontSize="11">퀴즈</text>
-          </g>
+          {/* 가구 이름표 — 둥실둥실 구름 태그 */}
+          <CloudLabel cx={48} cy={105} hw={20} label="운세" delay={0} />
+          <CloudLabel cx={120} cy={105} hw={37} label="함께한 시간" fs={9} delay={0.5} />
+          <CloudLabel cx={182} cy={105} hw={20} label="업적" delay={1.0} />
+          <CloudLabel cx={240} cy={105} hw={27} label="편지함" delay={1.5} />
+          <CloudLabel cx={318} cy={105} hw={27} label="소원권" delay={0.8} />
+          <CloudLabel cx={48} cy={312} hw={34} label="추억 앨범" fs={9} delay={0.3} />
+          <CloudLabel cx={213} cy={305} hw={27} label="포토부스" fs={8.5} delay={1.2} />
+          <CloudLabel cx={276} cy={322} hw={17} label="사주" fs={8.5} delay={0.6} />
+          <CloudLabel cx={314} cy={305} hw={17} label="유형" fs={8.5} delay={1.7} />
+          <CloudLabel cx={349} cy={322} hw={17} label="카톡" fs={8.5} delay={0.2} />
+          <CloudLabel cx={57} cy={642} hw={20} label="룰렛" fs={10} delay={0.9} />
+          <CloudLabel cx={323} cy={642} hw={20} label="퀴즈" fs={10} delay={1.4} />
         </svg>
 
         {/* ===== 가운데 커플 (크게 + 표정 + 말풍선) — SVG 위 HTML 오버레이 ===== */}
