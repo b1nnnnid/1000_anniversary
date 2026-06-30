@@ -10,7 +10,7 @@ type Mode = "sync" | "question";
 // 플레이어 색/이름 (한 폰으로 번갈아)
 const P = {
   p1: { name: "숯댕이 💗", color: "#E8556F", bg: "#FBEAF0", border: "#F4C0D1" },
-  p2: { name: "오빠 💙", color: "#3E7BC2", bg: "#E6F0FB", border: "#B5D4F4" },
+  p2: { name: "옵빵이 💙", color: "#3E7BC2", bg: "#E6F0FB", border: "#B5D4F4" },
 };
 
 function shuffle<T>(arr: T[]): T[] {
@@ -85,7 +85,7 @@ function SyncTest() {
           같은 질문에 <b style={{ color: "#B85C82" }}>각자</b> 답하고,<br />얼마나 똑같이 골랐는지 맞춰봐요!
         </p>
         <p style={{ fontSize: 11.5, color: "#A89AA3", lineHeight: 1.6, margin: "0 0 20px" }}>
-          숯댕이 먼저 → 폰 넘기기 → 오빠 → 같이 결과 확인<br />총 {rounds.length}라운드 · 한 폰으로 번갈아 플레이
+          숯댕이 먼저 → 폰 넘기기 → 옵빵이 → 같이 결과 확인<br />총 {rounds.length}라운드 · 한 폰으로 번갈아 플레이
         </p>
         <button className="btn-rose" onClick={start} style={{ fontSize: 15 }}>시작하기 →</button>
       </div>
@@ -96,10 +96,10 @@ function SyncTest() {
     return (
       <div className="slideup pixel-border" style={{ background: "var(--cream)", borderRadius: 18, padding: "30px 20px", marginTop: 10 }}>
         <div className="floaty" style={{ fontSize: 50 }}>📱💨</div>
-        <h2 style={{ fontSize: 18, color: "#3E7BC2", margin: "14px 0 8px" }}>오빠에게 폰을 넘겨주세요!</h2>
-        <p style={{ fontSize: 13, color: "#6A5A66", lineHeight: 1.7, margin: "0 0 4px" }}>숯댕이 답변 완료 💗<br />이제 오빠가 같은 질문에 답할 차례예요.</p>
+        <h2 style={{ fontSize: 18, color: "#3E7BC2", margin: "14px 0 8px" }}>옵빵이에게 폰을 넘겨주세요!</h2>
+        <p style={{ fontSize: 13, color: "#6A5A66", lineHeight: 1.7, margin: "0 0 4px" }}>숯댕이 답변 완료 💗<br />이제 옵빵이가 같은 질문에 답할 차례예요.</p>
         <p style={{ fontSize: 11.5, color: "#A89AA3", margin: "0 0 18px" }}>숯댕이 답은 안 보이니까 솔직하게! 🤫</p>
-        <button className="btn-rose" onClick={handoffDone} style={{ fontSize: 14, background: "#3E7BC2", boxShadow: "0 4px 0 rgba(40,80,140,.35)" }}>오빠 준비 완료! →</button>
+        <button className="btn-rose" onClick={handoffDone} style={{ fontSize: 14, background: "#3E7BC2", boxShadow: "0 4px 0 rgba(40,80,140,.35)" }}>옵빵이 준비 완료! →</button>
       </div>
     );
   }
