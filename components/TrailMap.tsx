@@ -64,6 +64,7 @@ export default function TrailMap({
   const bounce = useRef({ x: 0, y: 0, t: 0, cd: 0 });
   const thief = useRef({ active: false, x: 0, y: 0, t: 0 });
   const thiefInit = useRef(true);
+  const blinkArmed = useRef(false); // 첫 인트로에서 고양이 말 걸기 전까지만 깜빡
 
   useEffect(() => { collectedRef.current = collected; }, [collected]);
   useEffect(() => { allRef.current = allCollected; }, [allCollected]);
@@ -89,6 +90,7 @@ export default function TrailMap({
     c.x = Math.min((WORLD_COLS - 2) * TILE, pos.current.x + 2.4 * TILE);
     c.y = pos.current.y + 1.3 * TILE;
     c.state = "notice"; c.timer = 48; c.seenBusy = false;
+    blinkArmed.current = true;
   }, [catIntro]);
 
   const canMove = (nx: number, ny: number) => {
@@ -172,7 +174,7 @@ export default function TrailMap({
           if (Math.abs(ddx) > Math.abs(ddy)) c.x += Math.sign(ddx) * Math.min(sp, Math.abs(ddx));
           else c.y += Math.sign(ddy) * Math.min(sp, Math.abs(ddy));
           if (dPlayer < 1.15 * TILE || c.timer <= 0) {
-            c.state = "talk"; c.timer = 30; c.seenBusy = false; onCatTalk();
+            c.state = "talk"; c.timer = 30; c.seenBusy = false; blinkArmed.current = false; onCatTalk();
           }
         }
       } else if (c.state === "talk") {
@@ -321,8 +323,8 @@ export default function TrailMap({
       } else {
         drawGirlfriend(ctx, (GOAL.col + 1) * TILE + 6, GOAL.row * TILE, Math.floor(tick / 22) % 2);
       }
-      // 인트로 동안엔 리스폰처럼 깜빡임
-      const introBlink = introActive && Math.floor(tick / 6) % 2 === 0;
+      // 첫 인트로에서 고양이가 다가오는 동안(말 걸기 전)만 잠깐 깜빡
+      const introBlink = blinkArmed.current && (c.state === "notice" || c.state === "approach") && Math.floor(tick / 6) % 2 === 0;
       if (introBlink) ctx.globalAlpha = 0.3;
       drawCharacter(ctx, pos.current.x, pos.current.y, dir.current, frame, pink);
       if (introBlink) ctx.globalAlpha = 1;
