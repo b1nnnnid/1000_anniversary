@@ -176,6 +176,22 @@ export default function UsHub() {
             </g>
             <rect className="ring" x="296" y="542" width="54" height="86" rx="8" />
           </g>
+
+          {/* 가구 이름표 (어떤 항목인지 작게 표시) */}
+          <g style={{ pointerEvents: "none" }} textAnchor="middle" fill="#5A4A55" stroke="#fff" strokeWidth="3.5" paintOrder="stroke" fontWeight={700}>
+            <text x="48" y="102" fontSize="9.5">운세</text>
+            <text x="120" y="102" fontSize="9.5">함께한 시간</text>
+            <text x="182" y="102" fontSize="9.5">업적</text>
+            <text x="240" y="102" fontSize="9.5">편지함</text>
+            <text x="318" y="102" fontSize="9.5">소원권</text>
+            <text x="48" y="313" fontSize="9.5">추억 앨범</text>
+            <text x="213" y="313" fontSize="8">포토부스</text>
+            <text x="276" y="313" fontSize="8">사주</text>
+            <text x="314" y="313" fontSize="8">유형</text>
+            <text x="349" y="313" fontSize="8">카톡</text>
+            <text x="57" y="642" fontSize="11">룰렛</text>
+            <text x="323" y="642" fontSize="11">퀴즈</text>
+          </g>
         </svg>
 
         {/* ===== 가운데 커플 (크게 + 표정 + 말풍선) — SVG 위 HTML 오버레이 ===== */}
