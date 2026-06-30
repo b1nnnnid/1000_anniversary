@@ -56,7 +56,7 @@ export const ACHIEVEMENTS: Achievement[] = [
   { id: "wishes", emoji: "🎟️", title: "소원 지기", desc: "소원권 보관함을 열어봤어요", done: (x) => x.flags.includes("wishes") },
   { id: "kakao", emoji: "💬", title: "대화 분석가", desc: "카톡 대화를 분석했어요", done: (x) => x.flags.includes("kakao") },
   { id: "mystic", emoji: "🔮", title: "운명 탐구가", desc: "사주와 운세를 모두 열어봤어요", done: (x) => x.unlocks.includes("saju") && x.unlocks.includes("fortune") },
-  { id: "cards", emoji: "🃏", title: "유형 발견", desc: "커플 유형 테스트를 완료했어요", done: (x) => x.flags.includes("cards") },
+  { id: "cards", emoji: "🃏", title: "싱크로 측정", desc: "커플 카드 싱크로율 테스트를 완료했어요", done: (x) => x.flags.includes("cards") },
   { id: "photo", emoji: "📸", title: "포토그래퍼", desc: "포토부스로 사진을 저장했어요", done: (x) => x.flags.includes("photo") },
   { id: "roulette", emoji: "🎁", title: "행운을 돌려라", desc: "소원권 룰렛을 돌렸어요", done: (x) => x.flags.includes("roulette") },
 ];

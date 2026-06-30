@@ -174,7 +174,7 @@ const SCREENS: ScreenDef[] = [
     mock: (
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 6 }}>
         {tile("룰렛", "🎁")}{tile("편지함", "💌")}{tile("사주", "🔮")}
-        {tile("유형테스트", "🃏")}{tile("포토부스", "📸")}{tile("업적", "🏆")}
+        {tile("커플 카드", "🃏")}{tile("포토부스", "📸")}{tile("업적", "🏆")}
       </div>
     ),
   },
@@ -251,8 +251,8 @@ const SCREENS: ScreenDef[] = [
     ),
   },
   {
-    n: "10", route: "/cards", icon: "cards", title: "커플 유형 테스트",
-    blurb: "우리는 어떤 커플일까? 카드를 뽑아 우리만의 유형을 발견해요.",
+    n: "10", route: "/cards", icon: "cards", title: "커플 카드",
+    blurb: "둘이 같은 질문에 각자 답하고, 우리 싱크로율을 맞춰봐요!",
     mock: (
       <Mini bg="#F3DCE7">
         <div style={{ display: "flex", justifyContent: "center", gap: 6 }}>

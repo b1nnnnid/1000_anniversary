@@ -97,7 +97,7 @@ const PreviewGames = (
 // 슬라이드 3: 우리의 공간
 const HUB = [
   { icon: "gift", label: "룰렛" }, { icon: "letter", label: "편지함" }, { icon: "crystal", label: "사주" },
-  { icon: "moon", label: "운세" }, { icon: "cards", label: "유형테스트" }, { icon: "trophy", label: "업적" },
+  { icon: "moon", label: "운세" }, { icon: "cards", label: "커플 카드" }, { icon: "trophy", label: "업적" },
 ];
 const PreviewHub = (
   <Screen>
@@ -129,7 +129,7 @@ const PreviewTeaser = (
 const SLIDES: { title: string; body: string; preview: ReactNode }[] = [
   { title: "추억을 따라 걸어요", body: "캐릭터를 움직여 우리가 걸어온 길을 따라가요.\n스테이지에 닿으면 그날의 추억이 하나씩 열려요.", preview: PreviewMap },
   { title: "모으고, 풀고, 즐겨요", body: "숨은 하트·고양이·미니 미션으로 티켓 조각을 모아\n소원권 룰렛을 돌릴 수 있어요.", preview: PreviewGames },
-  { title: "우리의 공간엔 가득", body: "편지함, 사주·운세, 커플 유형 테스트,\n포토부스, 룰렛, 업적까지 즐길 게 많아요.", preview: PreviewHub },
+  { title: "우리의 공간엔 가득", body: "편지함, 사주·운세, 커플 카드,\n포토부스, 룰렛, 업적까지 즐길 게 많아요.", preview: PreviewHub },
   { title: "그리고 마지막엔...", body: "추억을 끝까지 모으면 특별한 순간이 기다려요.\n어떤 일일지는 직접 확인해봐요!", preview: PreviewTeaser },
 ];
 

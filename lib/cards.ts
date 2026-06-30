@@ -1,4 +1,4 @@
-// 서로 알아가기 질문 카드 + 커플 유형 테스트
+// 서로 알아가기 질문 카드 + 커플 싱크로율 테스트
 
 export interface QuestionCard { q: string; }
 export const QUESTIONS: QuestionCard[] = [
@@ -14,7 +14,7 @@ export const QUESTIONS: QuestionCard[] = [
   { q: "상대방이 가장 멋있어 보이는 순간은?" },
 ];
 
-// ── 커플 유형 테스트 ──
+// ── (구) 커플 유형 테스트 — 미사용, 싱크로율 테스트로 대체됨 ──
 // E(표현 풍부) vs C(은은·차분) / P(계획형) vs F(즉흥·자유)
 export type Axis = "E" | "C" | "P" | "F";
 export interface TypeOption { label: string; axis: Axis; }
